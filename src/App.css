@@ -1,42 +1,243 @@
-#root {
-  max-width: 1280px;
+.app-shell {
+  min-height: 100vh;
+  padding: 2rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.container {
+  width: min(1100px, 92vw);
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+  position: relative;
+  z-index: 2;
 }
 
 .card {
-  padding: 2em;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #d7e3f0;
+  border-radius: 18px;
+  box-shadow: 0 16px 35px rgba(18, 42, 69, 0.12);
 }
 
-.read-the-docs {
-  color: #888;
+.auth-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 1rem;
+}
+
+.intro,
+.panel,
+.section,
+.summary-card,
+.stage-indicator {
+  padding: 1.2rem;
+}
+
+.intro h1 {
+  margin-top: 0.25rem;
+  margin-bottom: 0.75rem;
+  font-size: clamp(1.55rem, 2.8vw, 2.3rem);
+}
+
+.intro p {
+  color: #3e596f;
+}
+
+.intro ul {
+  margin-bottom: 0;
+  padding-left: 1rem;
+  color: #244861;
+}
+
+.mode-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.mode-toggle button,
+.ghost-btn,
+.primary-btn {
+  border-radius: 12px;
+  padding: 0.74rem 1rem;
+  border: 1px solid #c8d8e7;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mode-toggle button,
+.ghost-btn {
+  background: #eff5fb;
+  color: #20425a;
+}
+
+.mode-toggle button.active {
+  background: #103d62;
+  border-color: #103d62;
+  color: #ffffff;
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, #0f5f9c, #0d8a80);
+  color: #ffffff;
+  border: none;
+}
+
+.form-grid {
+  display: grid;
+  gap: 0.82rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.field span {
+  font-weight: 600;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  border: 1px solid #c9d8e8;
+  border-radius: 10px;
+  padding: 0.68rem;
+  font: inherit;
+  background: #ffffff;
+}
+
+.field small {
+  color: #547086;
+  font-size: 0.8rem;
+}
+
+.error {
+  font-style: normal;
+  color: #b53232;
+  font-size: 0.8rem;
+}
+
+.feedback {
+  margin: 0.75rem 0 0;
+  color: #1a5b84;
+}
+
+.feedback.success {
+  color: #0f775f;
+}
+
+.kicker {
+  font-size: 0.75rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #355c77;
+  margin: 0;
+}
+
+.stage-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.stage-row h2 {
+  margin: 0.25rem 0 0;
+}
+
+.progress-track {
+  margin-top: 0.75rem;
+  background: #e7f0f8;
+  height: 10px;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  background: linear-gradient(90deg, #0f5f9c, #0d8a80);
+  height: 100%;
+  transition: width 250ms ease;
+}
+
+.onboarding-layout {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.section h3 {
+  margin-top: 0;
+  margin-bottom: 0.35rem;
+}
+
+.section p {
+  margin-top: 0;
+  color: #486278;
+}
+
+.grid.two-col {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.full {
+  grid-column: 1 / -1;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+
+.actions > div {
+  display: flex;
+  gap: 0.55rem;
+}
+
+.summary-layout {
+  max-width: 820px;
+}
+
+.bg-shape {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(1px);
+  z-index: 1;
+}
+
+.bg-shape-left {
+  width: 320px;
+  height: 320px;
+  background: #c9e8f6;
+  top: -120px;
+  left: -100px;
+}
+
+.bg-shape-right {
+  width: 340px;
+  height: 340px;
+  background: #d7efe6;
+  bottom: -130px;
+  right: -110px;
+}
+
+@media (max-width: 900px) {
+  .auth-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .grid.two-col {
+    grid-template-columns: 1fr;
+  }
+
+  .app-shell {
+    padding: 1rem 0 1.4rem;
+  }
 }
