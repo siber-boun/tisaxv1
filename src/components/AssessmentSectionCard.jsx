@@ -1,6 +1,4 @@
-import { maturityLevels } from "../stage2Data";
-
-export default function AssessmentSectionCard({ section, answers, errors, onAnswer }) {
+export default function AssessmentSectionCard({ section, answers, errors, onAnswer, maturityOptions }) {
   return (
     <section className="card section assessment-section">
       <h3>{section.title}</h3>
@@ -15,7 +13,7 @@ export default function AssessmentSectionCard({ section, answers, errors, onAnsw
             {question.helper ? <small>{question.helper}</small> : null}
 
             <div className="maturity-options">
-              {maturityLevels.map((level) => (
+              {maturityOptions.map((level) => (
                 <label key={level.value} className={`maturity-chip ${answers[question.id] === level.value ? "active" : ""}`}>
                   <input
                     type="radio"

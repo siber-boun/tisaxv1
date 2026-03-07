@@ -10,7 +10,7 @@ function AuthField({ label, type = "text", value, onChange, helper }) {
   );
 }
 
-export default function AuthCard({ onSignIn, onSignUp, feedback }) {
+export default function AuthCard({ onSignIn, onSignUp, feedback, text }) {
   const [mode, setMode] = useState("signin");
   const [signInData, setSignInData] = useState({ username: "", password: "" });
   const [signUpData, setSignUpData] = useState({
@@ -33,52 +33,52 @@ export default function AuthCard({ onSignIn, onSignUp, feedback }) {
   return (
     <section className="panel card">
       <div className="mode-toggle">
-        <button className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")}>Sign In</button>
-        <button className={mode === "signup" ? "active" : ""} onClick={() => setMode("signup")}>Sign Up</button>
+        <button className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")}>{text.signInTab}</button>
+        <button className={mode === "signup" ? "active" : ""} onClick={() => setMode("signup")}>{text.signUpTab}</button>
       </div>
 
       {mode === "signin" ? (
         <form onSubmit={submitSignIn} className="form-grid">
-          <h2>Secure Access</h2>
-          <p>Sign in with your organization account to start Stage 1 profiling.</p>
-          <AuthField label="Username" value={signInData.username} onChange={(value) => setSignInData((prev) => ({ ...prev, username: value }))} />
+          <h2>{text.secureAccess}</h2>
+          <p>{text.signInDesc}</p>
+          <AuthField label={text.username} value={signInData.username} onChange={(value) => setSignInData((prev) => ({ ...prev, username: value }))} />
           <AuthField
-            label="Password"
+            label={text.password}
             type="password"
             value={signInData.password}
             onChange={(value) => setSignInData((prev) => ({ ...prev, password: value }))}
           />
-          <button type="submit" className="primary-btn">Continue</button>
-          <small>Sample first-login user: `new_admin` / `Welcome123!`</small>
+          <button type="submit" className="primary-btn">{text.continue}</button>
+          <small>{text.sampleUser}</small>
         </form>
       ) : (
         <form onSubmit={submitSignUp} className="form-grid">
-          <h2>Create Account</h2>
-          <p>Create your workspace admin account for TISAX readiness assessment.</p>
+          <h2>{text.createAccount}</h2>
+          <p>{text.signUpDesc}</p>
           <AuthField
-            label="Company Name"
+            label={text.companyName}
             value={signUpData.companyName}
             onChange={(value) => setSignUpData((prev) => ({ ...prev, companyName: value }))}
           />
           <AuthField
-            label="Username"
+            label={text.username}
             value={signUpData.username}
             onChange={(value) => setSignUpData((prev) => ({ ...prev, username: value }))}
           />
           <AuthField
-            label="Password"
+            label={text.password}
             type="password"
             value={signUpData.password}
             onChange={(value) => setSignUpData((prev) => ({ ...prev, password: value }))}
-            helper="Use at least 8 characters."
+            helper={text.minPassword}
           />
           <AuthField
-            label="Confirm Password"
+            label={text.confirmPassword}
             type="password"
             value={signUpData.confirmPassword}
             onChange={(value) => setSignUpData((prev) => ({ ...prev, confirmPassword: value }))}
           />
-          <button type="submit" className="primary-btn">Create Account</button>
+          <button type="submit" className="primary-btn">{text.createAccountBtn}</button>
         </form>
       )}
 

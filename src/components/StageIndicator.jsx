@@ -1,4 +1,4 @@
-export default function StageIndicator({ step, total, title, stageLabel = "Stage 1" }) {
+export default function StageIndicator({ step, total, title, stageLabel = "Stage 1", stepLabel = "Step" }) {
   const percentage = Math.round((step / total) * 100);
 
   return (
@@ -9,7 +9,7 @@ export default function StageIndicator({ step, total, title, stageLabel = "Stage
           <h2>{title}</h2>
         </div>
         <span>
-          Step {step} / {total}
+          {stepLabel} {step} / {total}
         </span>
       </div>
       <div className="progress-track">
