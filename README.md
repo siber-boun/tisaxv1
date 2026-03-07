@@ -1,16 +1,11 @@
-# React + Vite
+# TISAX Prototype
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Prototype Disclaimer for HOMEWORK PROJECT
 
-Currently, two official plugins are available:
+This repository contains a prototype of an AI-based TISAX and cybersecurity assessment platform developed for demonstration, exploration, and design validation purposes.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+The current version is not intended for production use. It does not provide production-grade authentication, authorization, secure backend processing, or enterprise data protection controls. User/session behavior in the prototype is simplified and some data may be stored locally in the browser for demonstration purposes.
 
-## React Compiler
+No real organizational secrets, credentials, or sensitive production data should be entered into this prototype. Any assessment results, scores, and recommendations presented by the system are indicative and should not be interpreted as a formal audit, certification decision, or professional assurance statement.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+This project should be treated as an experimental and educational prototype unless and until it is extended with secure backend architecture, proper identity management, server-side validation, logging, monitoring, and full security hardening.
