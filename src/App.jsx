@@ -3,6 +3,8 @@ import "./App.css";
 import AuthCard from "./components/AuthCard";
 import StageIndicator from "./components/StageIndicator";
 import { FormSection, InputField, SelectField, TextAreaField } from "./components/FormSection";
+import AssessmentSectionCard from "./components/AssessmentSectionCard";
+import ScoreDashboard from "./components/ScoreDashboard";
 import {
   certificationOptions,
   companySizeOptions,
@@ -11,10 +13,14 @@ import {
   maturityOptions,
   yesNoPartialOptions,
 } from "./dataOptions";
+import { computeAssessmentResults, validateSectionQuestions } from "./assessmentUtils";
+import { stage2Sections } from "./stage2Data";
 
 const USERS_KEY = "tisax_prototype_users";
 const SESSION_KEY = "tisax_prototype_session";
 const PROFILE_KEY = "tisax_prototype_profile";
+const STAGE2_ANSWERS_KEY = "tisax_prototype_stage2_answers";
+const STAGE2_RESULTS_KEY = "tisax_prototype_stage2_results";
 
 const seedUsers = [
   { username: "new_admin", password: "Welcome123!", companyName: "BlueForge Mobility", firstLogin: true },
@@ -38,7 +44,7 @@ const emptyProfile = {
   mainConcerns: "",
 };
 
-const stepConfig = [
+const stage1Config = [
   {
     title: "Organization Context",
     description: "Capture company identity and operating footprint.",
@@ -87,21 +93,31 @@ function validateStep(values, requiredFields) {
   return errors;
 }
 
+function getScreenForSession(activeSession) {
+  if (!activeSession) return "auth";
+  if (activeSession.firstLogin) return "onboarding";
+
+  const cachedResults = readJson(STAGE2_RESULTS_KEY, null);
+  return cachedResults ? "stage2Results" : "stage2Assessment";
+}
+
 export default function App() {
   const [session, setSession] = useState(() => readJson(SESSION_KEY, null));
-  const [screen, setScreen] = useState(() => {
-    const active = readJson(SESSION_KEY, null);
-    if (!active) return "auth";
-    return active.firstLogin ? "onboarding" : "summary";
-  });
+  const [screen, setScreen] = useState(() => getScreenForSession(readJson(SESSION_KEY, null)));
   const [feedback, setFeedback] = useState("");
-  const [step, setStep] = useState(1);
-  const [errors, setErrors] = useState({});
+
+  const [stage1Step, setStage1Step] = useState(1);
+  const [stage1Errors, setStage1Errors] = useState({});
   const [profile, setProfile] = useState(() => {
     const saved = readJson(PROFILE_KEY, null);
     const active = readJson(SESSION_KEY, null);
     return { ...emptyProfile, ...saved, companyName: saved?.companyName || active?.companyName || "" };
   });
+
+  const [stage2Step, setStage2Step] = useState(1);
+  const [stage2Errors, setStage2Errors] = useState({});
+  const [stage2Answers, setStage2Answers] = useState(() => readJson(STAGE2_ANSWERS_KEY, {}));
+  const [stage2Results, setStage2Results] = useState(() => readJson(STAGE2_RESULTS_KEY, null));
 
   useEffect(() => {
     ensureUsers();
@@ -153,28 +169,26 @@ export default function App() {
     writeJson(SESSION_KEY, user);
     setSession(user);
     setFeedback("");
+    setStage1Step(1);
+    setStage2Step(1);
+    setStage1Errors({});
+    setStage2Errors({});
     setProfile((prev) => ({ ...prev, companyName: prev.companyName || user.companyName }));
-
-    if (user.firstLogin) {
-      setScreen("onboarding");
-      return;
-    }
-
-    setScreen("summary");
+    setScreen(getScreenForSession(user));
   };
 
-  const handleSaveAndContinue = () => {
-    const current = stepConfig[step - 1];
+  const handleStage1Save = () => {
+    const current = stage1Config[stage1Step - 1];
     const nextErrors = validateStep(profile, current.requiredFields);
-    setErrors(nextErrors);
+    setStage1Errors(nextErrors);
 
     if (Object.keys(nextErrors).length) return;
 
     writeJson(PROFILE_KEY, profile);
-    setFeedback("Progress saved.");
+    setFeedback("Stage 1 progress saved.");
 
-    if (step < stepConfig.length) {
-      setStep((prev) => prev + 1);
+    if (stage1Step < stage1Config.length) {
+      setStage1Step((prev) => prev + 1);
       return;
     }
 
@@ -182,31 +196,91 @@ export default function App() {
     const updatedUsers = users.map((item) =>
       item.username === session.username ? { ...item, firstLogin: false, companyName: profile.companyName } : item,
     );
-
     const updatedSession = { ...session, firstLogin: false, companyName: profile.companyName };
+
     writeJson(USERS_KEY, updatedUsers);
     writeJson(SESSION_KEY, updatedSession);
     setSession(updatedSession);
-    setScreen("summary");
-    setFeedback("Stage 1 completed successfully.");
+    setScreen("stage2Assessment");
+    setFeedback("Stage 1 completed. Continue with Stage 2 cybersecurity readiness assessment.");
+    setStage1Step(1);
   };
 
-  const handleBack = () => {
-    setErrors({});
+  const handleStage1Back = () => {
+    setStage1Errors({});
     setFeedback("");
-    setStep((prev) => Math.max(1, prev - 1));
+    setStage1Step((prev) => Math.max(1, prev - 1));
+  };
+
+  const handleAnswer = (questionId, value) => {
+    setStage2Answers((prev) => {
+      const next = { ...prev, [questionId]: value };
+      writeJson(STAGE2_ANSWERS_KEY, next);
+      return next;
+    });
+
+    setStage2Errors((prev) => {
+      if (!prev[questionId]) return prev;
+      const next = { ...prev };
+      delete next[questionId];
+      return next;
+    });
+  };
+
+  const handleStage2Save = () => {
+    const currentSection = stage2Sections[stage2Step - 1];
+    const nextErrors = validateSectionQuestions(currentSection, stage2Answers);
+    setStage2Errors(nextErrors);
+
+    if (Object.keys(nextErrors).length) {
+      setFeedback("Please answer all questions in this section.");
+      return;
+    }
+
+    setFeedback("Stage 2 progress saved.");
+
+    if (stage2Step < stage2Sections.length) {
+      setStage2Step((prev) => prev + 1);
+      return;
+    }
+
+    const results = computeAssessmentResults(stage2Sections, stage2Answers);
+    writeJson(STAGE2_RESULTS_KEY, results);
+    setStage2Results(results);
+    setScreen("stage2Results");
+    setFeedback("Stage 2 assessment completed.");
+  };
+
+  const handleStage2Back = () => {
+    setFeedback("");
+    setStage2Errors({});
+    setStage2Step((prev) => Math.max(1, prev - 1));
+  };
+
+  const handleRetakeAssessment = () => {
+    localStorage.removeItem(STAGE2_ANSWERS_KEY);
+    localStorage.removeItem(STAGE2_RESULTS_KEY);
+    setStage2Answers({});
+    setStage2Results(null);
+    setStage2Errors({});
+    setStage2Step(1);
+    setFeedback("Stage 2 reset. You can run the assessment again.");
+    setScreen("stage2Assessment");
   };
 
   const handleSignOut = () => {
     localStorage.removeItem(SESSION_KEY);
     setSession(null);
     setScreen("auth");
-    setStep(1);
-    setErrors({});
+    setStage1Step(1);
+    setStage2Step(1);
+    setStage1Errors({});
+    setStage2Errors({});
     setFeedback("Signed out.");
   };
 
-  const currentTitle = stepConfig[step - 1].title;
+  const currentStage1Title = stage1Config[stage1Step - 1].title;
+  const currentStage2 = stage2Sections[stage2Step - 1];
 
   return (
     <main className="app-shell">
@@ -219,13 +293,13 @@ export default function App() {
             <p className="kicker">AI-Based TISAX Platform</p>
             <h1>Cybersecurity Assessment Onboarding</h1>
             <p>
-              Start with trusted authentication. On first login, you will complete Stage 1 organization profiling so the
-              platform can establish your security posture baseline.
+              Start with trusted authentication. On first login, complete Stage 1 profiling and then Stage 2 readiness
+              assessment to identify priority gaps.
             </p>
             <ul>
-              <li>Structured TISAX and cybersecurity context intake</li>
-              <li>Designed for non-expert users</li>
-              <li>Modular flow for future backend integration</li>
+              <li>Structured TISAX and cybersecurity intake</li>
+              <li>Maturity-based controls assessment</li>
+              <li>Clear score output and action-oriented recommendations</li>
             </ul>
           </section>
           <AuthCard onSignIn={handleSignIn} onSignUp={handleSignUp} feedback={feedback} />
@@ -234,9 +308,9 @@ export default function App() {
 
       {screen === "onboarding" ? (
         <div className="container onboarding-layout">
-          <StageIndicator step={step} total={stepConfig.length} title={currentTitle} />
+          <StageIndicator step={stage1Step} total={stage1Config.length} title={currentStage1Title} stageLabel="Stage 1" />
 
-          {step === 1 ? (
+          {stage1Step === 1 ? (
             <FormSection title="Company Profile" description="Tell us who you are and where you operate.">
               <div className="grid two-col">
                 <InputField
@@ -245,7 +319,7 @@ export default function App() {
                   helper="Legal or commonly used business name."
                   value={profile.companyName}
                   onChange={(value) => updateField("companyName", value)}
-                  error={errors.companyName}
+                  error={stage1Errors.companyName}
                 />
                 <SelectField
                   label="Company Size"
@@ -254,7 +328,7 @@ export default function App() {
                   options={companySizeOptions}
                   value={profile.companySize}
                   onChange={(value) => updateField("companySize", value)}
-                  error={errors.companySize}
+                  error={stage1Errors.companySize}
                 />
                 <SelectField
                   label="Industry Sector"
@@ -263,7 +337,7 @@ export default function App() {
                   options={industryOptions}
                   value={profile.industrySector}
                   onChange={(value) => updateField("industrySector", value)}
-                  error={errors.industrySector}
+                  error={stage1Errors.industrySector}
                 />
                 <InputField
                   label="Number of Employees"
@@ -272,7 +346,7 @@ export default function App() {
                   helper="Approximate total workforce."
                   value={profile.numberOfEmployees}
                   onChange={(value) => updateField("numberOfEmployees", value)}
-                  error={errors.numberOfEmployees}
+                  error={stage1Errors.numberOfEmployees}
                 />
                 <InputField
                   label="Country / Region"
@@ -280,7 +354,7 @@ export default function App() {
                   helper="Primary operating geography."
                   value={profile.countryRegion}
                   onChange={(value) => updateField("countryRegion", value)}
-                  error={errors.countryRegion}
+                  error={stage1Errors.countryRegion}
                 />
                 <InputField
                   label="Number of Office Locations"
@@ -289,13 +363,13 @@ export default function App() {
                   helper="Include headquarters and branch offices."
                   value={profile.officeLocations}
                   onChange={(value) => updateField("officeLocations", value)}
-                  error={errors.officeLocations}
+                  error={stage1Errors.officeLocations}
                 />
               </div>
             </FormSection>
           ) : null}
 
-          {step === 2 ? (
+          {stage1Step === 2 ? (
             <FormSection title="IT Environment and Critical Assets" description="Map technical landscape and external dependencies.">
               <div className="grid two-col">
                 <SelectField
@@ -305,7 +379,7 @@ export default function App() {
                   options={itEnvironmentOptions}
                   value={profile.itEnvironment}
                   onChange={(value) => updateField("itEnvironment", value)}
-                  error={errors.itEnvironment}
+                  error={stage1Errors.itEnvironment}
                 />
                 <SelectField
                   label="Third-Party Providers"
@@ -314,7 +388,7 @@ export default function App() {
                   options={yesNoPartialOptions}
                   value={profile.thirdPartyProviders}
                   onChange={(value) => updateField("thirdPartyProviders", value)}
-                  error={errors.thirdPartyProviders}
+                  error={stage1Errors.thirdPartyProviders}
                 />
                 <TextAreaField
                   label="Critical Assets / Sensitive Data"
@@ -322,13 +396,13 @@ export default function App() {
                   helper="Examples: customer PII, source code, production systems, finance records."
                   value={profile.criticalAssets}
                   onChange={(value) => updateField("criticalAssets", value)}
-                  error={errors.criticalAssets}
+                  error={stage1Errors.criticalAssets}
                 />
               </div>
             </FormSection>
           ) : null}
 
-          {step === 3 ? (
+          {stage1Step === 3 ? (
             <FormSection title="Security Governance and Compliance" description="Understand policy coverage and compliance status.">
               <div className="grid two-col">
                 <SelectField
@@ -338,7 +412,7 @@ export default function App() {
                   options={yesNoPartialOptions}
                   value={profile.securityPolicies}
                   onChange={(value) => updateField("securityPolicies", value)}
-                  error={errors.securityPolicies}
+                  error={stage1Errors.securityPolicies}
                 />
                 <SelectField
                   label="ISO 27001 or Similar Certification"
@@ -347,7 +421,7 @@ export default function App() {
                   options={certificationOptions}
                   value={profile.certificationStatus}
                   onChange={(value) => updateField("certificationStatus", value)}
-                  error={errors.certificationStatus}
+                  error={stage1Errors.certificationStatus}
                 />
                 <TextAreaField
                   label="Regulatory Requirements"
@@ -355,13 +429,13 @@ export default function App() {
                   helper="Examples: GDPR, NIS2, automotive sector obligations."
                   value={profile.regulatoryRequirements}
                   onChange={(value) => updateField("regulatoryRequirements", value)}
-                  error={errors.regulatoryRequirements}
+                  error={stage1Errors.regulatoryRequirements}
                 />
               </div>
             </FormSection>
           ) : null}
 
-          {step === 4 ? (
+          {stage1Step === 4 ? (
             <FormSection title="Maturity and Priority Risks" description="Capture current cybersecurity maturity and top concerns.">
               <div className="grid two-col">
                 <SelectField
@@ -371,7 +445,7 @@ export default function App() {
                   options={maturityOptions}
                   value={profile.maturityLevel}
                   onChange={(value) => updateField("maturityLevel", value)}
-                  error={errors.maturityLevel}
+                  error={stage1Errors.maturityLevel}
                 />
                 <TextAreaField
                   label="Main Cybersecurity Concerns"
@@ -379,7 +453,7 @@ export default function App() {
                   helper="Example: ransomware risk, IAM gaps, supplier risk, incident readiness."
                   value={profile.mainConcerns}
                   onChange={(value) => updateField("mainConcerns", value)}
-                  error={errors.mainConcerns}
+                  error={stage1Errors.mainConcerns}
                 />
               </div>
             </FormSection>
@@ -390,12 +464,12 @@ export default function App() {
               Sign Out
             </button>
             <div>
-              {step > 1 ? (
-                <button className="ghost-btn" onClick={handleBack}>
+              {stage1Step > 1 ? (
+                <button className="ghost-btn" onClick={handleStage1Back}>
                   Back
                 </button>
               ) : null}
-              <button className="primary-btn" onClick={handleSaveAndContinue}>
+              <button className="primary-btn" onClick={handleStage1Save}>
                 Save and Continue
               </button>
             </div>
@@ -404,19 +478,52 @@ export default function App() {
         </div>
       ) : null}
 
-      {screen === "summary" ? (
-        <div className="container summary-layout">
-          <section className="card summary-card">
-            <p className="kicker">Stage 1 Complete</p>
-            <h2>{session?.companyName || "Organization"} profile is saved</h2>
-            <p>
-              First-login onboarding is complete. In the next stage, the platform can generate an AI-driven cybersecurity
-              and TISAX readiness baseline.
-            </p>
+      {screen === "stage2Assessment" ? (
+        <div className="container onboarding-layout">
+          <StageIndicator
+            step={stage2Step}
+            total={stage2Sections.length}
+            title={currentStage2.title}
+            stageLabel="Stage 2"
+          />
+
+          <AssessmentSectionCard
+            section={currentStage2}
+            answers={stage2Answers}
+            errors={stage2Errors}
+            onAnswer={handleAnswer}
+          />
+
+          <div className="actions">
+            <button className="ghost-btn" onClick={handleSignOut}>
+              Sign Out
+            </button>
+            <div>
+              {stage2Step > 1 ? (
+                <button className="ghost-btn" onClick={handleStage2Back}>
+                  Back
+                </button>
+              ) : null}
+              <button className="primary-btn" onClick={handleStage2Save}>
+                Save and Continue
+              </button>
+            </div>
+          </div>
+          {feedback ? <p className="feedback success">{feedback}</p> : null}
+        </div>
+      ) : null}
+
+      {screen === "stage2Results" ? (
+        <div className="container summary-layout results-screen">
+          <ScoreDashboard results={stage2Results} />
+          <div className="actions results-actions">
+            <button className="ghost-btn" onClick={handleRetakeAssessment}>
+              Retake Stage 2
+            </button>
             <button className="primary-btn" onClick={handleSignOut}>
               Sign Out
             </button>
-          </section>
+          </div>
         </div>
       ) : null}
     </main>

@@ -1,11 +1,11 @@
-export default function StageIndicator({ step, total, title }) {
+export default function StageIndicator({ step, total, title, stageLabel = "Stage 1" }) {
   const percentage = Math.round((step / total) * 100);
 
   return (
     <div className="stage-indicator card">
       <div className="stage-row">
         <div>
-          <p className="kicker">Stage 1</p>
+          <p className="kicker">{stageLabel}</p>
           <h2>{title}</h2>
         </div>
         <span>
