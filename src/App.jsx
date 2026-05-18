@@ -15,6 +15,7 @@ import UserManagementPage from "./components/UserManagementPage";
 import AssetManagementPage from "./components/AssetManagementPage";
 import RiskManagementPage from "./components/RiskManagementPage";
 import ThreatModelingPage from "./components/ThreatModelingPage";
+import MainDashboardPage from "./components/MainDashboardPage";
 
 const USERS_KEY = "tisax_prototype_users";
 const SESSION_KEY = "tisax_prototype_session";
@@ -174,7 +175,7 @@ export default function App() {
 
   const [session, setSession] = useState(() => readJson(SESSION_KEY, null));
   const [screen, setScreen] = useState(() => getScreenForSession(readJson(SESSION_KEY, null)));
-  const [activeView, setActiveView] = useState("hizli-test");
+  const [activeView, setActiveView] = useState("dashboard");
   const [feedback, setFeedback] = useState("");
 
   const [stage1Step, setStage1Step] = useState(1);
@@ -709,6 +710,7 @@ export default function App() {
 
   const getViewTitle = (view) => {
     switch (view) {
+      case "dashboard": return "Ana Sayfa / Pano";
       case "hizli-test": return "Hızlı Siber Olgunluk Testi";
       case "tisax": return "TISAX Denetimi";
       case "iso": return "ISO/SAE 21434 Denetimi";
@@ -727,7 +729,9 @@ export default function App() {
   }
 
   let mainView;
-  if (activeView === "hizli-test") {
+  if (activeView === "dashboard") {
+    mainView = <MainDashboardPage onNavigate={(id) => setActiveView(id)} />;
+  } else if (activeView === "hizli-test") {
     mainView = appContent;
   } else if (activeView === "raporlama") {
     mainView = (

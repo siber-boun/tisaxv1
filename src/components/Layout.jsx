@@ -17,6 +17,18 @@ export default function Layout({ children, activeTab, onTabChange, activeRole, o
 
   const menuItems = [
     {
+      id: "dashboard",
+      label: "Ana Sayfa / Pano",
+      icon: (
+        <svg {...svgProps}>
+          <rect x="3" y="3" width="7" height="7"></rect>
+          <rect x="14" y="3" width="7" height="7"></rect>
+          <rect x="14" y="14" width="7" height="7"></rect>
+          <rect x="3" y="14" width="7" height="7"></rect>
+        </svg>
+      )
+    },
+    {
       id: "hizli-test",
       label: "Hızlı Siber Olgunluk Testi",
       icon: (
