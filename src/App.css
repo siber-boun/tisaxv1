@@ -121,7 +121,7 @@
 }
 
 .primary-btn {
-  background: linear-gradient(135deg, #0f5f9c, #0d8a80);
+  background: #2563eb;
   color: #ffffff;
   border: none;
 }
@@ -192,14 +192,14 @@
 
 .progress-track {
   margin-top: 0.75rem;
-  background: #e7f0f8;
-  height: 10px;
+  background: #e2e8f0;
+  height: 8px;
   border-radius: 999px;
   overflow: hidden;
 }
 
 .progress-fill {
-  background: linear-gradient(90deg, #0f5f9c, #0d8a80);
+  background: #2563eb;
   height: 100%;
   transition: width 250ms ease;
 }

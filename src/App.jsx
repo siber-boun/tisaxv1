@@ -341,6 +341,11 @@ export default function App() {
       text.recommendations.catalog,
       text.recommendations.baseline,
     );
+    
+    // Add completion timestamp
+    const now = new Date();
+    results.completedAt = `${now.toLocaleDateString("tr-TR")} ${now.toLocaleTimeString("tr-TR", { hour: '2-digit', minute: '2-digit' })}`;
+    
     saveUserStage2Results(session?.username, results);
     setStage2Results(results);
     setScreen("stage2Results");
@@ -410,9 +415,6 @@ export default function App() {
 
   const appContent = (
     <main className="app-shell">
-      <div className="bg-shape bg-shape-left" />
-      <div className="bg-shape bg-shape-right" />
-
       <section className="language-switcher card">
         <span>{text.language.switcherLabel}</span>
         <div>
@@ -693,6 +695,20 @@ export default function App() {
     </main>
   );
 
+  const getViewTitle = (view) => {
+    switch (view) {
+      case "hizli-test": return "Hızlı Siber Olgunluk Testi";
+      case "tisax": return "TISAX Denetimi";
+      case "iso": return "ISO/SAE 21434 Denetimi";
+      case "varlik": return "Varlık Yönetimi";
+      case "risk": return "Risk Yönetimi";
+      case "tehdit": return "Tehdit Modellemesi";
+      case "zafiyet": return "Zafiyet ve Sızma Testi Yönetimi";
+      case "raporlama": return "Raporlama ve Analiz";
+      default: return "";
+    }
+  };
+
   if (screen === "auth") {
     return appContent;
   }
@@ -701,12 +717,22 @@ export default function App() {
   if (activeView === "hizli-test") {
     mainView = appContent;
   } else if (activeView === "raporlama") {
-    mainView = <ReportsView />;
+    mainView = (
+      <div className="placeholder-view">
+        <h2 className="view-title">{getViewTitle("raporlama")}</h2>
+        <ReportsView />
+      </div>
+    );
   } else {
     mainView = (
       <div className="placeholder-view">
-        <h3>Modül Yapım Aşamasında</h3>
-        <p>Bu alan ilerleyen fazlarda aktif edilecektir.</p>
+        <h2 className="view-title">{getViewTitle(activeView)}</h2>
+        <div className="card empty-state">
+          <p>Bu modül şu anda hazırlık aşamasındadır.</p>
+          <button className="primary-btn" onClick={() => setActiveView("hizli-test")}>
+            Hızlı Test'e Dön
+          </button>
+        </div>
       </div>
     );
   }
@@ -717,3 +743,4 @@ export default function App() {
     </Layout>
   );
 }
+
