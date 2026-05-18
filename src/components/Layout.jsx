@@ -2,8 +2,6 @@ import { useState } from "react";
 import "./Layout.css";
 
 export default function Layout({ children, activeTab, onTabChange, activeRole, onRoleChange }) {
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
-
   // Common SVG properties
   const svgProps = {
     xmlns: "http://www.w3.org/2000/svg",
@@ -132,10 +130,10 @@ export default function Layout({ children, activeTab, onTabChange, activeRole, o
               ))}
 
               {activeRole === "admin" && (
-                <li className={`accordion-item ${userMenuOpen ? "open" : ""}`}>
+                <li>
                   <button 
-                    className="nav-item" 
-                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                    className={`nav-item ${activeTab === "kullanici-yonetimi" ? "active" : ""}`}
+                    onClick={() => onTabChange("kullanici-yonetimi")}
                   >
                     <span className="icon">
                       <svg {...svgProps}>
@@ -146,36 +144,7 @@ export default function Layout({ children, activeTab, onTabChange, activeRole, o
                       </svg>
                     </span>
                     <span className="label">Kullanıcı Yönetimi</span>
-                    <span className="chevron">
-                      <svg 
-                        xmlns="http://www.w3.org/2000/svg" 
-                        width="16" 
-                        height="16" 
-                        viewBox="0 0 24 24" 
-                        fill="none" 
-                        stroke="currentColor" 
-                        strokeWidth="2" 
-                        strokeLinecap="round" 
-                        strokeLinejoin="round" 
-                        style={{ transform: userMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}
-                      >
-                        <path d="m6 9 6 6 6-6"/>
-                      </svg>
-                    </span>
                   </button>
-                  {userMenuOpen && (
-                    <ul className="sub-nav">
-                      <li>
-                        <button className={`sub-nav-item ${activeTab === "yeni-kullanici" ? "active" : ""}`} onClick={() => onTabChange("yeni-kullanici")}>Yeni Kullanıcı Ekle</button>
-                      </li>
-                      <li>
-                        <button className={`sub-nav-item ${activeTab === "gorev-ata" ? "active" : ""}`} onClick={() => onTabChange("gorev-ata")}>Görev Ata</button>
-                      </li>
-                      <li>
-                        <button className={`sub-nav-item ${activeTab === "denetci-ilerlemesi" ? "active" : ""}`} onClick={() => onTabChange("denetci-ilerlemesi")}>Denetçi İlerlemesi</button>
-                      </li>
-                    </ul>
-                  )}
                 </li>
               )}
 

@@ -735,7 +735,7 @@ export default function App() {
         <ReportsView />
       </div>
     );
-  } else if (activeView === "yeni-kullanici" || activeView === "gorev-ata" || activeView === "denetci-ilerlemesi") {
+  } else if (activeView === "kullanici-yonetimi") {
     mainView = <UserManagementPage />;
   } else {
     mainView = (
