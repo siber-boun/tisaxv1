@@ -14,6 +14,7 @@ import { defaultLanguage, getText } from "./i18n/translations";
 import UserManagementPage from "./components/UserManagementPage";
 import AssetManagementPage from "./components/AssetManagementPage";
 import RiskManagementPage from "./components/RiskManagementPage";
+import ThreatModelingPage from "./components/ThreatModelingPage";
 
 const USERS_KEY = "tisax_prototype_users";
 const SESSION_KEY = "tisax_prototype_session";
@@ -741,6 +742,8 @@ export default function App() {
     mainView = <AssetManagementPage />;
   } else if (activeView === "risk") {
     mainView = <RiskManagementPage />;
+  } else if (activeView === "tehdit") {
+    mainView = <ThreatModelingPage />;
   } else {
     mainView = (
       <div className="placeholder-view">
