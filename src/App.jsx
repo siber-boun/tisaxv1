@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import "./App.css";
+import Layout from "./components/Layout";
 import AuthCard from "./components/AuthCard";
 import StageIndicator from "./components/StageIndicator";
 import { FormSection, InputField, SelectField, TextAreaField } from "./components/FormSection";
@@ -405,7 +406,7 @@ export default function App() {
   const activeResults = localizedResults || stage2Results;
   const executiveSummary = activeResults ? generateExecutiveSummary(activeResults, text) : text.common.scoreNotSet;
 
-  return (
+  const appContent = (
     <main className="app-shell">
       <div className="bg-shape bg-shape-left" />
       <div className="bg-shape bg-shape-right" />
@@ -689,4 +690,10 @@ export default function App() {
       ) : null}
     </main>
   );
+
+  if (screen === "auth") {
+    return appContent;
+  }
+
+  return <Layout>{appContent}</Layout>;
 }
