@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 import Layout from "./components/Layout";
+import ReportsView from "./components/ReportsView";
 import AuthCard from "./components/AuthCard";
 import StageIndicator from "./components/StageIndicator";
 import { FormSection, InputField, SelectField, TextAreaField } from "./components/FormSection";
@@ -169,6 +170,7 @@ export default function App() {
 
   const [session, setSession] = useState(() => readJson(SESSION_KEY, null));
   const [screen, setScreen] = useState(() => getScreenForSession(readJson(SESSION_KEY, null)));
+  const [activeView, setActiveView] = useState("hizli-test");
   const [feedback, setFeedback] = useState("");
 
   const [stage1Step, setStage1Step] = useState(1);
@@ -695,5 +697,23 @@ export default function App() {
     return appContent;
   }
 
-  return <Layout>{appContent}</Layout>;
+  let mainView;
+  if (activeView === "hizli-test") {
+    mainView = appContent;
+  } else if (activeView === "raporlama") {
+    mainView = <ReportsView />;
+  } else {
+    mainView = (
+      <div className="placeholder-view">
+        <h3>Modül Yapım Aşamasında</h3>
+        <p>Bu alan ilerleyen fazlarda aktif edilecektir.</p>
+      </div>
+    );
+  }
+
+  return (
+    <Layout activeTab={activeView} onTabChange={setActiveView}>
+      {mainView}
+    </Layout>
+  );
 }
