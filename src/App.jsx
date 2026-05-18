@@ -11,6 +11,7 @@ import { computeAssessmentResults, validateSectionQuestions } from "./assessment
 import { generateExecutiveSummary } from "./executiveSummary";
 import { getStage2Sections, maturityLevels } from "./stage2Data";
 import { defaultLanguage, getText } from "./i18n/translations";
+import UserManagementPage from "./components/UserManagementPage";
 
 const USERS_KEY = "tisax_prototype_users";
 const SESSION_KEY = "tisax_prototype_session";
@@ -734,6 +735,8 @@ export default function App() {
         <ReportsView />
       </div>
     );
+  } else if (activeView === "yeni-kullanici" || activeView === "gorev-ata" || activeView === "denetci-ilerlemesi") {
+    mainView = <UserManagementPage />;
   } else {
     mainView = (
       <div className="placeholder-view">
