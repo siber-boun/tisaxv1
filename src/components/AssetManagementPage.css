@@ -198,8 +198,83 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-@media (max-width: 768px) {
-  .am-form-row { grid-template-columns: 1fr; gap: 1rem; }
-  .am-header-section { flex-direction: column; align-items: stretch; }
-  .am-add-btn { align-self: flex-start; }
+/* Alt Başlıklar */
+.am-panel-subheader {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+}
+
+.am-panel-subheader h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text-main);
+}
+
+/* CIA Form Satırı */
+.cia-row {
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+/* Tablo Hücre İstifleme (Daha düzenli görünüm) */
+.am-cell-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.am-cell-stack small {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+/* CIA Micro-Badges */
+.cia-badges {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.cia-badge {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+
+.cia-badge strong {
+  font-weight: 700;
+}
+
+/* Düşük (Gri) */
+.cia-low {
+  background-color: #f1f5f9;
+  color: #64748b;
+  border-color: #e2e8f0;
+}
+
+/* Orta (Sarı/Turuncu) */
+.cia-medium {
+  background-color: #fff7ed;
+  color: #b45309;
+  border-color: #ffedd5;
+}
+
+/* Yüksek (Kırmızımsı) */
+.cia-high {
+  background-color: #fef2f2;
+  color: #b91c1c;
+  border-color: #fee2e2;
+}
+
+@media (max-width: 900px) {
+  .cia-row {
+    grid-template-columns: 1fr;
+  }
 }
