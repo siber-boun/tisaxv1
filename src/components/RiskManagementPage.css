@@ -1,0 +1,193 @@
+.rm-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.rm-header {
+  margin-bottom: 2rem;
+}
+
+.rm-header h2 {
+  font-size: 1.75rem;
+  color: #1e293b;
+  margin: 0 0 0.5rem 0;
+}
+
+.rm-header p {
+  color: #64748b;
+  margin: 0;
+}
+
+/* Dashboard Widgets */
+.rm-dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.rm-widget {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.rm-widget-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.red-icon { background-color: #fef2f2; color: #dc2626; }
+.blue-icon { background-color: #eff6ff; color: #2563eb; }
+
+.rm-widget-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.rm-widget-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.rm-widget-value {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.rm-widget-value small {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+/* Table Styles */
+.rm-table-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+.rm-table-wrapper {
+  overflow-x: auto;
+}
+
+.rm-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.rm-table th {
+  padding: 1rem 1.5rem;
+  background-color: #f8fafc;
+  color: #64748b;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.rm-table td {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: middle;
+}
+
+.rm-table tr:last-child td {
+  border-bottom: none;
+}
+
+.rm-asset-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.rm-asset-info strong {
+  color: #1e293b;
+  font-size: 0.95rem;
+}
+
+.rm-asset-info small {
+  color: #64748b;
+  font-size: 0.8rem;
+}
+
+/* CIA Micro Badges */
+.rm-cia-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.rm-cia-badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+
+.cia-low { background-color: #f1f5f9; color: #475569; border-color: #e2e8f0; }
+.cia-medium { background-color: #fffbeb; color: #b45309; border-color: #fef3c7; }
+.cia-high { background-color: #fef2f2; color: #b91c1c; border-color: #fee2e2; }
+
+/* Select Dropdowns */
+.rm-select {
+  width: 100%;
+  min-width: 130px;
+  padding: 0.5rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background-color: #f8fafc;
+  color: #1e293b;
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.rm-select:focus {
+  border-color: #2563eb;
+  background-color: #fff;
+}
+
+/* Score & Risk Level Badges */
+.rm-score-display {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #1e293b;
+  text-align: center;
+}
+
+.rm-risk-badge {
+  padding: 0.35rem 0.75rem;
+  border-radius: 99px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: inline-flex;
+  justify-content: center;
+  min-width: 110px;
+}
+
+.risk-low { background-color: #ecfdf5; color: #0f766e; border: 1px solid #ccfbf1; }
+.risk-medium { background-color: #fffbeb; color: #b45309; border: 1px solid #fef3c7; }
+.risk-high { background-color: #fef2f2; color: #b91c1c; border: 1px solid #fee2e2; }

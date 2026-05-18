@@ -13,6 +13,7 @@ import { getStage2Sections, maturityLevels } from "./stage2Data";
 import { defaultLanguage, getText } from "./i18n/translations";
 import UserManagementPage from "./components/UserManagementPage";
 import AssetManagementPage from "./components/AssetManagementPage";
+import RiskManagementPage from "./components/RiskManagementPage";
 
 const USERS_KEY = "tisax_prototype_users";
 const SESSION_KEY = "tisax_prototype_session";
@@ -738,6 +739,8 @@ export default function App() {
     mainView = <UserManagementPage />;
   } else if (activeView === "varlik") {
     mainView = <AssetManagementPage />;
+  } else if (activeView === "risk") {
+    mainView = <RiskManagementPage />;
   } else {
     mainView = (
       <div className="placeholder-view">
