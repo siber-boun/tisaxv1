@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./Layout.css";
 
-export default function Layout({ children, activeTab, onTabChange }) {
+export default function Layout({ children, activeTab, onTabChange, activeRole, onRoleChange }) {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   // Common SVG properties
@@ -103,8 +103,18 @@ export default function Layout({ children, activeTab, onTabChange }) {
       
       <div className="dashboard-layout">
         <aside className="sidebar">
-          <div className="sidebar-header">
-            <h2 className="brand-title">BUSİBER OSG</h2>
+          <div className="sidebar-header-wrapper">
+            <div className="sidebar-header">
+              <h2 className="brand-title">BUSİBER OSG</h2>
+            </div>
+            
+            <div className="role-selector-container">
+              <label>Aktif Rol</label>
+              <select value={activeRole} onChange={(e) => onRoleChange(e.target.value)}>
+                <option value="admin">Yönetici</option>
+                <option value="auditor">Denetçi</option>
+              </select>
+            </div>
           </div>
 
           <nav className="sidebar-nav">
@@ -121,48 +131,53 @@ export default function Layout({ children, activeTab, onTabChange }) {
                 </li>
               ))}
 
-              <li className={`accordion-item ${userMenuOpen ? "open" : ""}`}>
-                <button 
-                  className="nav-item" 
-                  onClick={() => setUserMenuOpen(!userMenuOpen)}
-                >
-                  <span className="icon">
-                    <svg {...svgProps}>
-                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                      <circle cx="9" cy="7" r="4" />
-                      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                    </svg>
-                  </span>
-                  <span className="label">Kullanıcı Yönetimi</span>
-                  <span className="chevron">
-                    <svg 
-                      xmlns="http://www.w3.org/2000/svg" 
-                      width="16" 
-                      height="16" 
-                      viewBox="0 0 24 24" 
-                      fill="none" 
-                      stroke="currentColor" 
-                      strokeWidth="2" 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      style={{ transform: userMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}
-                    >
-                      <path d="m6 9 6 6 6-6"/>
-                    </svg>
-                  </span>
-                </button>
-                {userMenuOpen && (
-                  <ul className="sub-nav">
-                    <li>
-                      <button className="sub-nav-item">Yeni Kullanıcı Ekle</button>
-                    </li>
-                    <li>
-                      <button className="sub-nav-item">Görev Ata</button>
-                    </li>
-                  </ul>
-                )}
-              </li>
+              {activeRole === "admin" && (
+                <li className={`accordion-item ${userMenuOpen ? "open" : ""}`}>
+                  <button 
+                    className="nav-item" 
+                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  >
+                    <span className="icon">
+                      <svg {...svgProps}>
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                      </svg>
+                    </span>
+                    <span className="label">Kullanıcı Yönetimi</span>
+                    <span className="chevron">
+                      <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        width="16" 
+                        height="16" 
+                        viewBox="0 0 24 24" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        strokeWidth="2" 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        style={{ transform: userMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}
+                      >
+                        <path d="m6 9 6 6 6-6"/>
+                      </svg>
+                    </span>
+                  </button>
+                  {userMenuOpen && (
+                    <ul className="sub-nav">
+                      <li>
+                        <button className={`sub-nav-item ${activeTab === "yeni-kullanici" ? "active" : ""}`} onClick={() => onTabChange("yeni-kullanici")}>Yeni Kullanıcı Ekle</button>
+                      </li>
+                      <li>
+                        <button className={`sub-nav-item ${activeTab === "gorev-ata" ? "active" : ""}`} onClick={() => onTabChange("gorev-ata")}>Görev Ata</button>
+                      </li>
+                      <li>
+                        <button className={`sub-nav-item ${activeTab === "denetci-ilerlemesi" ? "active" : ""}`} onClick={() => onTabChange("denetci-ilerlemesi")}>Denetçi İlerlemesi</button>
+                      </li>
+                    </ul>
+                  )}
+                </li>
+              )}
 
               <li>
                 <button 

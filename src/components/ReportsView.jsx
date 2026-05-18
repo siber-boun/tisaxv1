@@ -72,6 +72,52 @@ export default function ReportsView() {
           </div>
         ))}
       </div>
+
+      {/* Yapay Zeka Uyum Analizi */}
+      <section className="ai-analysis-section">
+        <div className="section-header-ai">
+          <div className="ai-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 16v-4"/>
+              <path d="M12 8h.01"/>
+            </svg>
+          </div>
+          <h3>Yapay Zeka Uyum Analizi</h3>
+        </div>
+
+        <div className="ai-recommendations-grid">
+          <div className="ai-column must">
+            <h4>
+              <span className="status-dot red"></span>
+              Zorunlu Öneriler (Must)
+            </h4>
+            <div className="ai-card">
+              <div className="ai-card-title">Kritik Varlık Şifreleme Eksikliği</div>
+              <p>Varlık Yönetimi verilerine göre, hassas veri sınıfındaki 3 sunucuda AES-256 şifreleme aktif değildir. TISAX VDA ISA 5.2.2 maddesi uyarınca zorunludur.</p>
+            </div>
+            <div className="ai-card">
+              <div className="ai-card-title">IAM - MFA Eksikliği</div>
+              <p>Yetkili (Privileged) hesapların %40'ında MFA pasif durumdadır. Acilen tüm yönetici hesapları için MFA zorunlu hale getirilmelidir.</p>
+            </div>
+          </div>
+
+          <div className="ai-column should">
+            <h4>
+              <span className="status-dot blue"></span>
+              Tavsiye Öneriler (Should)
+            </h4>
+            <div className="ai-card">
+              <div className="ai-card-title">Farkındalık Eğitimi Sıklığı</div>
+              <p>Güvenlik farkındalığı eğitimlerinin 6 ayda bir yapılması önerilir. Mevcut periyot (12 ay) sektör ortalamasının gerisindedir.</p>
+            </div>
+            <div className="ai-card">
+              <div className="ai-card-title">Olay Müdahale Test Senaryoları</div>
+              <p>ISO 21434 uyumu için 'Supply Chain Attack' senaryosunun yıllık tatbikata dahil edilmesi olgunluk puanınızı +15 artıracaktır.</p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

@@ -192,9 +192,17 @@ export default function App() {
     return getUserStage2Results(active?.username);
   });
 
+  const [activeRole, setActiveRole] = useState("admin");
+
   useEffect(() => {
     ensureUsers();
   }, []);
+
+  useEffect(() => {
+    if (activeRole === "auditor" && screen === "onboarding") {
+      setScreen("stage2Assessment");
+    }
+  }, [activeRole, screen]);
 
   useEffect(() => {
     localStorage.setItem(LANGUAGE_KEY, language);
@@ -705,6 +713,9 @@ export default function App() {
       case "tehdit": return "Tehdit Modellemesi";
       case "zafiyet": return "Zafiyet ve Sızma Testi Yönetimi";
       case "raporlama": return "Raporlama ve Analiz";
+      case "yeni-kullanici": return "Yeni Kullanıcı Ekle";
+      case "gorev-ata": return "Görev Ata";
+      case "denetci-ilerlemesi": return "Denetçi İlerlemesi İzle";
       default: return "";
     }
   };
@@ -738,7 +749,12 @@ export default function App() {
   }
 
   return (
-    <Layout activeTab={activeView} onTabChange={setActiveView}>
+    <Layout 
+      activeTab={activeView} 
+      onTabChange={setActiveView}
+      activeRole={activeRole}
+      onRoleChange={setActiveRole}
+    >
       {mainView}
     </Layout>
   );
