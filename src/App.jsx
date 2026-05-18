@@ -714,9 +714,7 @@ export default function App() {
       case "tehdit": return "Tehdit Modellemesi";
       case "zafiyet": return "Zafiyet ve Sızma Testi Yönetimi";
       case "raporlama": return "Raporlama ve Analiz";
-      case "yeni-kullanici": return "Yeni Kullanıcı Ekle";
-      case "gorev-ata": return "Görev Ata";
-      case "denetci-ilerlemesi": return "Denetçi İlerlemesi İzle";
+      case "kullanici-yonetimi": return "Kullanıcı Yönetimi";
       default: return "";
     }
   };
