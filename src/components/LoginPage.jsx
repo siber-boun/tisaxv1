@@ -54,53 +54,91 @@ export default function LoginPage({ users, onLogin, onAddUser }) {
   };
 
   return (
-    <div className="auth-master-wrapper">
-      {/* 1. Upper Menu Bar (Header) */}
-      <header className="auth-header">
-        <div className="auth-logo">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-          </svg>
-          <span>BUSİBER OSG</span>
-        </div>
-        <nav className="auth-nav">
-          <button 
-            className={`nav-btn ${mode === 'login' ? 'active' : ''}`} 
-            onClick={() => setMode('login')}
-          >
-            Giriş Yap
-          </button>
-          <button 
-            className={`nav-btn signup-nav ${mode === 'signup' ? 'active' : ''}`} 
-            onClick={() => setMode('signup')}
-          >
-            Kayıt Ol
-          </button>
-        </nav>
-      </header>
+    <div className="auth-master-wrapper" style={{ display: 'flex', minHeight: '100vh', width: '100vw' }}>
+      
+      {/* SOL BÖLÜM (Hero Alanı) */}
+      <div 
+        className="auth-image-side"
+        style={{
+          flex: 1,
+          position: 'relative',
+          backgroundImage: `url('hero-image.png')`, 
+          backgroundSize: 'cover', 
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'flex-end',
+          padding: '4rem',
+          color: 'white',
+        }}
+      >
+        <div 
+          className="image-overlay"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(15, 23, 42, 0.65)', 
+            zIndex: 1
+          }}
+        ></div>
 
-      <div className="auth-split-container">
-        {/* 2. LEFT SECTION: Futuristic Image */}
-        <div className="auth-image-side">
-          <div className="image-overlay"></div>
-          <div className="image-text-content">
-            <h2>Geleceğin Güvenlik Standartları</h2>
-            <p>Otomotiv ekosisteminde uçtan uca siber güvenlik yönetimi ve TISAX uyum süreçleri.</p>
+        <div className="image-text-content" style={{ position: 'relative', zIndex: 2 }}>
+          <div style={{ position: 'absolute', top: '-18rem', left: '0' }}>
+            <span style={{ fontSize: '1.5rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+              BUSİBER OSG
+            </span>
           </div>
+          
+          <h1 style={{ fontSize: '2.8rem', fontWeight: 'bold', marginBottom: '1rem', lineHeight: '1.2' }}>
+            Geleceğin Güvenlik<br />Standartları
+          </h1>
+          <p style={{ fontSize: '1.2rem', opacity: 0.9, maxWidth: '500px', lineHeight: '1.6' }}>
+            Otomotiv ekosisteminde uçtan uca siber güvenlik yönetimi ve TISAX uyum süreçleri.
+          </p>
         </div>
+      </div>
 
-        {/* 3. RIGHT SECTION: Form Area */}
-        <div className="auth-form-side">
-          <div className="form-container">
+      {/* SAĞ BÖLÜM: Form Alanı */}
+      <div className="auth-form-side" style={{ flex: 1, backgroundColor: 'white', display: 'flex', flexDirection: 'column' }}>
+        <header className="auth-header" style={{ height: '80px', padding: '0 40px', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', borderBottom: '1px solid #e2e8f0' }}>
+          <nav className="auth-nav" style={{ display: 'flex', gap: '10px' }}>
+            <button 
+              className={`nav-btn ${mode === 'login' ? 'active' : ''}`} 
+              onClick={() => setMode('login')}
+            >
+              Giriş Yap
+            </button>
+            <button 
+              className={`nav-btn signup-nav ${mode === 'signup' ? 'active' : ''}`} 
+              onClick={() => setMode('signup')}
+            >
+              Kayıt Ol
+            </button>
+          </nav>
+        </header>
+
+        <div className="form-scroll-container" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px' }}>
+          <div className="form-container" style={{ width: '100%', maxWidth: '480px' }}>
             <div className="form-welcome">
-              <h2>{mode === 'signup' ? 'Yeni Kullanıcı Oluştur' : 'Sisteme Erişim Sağla'}</h2>
-              <p>{mode === 'signup' ? 'Platformun tüm avantajlarından yararlanmak için kaydolun.' : 'Lütfen kimlik bilgilerinizi girerek devam edin.'}</p>
+              <h2 style={{ fontSize: '1.85rem', fontWeight: 800, color: '#0f172a', margin: '0 0 8px 0' }}>
+                {mode === 'signup' ? 'Yeni Kullanıcı Oluştur' : 'Sisteme Erişim Sağla'}
+              </h2>
+              <p style={{ color: '#64748b', margin: '0 0 32px 0', fontSize: '0.95rem' }}>
+                {mode === 'signup' ? 'Platformun tüm avantajlarından yararlanmak için kaydolun.' : 'Lütfen kimlik bilgilerinizi girerek devam edin.'}
+              </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="auth-main-form">
+            <form onSubmit={handleSubmit} className="auth-main-form" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               {mode === 'signup' ? (
                 <>
-                  <div className="form-row">
+                  <div className="form-row" style={{ display: 'flex', gap: '15px' }}>
                     <div className="input-group">
                       <label>İsim</label>
                       <input type="text" placeholder="İsim" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
@@ -141,11 +179,11 @@ export default function LoginPage({ users, onLogin, onAddUser }) {
               </button>
             </form>
 
-            <div className="form-switch-link">
+            <div className="form-switch-link" style={{ textAlign: 'center', marginTop: '32px', color: '#64748b', fontSize: '0.9rem' }}>
               {mode === 'signup' ? (
-                <p>Zaten bir hesabınız var mı? <button onClick={() => setMode('login')}>Giriş Yapın</button></p>
+                <p>Zaten bir hesabınız var mı? <button onClick={() => setMode('login')} style={{ background: 'none', border: 'none', color: '#2563eb', fontWeight: 700, cursor: 'pointer' }}>Giriş Yapın</button></p>
               ) : (
-                <p>Hesabınız yok mu? <button onClick={() => setMode('signup')}>Kayıt Olun</button></p>
+                <p>Hesabınız yok mu? <button onClick={() => setMode('signup')} style={{ background: 'none', border: 'none', color: '#2563eb', fontWeight: 700, cursor: 'pointer' }}>Kayıt Olun</button></p>
               )}
             </div>
           </div>

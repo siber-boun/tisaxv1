@@ -68,16 +68,15 @@
   overflow: hidden;
 }
 
-/* Image Side */
+/* Sol Taraf */
 .auth-image-side {
   flex: 1;
-  background: url('image_0.png') center center no-repeat;
-  background-size: cover;
   position: relative;
   display: flex;
   align-items: flex-end;
-  padding: 60px;
+  padding: 40px;
 }
+
 
 .image-overlay {
   position: absolute;
