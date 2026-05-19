@@ -3,9 +3,8 @@ import "./App.css";
 import Layout from "./components/Layout";
 import ReportsView from "./components/ReportsView";
 import AuthCard from "./components/AuthCard";
-import StageIndicator from "./components/StageIndicator";
-import { FormSection, InputField, SelectField, TextAreaField } from "./components/FormSection";
-import AssessmentSectionCard from "./components/AssessmentSectionCard";
+import OnboardingFlow from "./components/OnboardingFlow";
+import AssessmentFlow from "./components/AssessmentFlow";
 import ScoreDashboard from "./components/ScoreDashboard";
 import { computeAssessmentResults, validateSectionQuestions } from "./assessmentUtils";
 import { generateExecutiveSummary } from "./executiveSummary";
@@ -21,123 +20,13 @@ import TisaxAuditPage from "./components/TisaxAuditPage";
 import LoginPage from "./components/LoginPage";
 import VulnerabilityPage from "./components/VulnerabilityPage";
 
-const USERS_KEY = "tisax_prototype_users";
-const SESSION_KEY = "tisax_prototype_session";
-const PROFILE_KEY_PREFIX = "tisax_prototype_profile";
-const STAGE2_ANSWERS_KEY_PREFIX = "tisax_prototype_stage2_answers";
-const STAGE2_RESULTS_KEY_PREFIX = "tisax_prototype_stage2_results";
-const LANGUAGE_KEY = "tisax_prototype_language";
-const ASSETS_KEY = "busiber_assets";
-const THREATS_KEY = "busiber_threats";
-const VULNS_KEY = "busiber_vulnerabilities";
-
-const seedUsers = [
-  { username: "bilgin", password: "1qaz2wsx", role: "Yönetici", name: "Bilgin Yönetici", firstLogin: false },
-  { username: "bilginx", password: "1qazwsX", companyName: "BUSİBER Admin", firstLogin: false },
-  { username: "new_admin", password: "Welcome123!", companyName: "BlueForge Mobility", firstLogin: true },
-];
-
-const initialAssets = [
-  { id: "V-1001", name: "Sunucu", type: "Sunucu / Donanım", location: "Veri Merkezi - Sistem Odası", owner: "Bilgi İşlem", status: "Aktif", cia: { c: 3, i: 3, a: 3 } },
-  { id: "V-1002", name: "Kullanıcı Bilgisayarı", type: "İş İstasyonu", location: "Mühendislik Departmanı", owner: "Melih Kaan", status: "Aktif", cia: { c: 2, i: 2, a: 2 } },
-  { id: "V-1003", name: "Laptop", type: "Taşınabilir Cihaz", location: "Yönetim Ofisi", owner: "Banu Sencer", status: "Aktif", cia: { c: 3, i: 2, a: 2 } },
-  { id: "V-1004", name: "Switch ve Ağ Cihazları", type: "Ağ Altyapısı", location: "Omurga Kabini - Kat 1", owner: "Ağ Yönetimi", status: "Aktif", cia: { c: 1, i: 2, a: 3 } }
-];
-
-const initialVulnerabilities = [
-  { id: 'CVE-2024-001', asset: 'Merkezi Sunucu', severity: 'Kritik', status: 'Açık', date: '18.05.2026' },
-  { id: 'CVE-2024-012', asset: 'Ağ Switch (Kat 1)', severity: 'Yüksek', status: 'İşlemde', date: '17.05.2026' }
-];
-
-const emptyProfile = {
-  companyName: "",
-  companySize: "",
-  industrySector: "",
-  numberOfEmployees: "",
-  countryRegion: "",
-  officeLocations: "",
-  itEnvironment: "",
-  thirdPartyProviders: "",
-  securityPolicies: "",
-  certificationStatus: "",
-  regulatoryRequirements: "",
-  criticalAssets: "",
-  maturityLevel: "",
-  mainConcerns: "",
-};
-
-const stage1Config = [
-  {
-    requiredFields: ["companyName", "companySize", "industrySector", "numberOfEmployees", "countryRegion", "officeLocations"],
-  },
-  {
-    requiredFields: ["itEnvironment", "thirdPartyProviders", "criticalAssets"],
-  },
-  {
-    requiredFields: ["securityPolicies", "certificationStatus", "regulatoryRequirements"],
-  },
-  {
-    requiredFields: ["maturityLevel", "mainConcerns"],
-  },
-];
-
-function readJson(key, fallback) {
-  const raw = localStorage.getItem(key);
-  return raw ? JSON.parse(raw) : fallback;
-}
-
-function writeJson(key, value) {
-  localStorage.setItem(key, JSON.stringify(value));
-}
-
-function buildUserKey(prefix, username) {
-  return `${prefix}_${username}`;
-}
-
-function getUserProfile(username) {
-  if (!username) return null;
-  return readJson(buildUserKey(PROFILE_KEY_PREFIX, username), null);
-}
-
-function saveUserProfile(username, value) {
-  if (!username) return;
-  writeJson(buildUserKey(PROFILE_KEY_PREFIX, username), value);
-}
-
-function getUserStage2Answers(username) {
-  if (!username) return {};
-  return readJson(buildUserKey(STAGE2_ANSWERS_KEY_PREFIX, username), {});
-}
-
-function saveUserStage2Answers(username, value) {
-  if (!username) return;
-  writeJson(buildUserKey(STAGE2_ANSWERS_KEY_PREFIX, username), value);
-}
-
-function clearUserStage2Answers(username) {
-  if (!username) return;
-  localStorage.removeItem(buildUserKey(STAGE2_ANSWERS_KEY_PREFIX, username));
-}
-
-function getUserStage2Results(username) {
-  if (!username) return null;
-  return readJson(buildUserKey(STAGE2_RESULTS_KEY_PREFIX, username), null);
-}
-
-function saveUserStage2Results(username, value) {
-  if (!username) return;
-  writeJson(buildUserKey(STAGE2_RESULTS_KEY_PREFIX, username), value);
-}
-
-function clearUserStage2Results(username) {
-  if (!username) return;
-  localStorage.removeItem(buildUserKey(STAGE2_RESULTS_KEY_PREFIX, username));
-}
+import * as storage from "./utils/storage";
+import { seedUsers, initialAssets, initialVulnerabilities, emptyProfile, stage1Config } from "./data/initialData";
 
 function ensureUsers() {
-  let users = readJson(USERS_KEY, null);
+  let users = storage.readJson(storage.USERS_KEY, null);
   if (!users) {
-    writeJson(USERS_KEY, seedUsers);
+    storage.writeJson(storage.USERS_KEY, seedUsers);
     return seedUsers;
   }
   let updated = false;
@@ -149,7 +38,7 @@ function ensureUsers() {
     users = [...seedUsers.filter(s => s.username === "bilgin"), ...users];
     updated = true;
   }
-  if (updated) writeJson(USERS_KEY, users);
+  if (updated) storage.writeJson(storage.USERS_KEY, users);
   return users;
 }
 
@@ -163,9 +52,9 @@ function validateStep(values, requiredFields, requiredFieldMessage) {
 
 function getScreenForSession(activeSession) {
   if (!activeSession) return "auth";
-  const hasStage1Profile = Boolean(getUserProfile(activeSession.username)?.companyName);
+  const hasStage1Profile = Boolean(storage.getUserProfile(activeSession.username)?.companyName);
   if (activeSession.firstLogin || !hasStage1Profile) return "onboarding";
-  const cachedResults = getUserStage2Results(activeSession.username);
+  const cachedResults = storage.getUserStage2Results(activeSession.username);
   return cachedResults ? "stage2Results" : "stage2Assessment";
 }
 
@@ -194,7 +83,7 @@ function JourneyNav({ current, text }) {
 }
 
 export default function App() {
-  const [language, setLanguage] = useState(() => localStorage.getItem(LANGUAGE_KEY) || defaultLanguage);
+  const [language, setLanguage] = useState(() => localStorage.getItem(storage.LANGUAGE_KEY) || defaultLanguage);
   const text = getText(language);
 
   const stage2Sections = useMemo(() => getStage2Sections(text), [text]);
@@ -204,39 +93,37 @@ export default function App() {
   );
 
   const [users, setUsers] = useState(() => ensureUsers());
-  const [currentUser, setCurrentUser] = useState(() => readJson(SESSION_KEY, null));
-  const [screen, setScreen] = useState(() => getScreenForSession(readJson(SESSION_KEY, null)));
+  const [currentUser, setCurrentUser] = useState(() => storage.readJson(storage.SESSION_KEY, null));
+  const [screen, setScreen] = useState(() => getScreenForSession(storage.readJson(storage.SESSION_KEY, null)));
   const [activeView, setActiveView] = useState("dashboard");
   const [feedback, setFeedback] = useState("");
 
-  // Shared Centralized Data Havuzu (Lifted Up + LocalStorage Persistence)
-  const [assets, setAssets] = useState(() => readJson(ASSETS_KEY, initialAssets));
-  const [threats, setThreats] = useState(() => readJson(THREATS_KEY, []));
-  const [vulnerabilities, setVulnerabilities] = useState(() => readJson(VULNS_KEY, initialVulnerabilities));
+  const [assets, setAssets] = useState(() => storage.readJson(storage.ASSETS_KEY, initialAssets));
+  const [threats, setThreats] = useState(() => storage.readJson(storage.THREATS_KEY, []));
+  const [vulnerabilities, setVulnerabilities] = useState(() => storage.readJson(storage.VULNS_KEY, initialVulnerabilities));
 
-  // Sync states to localStorage
-  useEffect(() => { writeJson(ASSETS_KEY, assets); }, [assets]);
-  useEffect(() => { writeJson(THREATS_KEY, threats); }, [threats]);
-  useEffect(() => { writeJson(VULNS_KEY, vulnerabilities); }, [vulnerabilities]);
-  useEffect(() => { writeJson(USERS_KEY, users); }, [users]);
+  useEffect(() => { storage.writeJson(storage.ASSETS_KEY, assets); }, [assets]);
+  useEffect(() => { storage.writeJson(storage.THREATS_KEY, threats); }, [threats]);
+  useEffect(() => { storage.writeJson(storage.VULNS_KEY, vulnerabilities); }, [vulnerabilities]);
+  useEffect(() => { storage.writeJson(storage.USERS_KEY, users); }, [users]);
 
   const [stage1Step, setStage1Step] = useState(1);
   const [stage1Errors, setStage1Errors] = useState({});
   const [profile, setProfile] = useState(() => {
-    const active = readJson(SESSION_KEY, null);
-    const saved = getUserProfile(active?.username);
+    const active = storage.readJson(storage.SESSION_KEY, null);
+    const saved = storage.getUserProfile(active?.username);
     return { ...emptyProfile, ...saved, companyName: saved?.companyName || active?.companyName || "" };
   });
 
   const [stage2Step, setStage2Step] = useState(1);
   const [stage2Errors, setStage2Errors] = useState({});
   const [stage2Answers, setStage2Answers] = useState(() => {
-    const active = readJson(SESSION_KEY, null);
-    return getUserStage2Answers(active?.username);
+    const active = storage.readJson(storage.SESSION_KEY, null);
+    return storage.getUserStage2Answers(active?.username);
   });
   const [stage2Results, setStage2Results] = useState(() => {
-    const active = readJson(SESSION_KEY, null);
-    return getUserStage2Results(active?.username);
+    const active = storage.readJson(storage.SESSION_KEY, null);
+    return storage.getUserStage2Results(active?.username);
   });
 
   const [activeRole, setActiveRole] = useState(() => currentUser?.role === "Denetçi" ? "auditor" : "admin");
@@ -248,7 +135,7 @@ export default function App() {
   }, [activeRole, screen]);
 
   useEffect(() => {
-    localStorage.setItem(LANGUAGE_KEY, language);
+    localStorage.setItem(storage.LANGUAGE_KEY, language);
   }, [language]);
 
   useEffect(() => {
@@ -260,9 +147,9 @@ export default function App() {
   const updateField = (name, value) => setProfile((prev) => ({ ...prev, [name]: value }));
 
   const hydrateUserState = (user) => {
-    const userProfile = getUserProfile(user.username);
-    const userAnswers = getUserStage2Answers(user.username);
-    const userResults = getUserStage2Results(user.username);
+    const userProfile = storage.getUserProfile(user.username);
+    const userAnswers = storage.getUserStage2Answers(user.username);
+    const userResults = storage.getUserStage2Results(user.username);
 
     setProfile({
       ...emptyProfile,
@@ -278,14 +165,14 @@ export default function App() {
   };
 
   const handleSignIn = (user) => {
-    writeJson(SESSION_KEY, user);
+    storage.writeJson(storage.SESSION_KEY, user);
     setCurrentUser(user);
     hydrateUserState(user);
     setScreen(getScreenForSession(user));
   };
 
   const handleSignOut = () => {
-    localStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem(storage.SESSION_KEY);
     setCurrentUser(null);
     setScreen("auth");
     setStage1Step(1);
@@ -304,7 +191,7 @@ export default function App() {
     }
     const updatedUsers = [...users, newUser];
     setUsers(updatedUsers);
-    writeJson(USERS_KEY, updatedUsers);
+    storage.writeJson(storage.USERS_KEY, updatedUsers);
     return { success: true };
   };
 
@@ -315,7 +202,7 @@ export default function App() {
 
     if (Object.keys(nextErrors).length) return;
 
-    saveUserProfile(currentUser?.username, profile);
+    storage.saveUserProfile(currentUser?.username, profile);
     setFeedback(text.feedback.stage1Saved);
 
     if (stage1Step < stage1Config.length) {
@@ -329,8 +216,8 @@ export default function App() {
     const updatedSession = { ...currentUser, firstLogin: false, companyName: profile.companyName };
 
     setUsers(updatedUsers);
-    writeJson(USERS_KEY, updatedUsers);
-    writeJson(SESSION_KEY, updatedSession);
+    storage.writeJson(storage.USERS_KEY, updatedUsers);
+    storage.writeJson(storage.SESSION_KEY, updatedSession);
     setCurrentUser(updatedSession);
     setScreen("stage2Assessment");
     setFeedback(text.feedback.stage1Complete);
@@ -346,7 +233,7 @@ export default function App() {
   const handleAnswer = (questionId, value) => {
     setStage2Answers((prev) => {
       const next = { ...prev, [questionId]: value };
-      saveUserStage2Answers(currentUser?.username, next);
+      storage.saveUserStage2Answers(currentUser?.username, next);
       return next;
     });
 
@@ -385,7 +272,7 @@ export default function App() {
     const now = new Date();
     results.completedAt = `${now.toLocaleDateString("tr-TR")} ${now.toLocaleTimeString("tr-TR", { hour: '2-digit', minute: '2-digit' })}`;
     
-    saveUserStage2Results(currentUser?.username, results);
+    storage.saveUserStage2Results(currentUser?.username, results);
     setStage2Results(results);
     setScreen("stage2Results");
     setFeedback(text.feedback.stage2Complete);
@@ -399,7 +286,7 @@ export default function App() {
 
   const handleEditProfile = () => {
     if (!currentUser) return;
-    const savedProfile = getUserProfile(currentUser.username);
+    const savedProfile = storage.getUserProfile(currentUser.username);
     setProfile({
       ...emptyProfile,
       ...savedProfile,
@@ -412,8 +299,8 @@ export default function App() {
   };
 
   const handleRetakeAssessment = () => {
-    clearUserStage2Answers(currentUser?.username);
-    clearUserStage2Results(currentUser?.username);
+    storage.clearUserStage2Answers(currentUser?.username);
+    storage.clearUserStage2Results(currentUser?.username);
     setStage2Answers({});
     setStage2Results(null);
     setStage2Errors({});
@@ -421,9 +308,6 @@ export default function App() {
     setFeedback(text.feedback.stage2Reset);
     setScreen("stage2Assessment");
   };
-
-  const stage1Text = text.stage1.sections[stage1Step - 1];
-  const currentStage2 = stage2Sections[stage2Step - 1];
 
   const localizedResults = useMemo(() => {
     if (!stage2Results || Object.keys(stage2Answers).length === 0) return null;
@@ -456,88 +340,46 @@ export default function App() {
         </div>
       </section>
 
-      {screen === "onboarding" ? (
+      {screen === "onboarding" && (
         <div className="container onboarding-layout">
           <JourneyNav current="onboarding" text={text} />
-          <StageIndicator
-            step={stage1Step}
-            total={stage1Config.length}
-            title={stage1Text.indicatorTitle}
-            stageLabel={text.journey.stage1}
-            stepLabel={text.common.step}
+          <OnboardingFlow 
+            stage1Step={stage1Step}
+            profile={profile}
+            updateField={updateField}
+            stage1Errors={stage1Errors}
+            text={text}
+            handleStage1Back={handleStage1Back}
+            handleStage1Save={handleStage1Save}
+            handleSignOut={handleSignOut}
+            feedback={feedback}
           />
-          {stage1Step === 1 && (
-            <FormSection title={stage1Text.title} description={stage1Text.description}>
-              <div className="grid two-col">
-                <InputField label={text.stage1.fields.companyName.label} required helper={text.stage1.fields.companyName.helper} value={profile.companyName} onChange={(v) => updateField("companyName", v)} error={stage1Errors.companyName} />
-                <SelectField label={text.stage1.fields.companySize.label} required helper={text.stage1.fields.companySize.helper} options={text.stage1.options.companySize} value={profile.companySize} onChange={(v) => updateField("companySize", v)} error={stage1Errors.companySize} />
-                <SelectField label={text.stage1.fields.industrySector.label} required helper={text.stage1.fields.industrySector.helper} options={text.stage1.options.industry} value={profile.industrySector} onChange={(v) => updateField("industrySector", v)} error={stage1Errors.industrySector} />
-                <InputField label={text.stage1.fields.numberOfEmployees.label} required type="number" helper={text.stage1.fields.numberOfEmployees.helper} value={profile.numberOfEmployees} onChange={(v) => updateField("numberOfEmployees", v)} error={stage1Errors.numberOfEmployees} />
-                <InputField label={text.stage1.fields.countryRegion.label} required helper={text.stage1.fields.countryRegion.helper} value={profile.countryRegion} onChange={(v) => updateField("countryRegion", v)} error={stage1Errors.countryRegion} />
-                <InputField label={text.stage1.fields.officeLocations.label} required type="number" helper={text.stage1.fields.officeLocations.helper} value={profile.officeLocations} onChange={(v) => updateField("officeLocations", v)} error={stage1Errors.officeLocations} />
-              </div>
-            </FormSection>
-          )}
-          {stage1Step === 2 && (
-            <FormSection title={stage1Text.title} description={stage1Text.description}>
-              <div className="grid two-col">
-                <SelectField label={text.stage1.fields.itEnvironment.label} required helper={text.stage1.fields.itEnvironment.helper} options={text.stage1.options.itEnvironment} value={profile.itEnvironment} onChange={(v) => updateField("itEnvironment", v)} error={stage1Errors.itEnvironment} />
-                <SelectField label={text.stage1.fields.thirdPartyProviders.label} required helper={text.stage1.fields.thirdPartyProviders.helper} options={text.stage1.options.yesNoPartial} value={profile.thirdPartyProviders} onChange={(v) => updateField("thirdPartyProviders", v)} error={stage1Errors.thirdPartyProviders} />
-                <TextAreaField label={text.stage1.fields.criticalAssets.label} required helper={text.stage1.fields.criticalAssets.helper} value={profile.criticalAssets} onChange={(v) => updateField("criticalAssets", v)} error={stage1Errors.criticalAssets} />
-              </div>
-            </FormSection>
-          )}
-          {stage1Step === 3 && (
-            <FormSection title={stage1Text.title} description={stage1Text.description}>
-              <div className="grid two-col">
-                <SelectField label={text.stage1.fields.securityPolicies.label} required helper={text.stage1.fields.securityPolicies.helper} options={text.stage1.options.yesNoPartial} value={profile.securityPolicies} onChange={(v) => updateField("securityPolicies", v)} error={stage1Errors.securityPolicies} />
-                <SelectField label={text.stage1.fields.certificationStatus.label} required helper={text.stage1.fields.certificationStatus.helper} options={text.stage1.options.certification} value={profile.certificationStatus} onChange={(v) => updateField("certificationStatus", v)} error={stage1Errors.certificationStatus} />
-                <TextAreaField label={text.stage1.fields.regulatoryRequirements.label} required helper={text.stage1.fields.regulatoryRequirements.helper} value={profile.regulatoryRequirements} onChange={(v) => updateField("regulatoryRequirements", v)} error={stage1Errors.regulatoryRequirements} />
-              </div>
-            </FormSection>
-          )}
-          {stage1Step === 4 && (
-            <FormSection title={stage1Text.title} description={stage1Text.description}>
-              <div className="grid two-col">
-                <SelectField label={text.stage1.fields.maturityLevel.label} required helper={text.stage1.fields.maturityLevel.helper} options={text.stage1.options.maturity} value={profile.maturityLevel} onChange={(v) => updateField("maturityLevel", v)} error={stage1Errors.maturityLevel} />
-                <TextAreaField label={text.stage1.fields.mainConcerns.label} required helper={text.stage1.fields.mainConcerns.helper} value={profile.mainConcerns} onChange={(v) => updateField("mainConcerns", v)} error={stage1Errors.mainConcerns} />
-              </div>
-            </FormSection>
-          )}
-          <div className="actions">
-            <button className="ghost-btn" onClick={handleSignOut}>{text.common.signOut}</button>
-            <div>
-              {stage1Step > 1 && <button className="ghost-btn" onClick={handleStage1Back}>{text.common.back}</button>}
-              <button className="primary-btn" onClick={handleStage1Save}>{stage1Step === stage1Config.length ? text.common.continueToStage2 : text.common.saveAndContinue}</button>
-            </div>
-          </div>
-          {feedback && <p className="feedback success">{feedback}</p>}
         </div>
-      ) : null}
+      )}
 
-      {screen === "stage2Assessment" ? (
+      {screen === "stage2Assessment" && (
         <div className="container onboarding-layout">
           <JourneyNav current="stage2Assessment" text={text} />
-          <StageIndicator step={stage2Step} total={stage2Sections.length} title={currentStage2.title} stageLabel={text.journey.stage2} stepLabel={text.common.step} />
-          <section className="card stage-context">
-            <p className="kicker">{text.journey.sharedProfile}</p>
-            <strong>{profile.companyName || currentUser?.companyName || text.common.profileNotSet}</strong>
-            <p>{profile.industrySector || text.common.profileNotSet} · {profile.companySize || text.common.profileNotSet} · {profile.countryRegion || text.common.profileNotSet}</p>
-          </section>
-          <AssessmentSectionCard section={currentStage2} answers={stage2Answers} errors={stage2Errors} onAnswer={handleAnswer} maturityOptions={maturityOptions} />
-          <div className="actions">
-            <button className="ghost-btn" onClick={handleSignOut}>{text.common.signOut}</button>
-            <div>
-              <button className="ghost-btn" onClick={handleEditProfile}>{text.journey.editProfile}</button>
-              {stage2Step > 1 && <button className="ghost-btn" onClick={handleStage2Back}>{text.common.back}</button>}
-              <button className="primary-btn" onClick={handleStage2Save}>{text.common.saveAndContinue}</button>
-            </div>
-          </div>
-          {feedback && <p className="feedback success">{feedback}</p>}
+          <AssessmentFlow 
+            stage2Step={stage2Step}
+            stage2Sections={stage2Sections}
+            stage2Answers={stage2Answers}
+            stage2Errors={stage2Errors}
+            handleAnswer={handleAnswer}
+            maturityOptions={maturityOptions}
+            text={text}
+            profile={profile}
+            currentUser={currentUser}
+            handleSignOut={handleSignOut}
+            handleEditProfile={handleEditProfile}
+            handleStage2Back={handleStage2Back}
+            handleStage2Save={handleStage2Save}
+            feedback={feedback}
+          />
         </div>
-      ) : null}
+      )}
 
-      {screen === "stage2Results" ? (
+      {screen === "stage2Results" && (
         <div className="container summary-layout results-screen">
           <JourneyNav current="stage2Results" text={text} />
           <ScoreDashboard results={activeResults} executiveSummary={executiveSummary} text={text.results} />
@@ -547,7 +389,7 @@ export default function App() {
             <button className="primary-btn" onClick={handleSignOut}>{text.common.signOut}</button>
           </div>
         </div>
-      ) : null}
+      )}
     </main>
   );
 
