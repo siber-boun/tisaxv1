@@ -22,7 +22,7 @@ export default function UserManagementPage({ onAddUser, initialUsers = [] }) {
       id: Date.now(),
       name: newUser.name,
       username: newUser.username,
-      password: newUser.password,
+      password: newUser.password, // Formdan gelen şifre
       role: newUser.role === 'admin' ? 'Yönetici' : 'Denetçi',
       task: "-",
       progress: 0,

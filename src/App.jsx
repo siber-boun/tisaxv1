@@ -18,6 +18,7 @@ import ThreatModelingPage from "./components/ThreatModelingPage";
 import MainDashboardPage from "./components/MainDashboardPage";
 import Iso21434AuditPage from "./components/Iso21434AuditPage";
 import TisaxAuditPage from "./components/TisaxAuditPage";
+import LoginPage from "./components/LoginPage";
 
 const USERS_KEY = "tisax_prototype_users";
 const SESSION_KEY = "tisax_prototype_session";
@@ -27,9 +28,9 @@ const STAGE2_RESULTS_KEY_PREFIX = "tisax_prototype_stage2_results";
 const LANGUAGE_KEY = "tisax_prototype_language";
 
 const seedUsers = [
+  { username: "bilgin", password: "1qaz2wsx", role: "Yönetici", name: "Bilgin Yönetici", firstLogin: false },
   { username: "bilginx", password: "1qazwsX", companyName: "BUSİBER Admin", firstLogin: false },
   { username: "new_admin", password: "Welcome123!", companyName: "BlueForge Mobility", firstLogin: true },
-  { username: "returning_admin", password: "Welcome123!", companyName: "Northway Systems", firstLogin: false },
 ];
 
 const emptyProfile = {
@@ -123,11 +124,16 @@ function ensureUsers() {
     writeJson(USERS_KEY, seedUsers);
     return seedUsers;
   }
-  // Ensure 'bilginx' exists for existing users
+  let updated = false;
   if (!users.some(u => u.username === "bilginx")) {
     users = [...seedUsers.filter(s => s.username === "bilginx"), ...users];
-    writeJson(USERS_KEY, users);
+    updated = true;
   }
+  if (!users.some(u => u.username === "bilgin")) {
+    users = [...seedUsers.filter(s => s.username === "bilgin"), ...users];
+    updated = true;
+  }
+  if (updated) writeJson(USERS_KEY, users);
   return users;
 }
 
@@ -181,7 +187,8 @@ export default function App() {
     [text],
   );
 
-  const [session, setSession] = useState(() => readJson(SESSION_KEY, null));
+  const [users, setUsers] = useState(() => ensureUsers());
+  const [currentUser, setCurrentUser] = useState(() => readJson(SESSION_KEY, null));
   const [screen, setScreen] = useState(() => getScreenForSession(readJson(SESSION_KEY, null)));
   const [activeView, setActiveView] = useState("dashboard");
   const [feedback, setFeedback] = useState("");
@@ -205,11 +212,7 @@ export default function App() {
     return getUserStage2Results(active?.username);
   });
 
-  const [activeRole, setActiveRole] = useState("admin");
-
-  useEffect(() => {
-    ensureUsers();
-  }, []);
+  const [activeRole, setActiveRole] = useState(() => currentUser?.role === "Denetçi" ? "auditor" : "admin");
 
   useEffect(() => {
     if (activeRole === "auditor" && screen === "onboarding") {
@@ -220,6 +223,12 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem(LANGUAGE_KEY, language);
   }, [language]);
+
+  useEffect(() => {
+    if (currentUser) {
+      setActiveRole(currentUser.role === "Denetçi" ? "auditor" : "admin");
+    }
+  }, [currentUser]);
 
   const updateField = (name, value) => setProfile((prev) => ({ ...prev, [name]: value }));
 
@@ -241,52 +250,35 @@ export default function App() {
     setStage2Errors({});
   };
 
-  const handleSignUp = (payload) => {
-    const users = ensureUsers();
-
-    if (!payload.companyName || !payload.username || payload.password.length < 8) {
-      setFeedback(text.feedback.authFillAll);
-      return;
-    }
-
-    if (payload.password !== payload.confirmPassword) {
-      setFeedback(text.feedback.passwordMismatch);
-      return;
-    }
-
-    if (users.some((user) => user.username.toLowerCase() === payload.username.toLowerCase())) {
-      setFeedback(text.feedback.usernameExists);
-      return;
-    }
-
-    const nextUsers = [
-      ...users,
-      {
-        username: payload.username,
-        password: payload.password,
-        companyName: payload.companyName,
-        firstLogin: true,
-      },
-    ];
-
-    writeJson(USERS_KEY, nextUsers);
-    setFeedback(text.feedback.accountCreated);
-  };
-
-  const handleSignIn = (payload) => {
-    const users = ensureUsers();
-    const user = users.find((item) => item.username === payload.username && item.password === payload.password);
-
-    if (!user) {
-      setFeedback(text.feedback.invalidCredentials);
-      return;
-    }
-
+  const handleSignIn = (user) => {
     writeJson(SESSION_KEY, user);
-    setSession(user);
-    setFeedback("");
+    setCurrentUser(user);
     hydrateUserState(user);
     setScreen(getScreenForSession(user));
+  };
+
+  const handleSignOut = () => {
+    localStorage.removeItem(SESSION_KEY);
+    setCurrentUser(null);
+    setScreen("auth");
+    setStage1Step(1);
+    setStage2Step(1);
+    setStage1Errors({});
+    setStage2Errors({});
+    setProfile(emptyProfile);
+    setStage2Answers({});
+    setStage2Results(null);
+    setFeedback("");
+  };
+
+  const handleAddUserGlobal = (newUser) => {
+    if (users.some(u => u.username === newUser.username)) {
+      return { success: false, message: text.feedback.usernameExists };
+    }
+    const updatedUsers = [...users, newUser];
+    setUsers(updatedUsers);
+    writeJson(USERS_KEY, updatedUsers);
+    return { success: true };
   };
 
   const handleStage1Save = () => {
@@ -296,7 +288,7 @@ export default function App() {
 
     if (Object.keys(nextErrors).length) return;
 
-    saveUserProfile(session?.username, profile);
+    saveUserProfile(currentUser?.username, profile);
     setFeedback(text.feedback.stage1Saved);
 
     if (stage1Step < stage1Config.length) {
@@ -304,15 +296,15 @@ export default function App() {
       return;
     }
 
-    const users = ensureUsers();
     const updatedUsers = users.map((item) =>
-      item.username === session.username ? { ...item, firstLogin: false, companyName: profile.companyName } : item,
+      item.username === currentUser.username ? { ...item, firstLogin: false, companyName: profile.companyName } : item,
     );
-    const updatedSession = { ...session, firstLogin: false, companyName: profile.companyName };
+    const updatedSession = { ...currentUser, firstLogin: false, companyName: profile.companyName };
 
+    setUsers(updatedUsers);
     writeJson(USERS_KEY, updatedUsers);
     writeJson(SESSION_KEY, updatedSession);
-    setSession(updatedSession);
+    setCurrentUser(updatedSession);
     setScreen("stage2Assessment");
     setFeedback(text.feedback.stage1Complete);
     setStage1Step(1);
@@ -327,7 +319,7 @@ export default function App() {
   const handleAnswer = (questionId, value) => {
     setStage2Answers((prev) => {
       const next = { ...prev, [questionId]: value };
-      saveUserStage2Answers(session?.username, next);
+      saveUserStage2Answers(currentUser?.username, next);
       return next;
     });
 
@@ -363,11 +355,10 @@ export default function App() {
       text.recommendations.baseline,
     );
     
-    // Add completion timestamp
     const now = new Date();
     results.completedAt = `${now.toLocaleDateString("tr-TR")} ${now.toLocaleTimeString("tr-TR", { hour: '2-digit', minute: '2-digit' })}`;
     
-    saveUserStage2Results(session?.username, results);
+    saveUserStage2Results(currentUser?.username, results);
     setStage2Results(results);
     setScreen("stage2Results");
     setFeedback(text.feedback.stage2Complete);
@@ -380,12 +371,12 @@ export default function App() {
   };
 
   const handleEditProfile = () => {
-    if (!session) return;
-    const savedProfile = getUserProfile(session.username);
+    if (!currentUser) return;
+    const savedProfile = getUserProfile(currentUser.username);
     setProfile({
       ...emptyProfile,
       ...savedProfile,
-      companyName: savedProfile?.companyName || session.companyName || "",
+      companyName: savedProfile?.companyName || currentUser.companyName || "",
     });
     setStage1Step(1);
     setStage1Errors({});
@@ -394,28 +385,14 @@ export default function App() {
   };
 
   const handleRetakeAssessment = () => {
-    clearUserStage2Answers(session?.username);
-    clearUserStage2Results(session?.username);
+    clearUserStage2Answers(currentUser?.username);
+    clearUserStage2Results(currentUser?.username);
     setStage2Answers({});
     setStage2Results(null);
     setStage2Errors({});
     setStage2Step(1);
     setFeedback(text.feedback.stage2Reset);
     setScreen("stage2Assessment");
-  };
-
-  const handleSignOut = () => {
-    localStorage.removeItem(SESSION_KEY);
-    setSession(null);
-    setScreen("auth");
-    setStage1Step(1);
-    setStage2Step(1);
-    setStage1Errors({});
-    setStage2Errors({});
-    setProfile(emptyProfile);
-    setStage2Answers({});
-    setStage2Results(null);
-    setFeedback(text.feedback.signedOut);
   };
 
   const stage1Text = text.stage1.sections[stage1Step - 1];
@@ -434,6 +411,10 @@ export default function App() {
   const activeResults = localizedResults || stage2Results;
   const executiveSummary = activeResults ? generateExecutiveSummary(activeResults, text) : text.common.scoreNotSet;
 
+  if (!currentUser) {
+    return <LoginPage users={users} onLogin={handleSignIn} />;
+  }
+
   const appContent = (
     <main className="app-shell">
       <section className="language-switcher card">
@@ -448,22 +429,6 @@ export default function App() {
         </div>
       </section>
 
-      {screen === "auth" ? (
-        <div className="container auth-layout">
-          <section className="intro card">
-            <p className="kicker">{text.auth.introKicker}</p>
-            <h1>{text.auth.introTitle}</h1>
-            <p>{text.auth.introDesc}</p>
-            <ul>
-              {text.auth.introPoints.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </section>
-          <AuthCard onSignIn={handleSignIn} onSignUp={handleSignUp} feedback={feedback} text={text.auth} />
-        </div>
-      ) : null}
-
       {screen === "onboarding" ? (
         <div className="container onboarding-layout">
           <JourneyNav current="onboarding" text={text} />
@@ -474,242 +439,85 @@ export default function App() {
             stageLabel={text.journey.stage1}
             stepLabel={text.common.step}
           />
-
-          {stage1Step === 1 ? (
+          {stage1Step === 1 && (
             <FormSection title={stage1Text.title} description={stage1Text.description}>
               <div className="grid two-col">
-                <InputField
-                  label={text.stage1.fields.companyName.label}
-                  required
-                  helper={text.stage1.fields.companyName.helper}
-                  value={profile.companyName}
-                  onChange={(value) => updateField("companyName", value)}
-                  error={stage1Errors.companyName}
-                />
-                <SelectField
-                  label={text.stage1.fields.companySize.label}
-                  required
-                  helper={text.stage1.fields.companySize.helper}
-                  options={text.stage1.options.companySize}
-                  value={profile.companySize}
-                  onChange={(value) => updateField("companySize", value)}
-                  error={stage1Errors.companySize}
-                />
-                <SelectField
-                  label={text.stage1.fields.industrySector.label}
-                  required
-                  helper={text.stage1.fields.industrySector.helper}
-                  options={text.stage1.options.industry}
-                  value={profile.industrySector}
-                  onChange={(value) => updateField("industrySector", value)}
-                  error={stage1Errors.industrySector}
-                />
-                <InputField
-                  label={text.stage1.fields.numberOfEmployees.label}
-                  required
-                  type="number"
-                  helper={text.stage1.fields.numberOfEmployees.helper}
-                  value={profile.numberOfEmployees}
-                  onChange={(value) => updateField("numberOfEmployees", value)}
-                  error={stage1Errors.numberOfEmployees}
-                />
-                <InputField
-                  label={text.stage1.fields.countryRegion.label}
-                  required
-                  helper={text.stage1.fields.countryRegion.helper}
-                  value={profile.countryRegion}
-                  onChange={(value) => updateField("countryRegion", value)}
-                  error={stage1Errors.countryRegion}
-                />
-                <InputField
-                  label={text.stage1.fields.officeLocations.label}
-                  required
-                  type="number"
-                  helper={text.stage1.fields.officeLocations.helper}
-                  value={profile.officeLocations}
-                  onChange={(value) => updateField("officeLocations", value)}
-                  error={stage1Errors.officeLocations}
-                />
+                <InputField label={text.stage1.fields.companyName.label} required helper={text.stage1.fields.companyName.helper} value={profile.companyName} onChange={(v) => updateField("companyName", v)} error={stage1Errors.companyName} />
+                <SelectField label={text.stage1.fields.companySize.label} required helper={text.stage1.fields.companySize.helper} options={text.stage1.options.companySize} value={profile.companySize} onChange={(v) => updateField("companySize", v)} error={stage1Errors.companySize} />
+                <SelectField label={text.stage1.fields.industrySector.label} required helper={text.stage1.fields.industrySector.helper} options={text.stage1.options.industry} value={profile.industrySector} onChange={(v) => updateField("industrySector", v)} error={stage1Errors.industrySector} />
+                <InputField label={text.stage1.fields.numberOfEmployees.label} required type="number" helper={text.stage1.fields.numberOfEmployees.helper} value={profile.numberOfEmployees} onChange={(v) => updateField("numberOfEmployees", v)} error={stage1Errors.numberOfEmployees} />
+                <InputField label={text.stage1.fields.countryRegion.label} required helper={text.stage1.fields.countryRegion.helper} value={profile.countryRegion} onChange={(v) => updateField("countryRegion", v)} error={stage1Errors.countryRegion} />
+                <InputField label={text.stage1.fields.officeLocations.label} required type="number" helper={text.stage1.fields.officeLocations.helper} value={profile.officeLocations} onChange={(v) => updateField("officeLocations", v)} error={stage1Errors.officeLocations} />
               </div>
             </FormSection>
-          ) : null}
-
-          {stage1Step === 2 ? (
+          )}
+          {stage1Step === 2 && (
             <FormSection title={stage1Text.title} description={stage1Text.description}>
               <div className="grid two-col">
-                <SelectField
-                  label={text.stage1.fields.itEnvironment.label}
-                  required
-                  helper={text.stage1.fields.itEnvironment.helper}
-                  options={text.stage1.options.itEnvironment}
-                  value={profile.itEnvironment}
-                  onChange={(value) => updateField("itEnvironment", value)}
-                  error={stage1Errors.itEnvironment}
-                />
-                <SelectField
-                  label={text.stage1.fields.thirdPartyProviders.label}
-                  required
-                  helper={text.stage1.fields.thirdPartyProviders.helper}
-                  options={text.stage1.options.yesNoPartial}
-                  value={profile.thirdPartyProviders}
-                  onChange={(value) => updateField("thirdPartyProviders", value)}
-                  error={stage1Errors.thirdPartyProviders}
-                />
-                <TextAreaField
-                  label={text.stage1.fields.criticalAssets.label}
-                  required
-                  helper={text.stage1.fields.criticalAssets.helper}
-                  value={profile.criticalAssets}
-                  onChange={(value) => updateField("criticalAssets", value)}
-                  error={stage1Errors.criticalAssets}
-                />
+                <SelectField label={text.stage1.fields.itEnvironment.label} required helper={text.stage1.fields.itEnvironment.helper} options={text.stage1.options.itEnvironment} value={profile.itEnvironment} onChange={(v) => updateField("itEnvironment", v)} error={stage1Errors.itEnvironment} />
+                <SelectField label={text.stage1.fields.thirdPartyProviders.label} required helper={text.stage1.fields.thirdPartyProviders.helper} options={text.stage1.options.yesNoPartial} value={profile.thirdPartyProviders} onChange={(v) => updateField("thirdPartyProviders", v)} error={stage1Errors.thirdPartyProviders} />
+                <TextAreaField label={text.stage1.fields.criticalAssets.label} required helper={text.stage1.fields.criticalAssets.helper} value={profile.criticalAssets} onChange={(v) => updateField("criticalAssets", v)} error={stage1Errors.criticalAssets} />
               </div>
             </FormSection>
-          ) : null}
-
-          {stage1Step === 3 ? (
+          )}
+          {stage1Step === 3 && (
             <FormSection title={stage1Text.title} description={stage1Text.description}>
               <div className="grid two-col">
-                <SelectField
-                  label={text.stage1.fields.securityPolicies.label}
-                  required
-                  helper={text.stage1.fields.securityPolicies.helper}
-                  options={text.stage1.options.yesNoPartial}
-                  value={profile.securityPolicies}
-                  onChange={(value) => updateField("securityPolicies", value)}
-                  error={stage1Errors.securityPolicies}
-                />
-                <SelectField
-                  label={text.stage1.fields.certificationStatus.label}
-                  required
-                  helper={text.stage1.fields.certificationStatus.helper}
-                  options={text.stage1.options.certification}
-                  value={profile.certificationStatus}
-                  onChange={(value) => updateField("certificationStatus", value)}
-                  error={stage1Errors.certificationStatus}
-                />
-                <TextAreaField
-                  label={text.stage1.fields.regulatoryRequirements.label}
-                  required
-                  helper={text.stage1.fields.regulatoryRequirements.helper}
-                  value={profile.regulatoryRequirements}
-                  onChange={(value) => updateField("regulatoryRequirements", value)}
-                  error={stage1Errors.regulatoryRequirements}
-                />
+                <SelectField label={text.stage1.fields.securityPolicies.label} required helper={text.stage1.fields.securityPolicies.helper} options={text.stage1.options.yesNoPartial} value={profile.securityPolicies} onChange={(v) => updateField("securityPolicies", v)} error={stage1Errors.securityPolicies} />
+                <SelectField label={text.stage1.fields.certificationStatus.label} required helper={text.stage1.fields.certificationStatus.helper} options={text.stage1.options.certification} value={profile.certificationStatus} onChange={(v) => updateField("certificationStatus", v)} error={stage1Errors.certificationStatus} />
+                <TextAreaField label={text.stage1.fields.regulatoryRequirements.label} required helper={text.stage1.fields.regulatoryRequirements.helper} value={profile.regulatoryRequirements} onChange={(v) => updateField("regulatoryRequirements", v)} error={stage1Errors.regulatoryRequirements} />
               </div>
             </FormSection>
-          ) : null}
-
-          {stage1Step === 4 ? (
+          )}
+          {stage1Step === 4 && (
             <FormSection title={stage1Text.title} description={stage1Text.description}>
               <div className="grid two-col">
-                <SelectField
-                  label={text.stage1.fields.maturityLevel.label}
-                  required
-                  helper={text.stage1.fields.maturityLevel.helper}
-                  options={text.stage1.options.maturity}
-                  value={profile.maturityLevel}
-                  onChange={(value) => updateField("maturityLevel", value)}
-                  error={stage1Errors.maturityLevel}
-                />
-                <TextAreaField
-                  label={text.stage1.fields.mainConcerns.label}
-                  required
-                  helper={text.stage1.fields.mainConcerns.helper}
-                  value={profile.mainConcerns}
-                  onChange={(value) => updateField("mainConcerns", value)}
-                  error={stage1Errors.mainConcerns}
-                />
+                <SelectField label={text.stage1.fields.maturityLevel.label} required helper={text.stage1.fields.maturityLevel.helper} options={text.stage1.options.maturity} value={profile.maturityLevel} onChange={(v) => updateField("maturityLevel", v)} error={stage1Errors.maturityLevel} />
+                <TextAreaField label={text.stage1.fields.mainConcerns.label} required helper={text.stage1.fields.mainConcerns.helper} value={profile.mainConcerns} onChange={(v) => updateField("mainConcerns", v)} error={stage1Errors.mainConcerns} />
               </div>
             </FormSection>
-          ) : null}
-
+          )}
           <div className="actions">
-            <button className="ghost-btn" onClick={handleSignOut}>
-              {text.common.signOut}
-            </button>
+            <button className="ghost-btn" onClick={handleSignOut}>{text.common.signOut}</button>
             <div>
-              {stage1Step > 1 ? (
-                <button className="ghost-btn" onClick={handleStage1Back}>
-                  {text.common.back}
-                </button>
-              ) : null}
-              <button className="primary-btn" onClick={handleStage1Save}>
-                {stage1Step === stage1Config.length ? text.common.continueToStage2 : text.common.saveAndContinue}
-              </button>
+              {stage1Step > 1 && <button className="ghost-btn" onClick={handleStage1Back}>{text.common.back}</button>}
+              <button className="primary-btn" onClick={handleStage1Save}>{stage1Step === stage1Config.length ? text.common.continueToStage2 : text.common.saveAndContinue}</button>
             </div>
           </div>
-          {feedback ? <p className="feedback success">{feedback}</p> : null}
+          {feedback && <p className="feedback success">{feedback}</p>}
         </div>
       ) : null}
 
       {screen === "stage2Assessment" ? (
         <div className="container onboarding-layout">
           <JourneyNav current="stage2Assessment" text={text} />
-          <StageIndicator
-            step={stage2Step}
-            total={stage2Sections.length}
-            title={currentStage2.title}
-            stageLabel={text.journey.stage2}
-            stepLabel={text.common.step}
-          />
+          <StageIndicator step={stage2Step} total={stage2Sections.length} title={currentStage2.title} stageLabel={text.journey.stage2} stepLabel={text.common.step} />
           <section className="card stage-context">
             <p className="kicker">{text.journey.sharedProfile}</p>
-            <strong>{profile.companyName || session?.companyName || text.common.profileNotSet}</strong>
-            <p>
-              {profile.industrySector || text.common.profileNotSet} · {profile.companySize || text.common.profileNotSet} ·{" "}
-              {profile.countryRegion || text.common.profileNotSet}
-            </p>
+            <strong>{profile.companyName || currentUser?.companyName || text.common.profileNotSet}</strong>
+            <p>{profile.industrySector || text.common.profileNotSet} · {profile.companySize || text.common.profileNotSet} · {profile.countryRegion || text.common.profileNotSet}</p>
           </section>
-
-          <AssessmentSectionCard
-            section={currentStage2}
-            answers={stage2Answers}
-            errors={stage2Errors}
-            onAnswer={handleAnswer}
-            maturityOptions={maturityOptions}
-          />
-
+          <AssessmentSectionCard section={currentStage2} answers={stage2Answers} errors={stage2Errors} onAnswer={handleAnswer} maturityOptions={maturityOptions} />
           <div className="actions">
-            <button className="ghost-btn" onClick={handleSignOut}>
-              {text.common.signOut}
-            </button>
+            <button className="ghost-btn" onClick={handleSignOut}>{text.common.signOut}</button>
             <div>
-              <button className="ghost-btn" onClick={handleEditProfile}>
-                {text.journey.editProfile}
-              </button>
-              {stage2Step > 1 ? (
-                <button className="ghost-btn" onClick={handleStage2Back}>
-                  {text.common.back}
-                </button>
-              ) : null}
-              <button className="primary-btn" onClick={handleStage2Save}>
-                {text.common.saveAndContinue}
-              </button>
+              <button className="ghost-btn" onClick={handleEditProfile}>{text.journey.editProfile}</button>
+              {stage2Step > 1 && <button className="ghost-btn" onClick={handleStage2Back}>{text.common.back}</button>}
+              <button className="primary-btn" onClick={handleStage2Save}>{text.common.saveAndContinue}</button>
             </div>
           </div>
-          {feedback ? <p className="feedback success">{feedback}</p> : null}
+          {feedback && <p className="feedback success">{feedback}</p>}
         </div>
       ) : null}
 
       {screen === "stage2Results" ? (
         <div className="container summary-layout results-screen">
           <JourneyNav current="stage2Results" text={text} />
-          <ScoreDashboard
-            results={activeResults}
-            executiveSummary={executiveSummary}
-            text={text.results}
-          />
+          <ScoreDashboard results={activeResults} executiveSummary={executiveSummary} text={text.results} />
           <div className="actions results-actions">
-            <button className="ghost-btn" onClick={handleEditProfile}>
-              {text.journey.editProfile}
-            </button>
-            <button className="ghost-btn" onClick={handleRetakeAssessment}>
-              {text.results.retake}
-            </button>
-            <button className="primary-btn" onClick={handleSignOut}>
-              {text.common.signOut}
-            </button>
+            <button className="ghost-btn" onClick={handleEditProfile}>{text.journey.editProfile}</button>
+            <button className="ghost-btn" onClick={handleRetakeAssessment}>{text.results.retake}</button>
+            <button className="primary-btn" onClick={handleSignOut}>{text.common.signOut}</button>
           </div>
         </div>
       ) : null}
@@ -732,27 +540,11 @@ export default function App() {
     }
   };
 
-  const handleAddUserGlobal = (newUser) => {
-    const currentUsers = ensureUsers();
-    if (currentUsers.some(u => u.username === newUser.username)) {
-      return { success: false, message: text.feedback.usernameExists };
-    }
-    const updatedUsers = [...currentUsers, newUser];
-    writeJson(USERS_KEY, updatedUsers);
-    return { success: true };
-  };
-
-  if (screen === "auth") {
-    return appContent;
-  }
-
   let mainView;
   if (activeView === "dashboard") {
     mainView = <MainDashboardPage onNavigate={(id) => setActiveView(id)} />;
   } else if (activeView === "hizli-test") {
     mainView = appContent;
-  } else if (activeView === "tisax") {
-    mainView = <TisaxAuditPage />;
   } else if (activeView === "raporlama") {
     mainView = (
       <div className="placeholder-view">
@@ -761,12 +553,7 @@ export default function App() {
       </div>
     );
   } else if (activeView === "kullanici-yonetimi") {
-    mainView = (
-      <UserManagementPage 
-        onAddUser={handleAddUserGlobal} 
-        initialUsers={ensureUsers()} 
-      />
-    );
+    mainView = <UserManagementPage onAddUser={handleAddUserGlobal} initialUsers={users} />;
   } else if (activeView === "varlik") {
     mainView = <AssetManagementPage />;
   } else if (activeView === "risk") {
@@ -775,15 +562,15 @@ export default function App() {
     mainView = <ThreatModelingPage />;
   } else if (activeView === "iso") {
     mainView = <Iso21434AuditPage assets={[]} />;
+  } else if (activeView === "tisax") {
+    mainView = <TisaxAuditPage />;
   } else {
     mainView = (
       <div className="placeholder-view">
         <h2 className="view-title">{getViewTitle(activeView)}</h2>
         <div className="card empty-state">
           <p>Bu modül şu anda hazırlık aşamasındadır.</p>
-          <button className="primary-btn" onClick={() => setActiveView("hizli-test")}>
-            Hızlı Test'e Dön
-          </button>
+          <button className="primary-btn" onClick={() => setActiveView("hizli-test")}>Hızlı Test'e Dön</button>
         </div>
       </div>
     );
@@ -795,9 +582,10 @@ export default function App() {
       onTabChange={setActiveView}
       activeRole={activeRole}
       onRoleChange={setActiveRole}
+      currentUser={currentUser}
+      onLogout={handleSignOut}
     >
       {mainView}
     </Layout>
   );
 }
-
