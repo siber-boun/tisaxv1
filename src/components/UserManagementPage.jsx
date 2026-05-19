@@ -8,16 +8,35 @@ const INITIAL_USERS = [
   { id: 3, name: "Mehmet Demir", role: "Yönetici", task: "-", progress: 0 },
 ];
 
-export default function UserManagementPage() {
-  const [users, setUsers] = useState(INITIAL_USERS);
-  const [newUser, setNewUser] = useState({ name: '', email: '', role: 'auditor' });
+export default function UserManagementPage({ onAddUser, initialUsers = [] }) {
+  const [users, setUsers] = useState(initialUsers);
+  const [newUser, setNewUser] = useState({ name: '', username: '', password: '', role: 'auditor' });
   const [assignment, setAssignment] = useState({ auditorId: '', standard: 'tisax' });
+  const [error, setError] = useState("");
 
   const handleAddUser = (e) => {
     e.preventDefault();
-    if (!newUser.name) return;
-    setUsers([...users, { id: Date.now(), name: newUser.name, role: newUser.role === 'admin' ? 'Yönetici' : 'Denetçi', task: "-", progress: 0 }]);
-    setNewUser({ name: '', email: '', role: 'auditor' });
+    if (!newUser.name || !newUser.username || !newUser.password) return;
+
+    const userObj = {
+      id: Date.now(),
+      name: newUser.name,
+      username: newUser.username,
+      password: newUser.password,
+      role: newUser.role === 'admin' ? 'Yönetici' : 'Denetçi',
+      task: "-",
+      progress: 0,
+      firstLogin: false
+    };
+
+    const result = onAddUser(userObj);
+    if (result.success) {
+      setUsers([...users, userObj]);
+      setNewUser({ name: '', username: '', password: '', role: 'auditor' });
+      setError("");
+    } else {
+      setError(result.message);
+    }
   };
 
   const handleAssignTask = (e) => {
@@ -53,8 +72,12 @@ export default function UserManagementPage() {
               <input type="text" placeholder="Örn: Ayşe Yılmaz" value={newUser.name} onChange={e => setNewUser({...newUser, name: e.target.value})} required />
             </div>
             <div className="um-field">
-              <label>E-posta Adresi</label>
-              <input type="email" placeholder="ornek@sirket.com" value={newUser.email} onChange={e => setNewUser({...newUser, email: e.target.value})} required />
+              <label>Kullanıcı Adı</label>
+              <input type="text" placeholder="Giriş için kullanılacak ad" value={newUser.username} onChange={e => setNewUser({...newUser, username: e.target.value})} required />
+            </div>
+            <div className="um-field">
+              <label>Parola</label>
+              <input type="password" placeholder="En az 8 karakter" value={newUser.password} onChange={e => setNewUser({...newUser, password: e.target.value})} required />
             </div>
             <div className="um-field">
               <label>Rol Ata</label>
@@ -63,6 +86,7 @@ export default function UserManagementPage() {
                 <option value="admin">Yönetici</option>
               </select>
             </div>
+            {error && <p className="um-error">{error}</p>}
             <button type="submit" className="um-btn-primary">Kullanıcıyı Kaydet</button>
           </form>
         </div>

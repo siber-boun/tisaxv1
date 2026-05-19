@@ -16,6 +16,8 @@ import AssetManagementPage from "./components/AssetManagementPage";
 import RiskManagementPage from "./components/RiskManagementPage";
 import ThreatModelingPage from "./components/ThreatModelingPage";
 import MainDashboardPage from "./components/MainDashboardPage";
+import Iso21434AuditPage from "./components/Iso21434AuditPage";
+import TisaxAuditPage from "./components/TisaxAuditPage";
 
 const USERS_KEY = "tisax_prototype_users";
 const SESSION_KEY = "tisax_prototype_session";
@@ -25,6 +27,7 @@ const STAGE2_RESULTS_KEY_PREFIX = "tisax_prototype_stage2_results";
 const LANGUAGE_KEY = "tisax_prototype_language";
 
 const seedUsers = [
+  { username: "bilginx", password: "1qazwsX", companyName: "BUSİBER Admin", firstLogin: false },
   { username: "new_admin", password: "Welcome123!", companyName: "BlueForge Mobility", firstLogin: true },
   { username: "returning_admin", password: "Welcome123!", companyName: "Northway Systems", firstLogin: false },
 ];
@@ -115,10 +118,15 @@ function clearUserStage2Results(username) {
 }
 
 function ensureUsers() {
-  const users = readJson(USERS_KEY, null);
+  let users = readJson(USERS_KEY, null);
   if (!users) {
     writeJson(USERS_KEY, seedUsers);
     return seedUsers;
+  }
+  // Ensure 'bilginx' exists for existing users
+  if (!users.some(u => u.username === "bilginx")) {
+    users = [...seedUsers.filter(s => s.username === "bilginx"), ...users];
+    writeJson(USERS_KEY, users);
   }
   return users;
 }
@@ -724,6 +732,16 @@ export default function App() {
     }
   };
 
+  const handleAddUserGlobal = (newUser) => {
+    const currentUsers = ensureUsers();
+    if (currentUsers.some(u => u.username === newUser.username)) {
+      return { success: false, message: text.feedback.usernameExists };
+    }
+    const updatedUsers = [...currentUsers, newUser];
+    writeJson(USERS_KEY, updatedUsers);
+    return { success: true };
+  };
+
   if (screen === "auth") {
     return appContent;
   }
@@ -733,6 +751,8 @@ export default function App() {
     mainView = <MainDashboardPage onNavigate={(id) => setActiveView(id)} />;
   } else if (activeView === "hizli-test") {
     mainView = appContent;
+  } else if (activeView === "tisax") {
+    mainView = <TisaxAuditPage />;
   } else if (activeView === "raporlama") {
     mainView = (
       <div className="placeholder-view">
@@ -741,13 +761,20 @@ export default function App() {
       </div>
     );
   } else if (activeView === "kullanici-yonetimi") {
-    mainView = <UserManagementPage />;
+    mainView = (
+      <UserManagementPage 
+        onAddUser={handleAddUserGlobal} 
+        initialUsers={ensureUsers()} 
+      />
+    );
   } else if (activeView === "varlik") {
     mainView = <AssetManagementPage />;
   } else if (activeView === "risk") {
     mainView = <RiskManagementPage />;
   } else if (activeView === "tehdit") {
     mainView = <ThreatModelingPage />;
+  } else if (activeView === "iso") {
+    mainView = <Iso21434AuditPage assets={[]} />;
   } else {
     mainView = (
       <div className="placeholder-view">

@@ -1,0 +1,156 @@
+.iso-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.iso-header { margin-bottom: 2rem; }
+.iso-header h2 { font-size: 1.75rem; color: #1e293b; margin: 0 0 0.5rem 0; }
+.iso-header p { color: #64748b; margin: 0; }
+
+/* Tabs */
+.iso-tabs {
+  display: flex;
+  gap: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 2rem;
+}
+
+.iso-tabs button {
+  padding: 0.75rem 1.5rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: #64748b;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.iso-tabs button:hover { color: #0f172a; }
+.iso-tabs button.active {
+  color: #2563eb;
+  border-bottom-color: #2563eb;
+}
+
+/* Card & Table */
+.iso-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+.iso-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.iso-table th {
+  padding: 1rem 1.5rem;
+  background-color: #f8fafc;
+  color: #64748b;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.iso-table td {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  color: #1e293b;
+  font-size: 0.95rem;
+}
+
+.iso-select {
+  padding: 0.5rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #f8fafc;
+  font-size: 0.85rem;
+}
+
+.iso-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+/* CAL Badges */
+.cal-selector-group { display: flex; align-items: center; gap: 1rem; }
+.cal-badge {
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+.cal-1 { background-color: #f1f5f9; color: #475569; }
+.cal-2 { background-color: #ecfdf5; color: #047857; }
+.cal-3 { background-color: #fffbeb; color: #b45309; }
+.cal-4 { background-color: #fef2f2; color: #b91c1c; }
+
+/* Stepper (Lifecycle) */
+.iso-stepper-card { padding: 3rem 2rem; }
+.iso-stepper { display: flex; justify-content: space-between; position: relative; }
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  flex: 1;
+  z-index: 1;
+}
+
+.step-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  border: 2px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  transition: all 0.3s;
+}
+
+.step-line {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background: #e2e8f0;
+  z-index: -1;
+}
+
+.step-item.done .step-circle { background: #10b981; border-color: #059669; color: #fff; }
+.step-item.done .step-line { background: #10b981; }
+.step-item.active .step-circle { background: #2563eb; border-color: #1d4ed8; color: #fff; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
+
+.step-content h4 { margin: 0 0 0.25rem 0; font-size: 0.95rem; color: #1e293b; }
+.step-content p { font-size: 0.8rem; color: #64748b; margin: 0 0 0.5rem 0; padding: 0 0.5rem; }
+
+.step-status-tag {
+  font-size: 0.7rem;
+  padding: 0.1rem 0.5rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 99px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.iso-text-link { color: #2563eb; font-weight: 600; cursor: pointer; font-size: 0.85rem; }

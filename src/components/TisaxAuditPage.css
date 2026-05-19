@@ -1,0 +1,87 @@
+.tisax-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.tisax-header { margin-bottom: 2rem; }
+.tisax-title-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
+.tisax-header h2 { font-size: 1.75rem; color: #1e293b; margin: 0; }
+.tisax-version-badge { background: #f1f5f9; color: #475569; padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; border: 1px solid #e2e8f0; }
+.tisax-header p { color: #64748b; margin: 0; }
+
+/* Tabs */
+.tisax-tabs {
+  display: flex;
+  gap: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 2rem;
+}
+
+.tisax-tabs button {
+  padding: 0.75rem 1.5rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: #64748b;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tisax-tabs button.active {
+  color: #2563eb;
+  border-bottom-color: #2563eb;
+}
+
+/* Card & Table */
+.tisax-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+.tisax-table { width: 100%; border-collapse: collapse; text-align: left; }
+.tisax-table th { padding: 1rem 1.5rem; background-color: #f8fafc; color: #64748b; font-size: 0.8rem; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; }
+.tisax-table td { padding: 1.25rem 1.5rem; border-bottom: 1px solid #e2e8f0; color: #1e293b; font-size: 0.95rem; }
+
+.tisax-select { padding: 0.4rem; border: 1px solid #cbd5e1; border-radius: 6px; background: #f8fafc; font-size: 0.85rem; outline: none; }
+.tisax-select:focus { border-color: #2563eb; }
+
+.target-badge { background: #ecfdf5; color: #059669; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 700; font-size: 0.75rem; border: 1px solid #a7f3d0; }
+
+/* Dashboard Panel */
+.dashboard-panel { padding: 2.5rem; }
+.dashboard-panel h3 { margin: 0 0 0.5rem 0; color: #1e293b; }
+.dashboard-panel p { color: #64748b; margin-bottom: 3rem; }
+.tisax-chart-container { height: 300px; width: 100%; max-width: 600px; }
+
+/* Labels Grid */
+.tisax-labels-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+.label-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  position: relative;
+  transition: transform 0.2s;
+}
+.label-card:hover { transform: translateY(-4px); }
+
+.label-icon { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #f1f5f9; color: #2563eb; }
+
+.label-info h4 { margin: 0 0 0.25rem 0; font-size: 1.05rem; color: #1e293b; }
+.label-info p { margin: 0; font-size: 0.85rem; color: #64748b; }
+
+.status-pill { padding: 0.25rem 0.75rem; border-radius: 99px; font-size: 0.75rem; font-weight: 700; position: absolute; top: 1.5rem; right: 1.5rem; }
+.status-pill.ready { background: #ecfdf5; color: #059669; }
+.status-pill.missing { background: #fef2f2; color: #b91c1c; }
+
+.label-card.ready { border-left: 4px solid #10b981; }
+.label-card.missing { border-left: 4px solid #ef4444; }
