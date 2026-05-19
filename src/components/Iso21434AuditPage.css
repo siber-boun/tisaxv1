@@ -1,45 +1,46 @@
 .iso-container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
-  animation: fadeIn 0.3s ease;
+  padding: 2.5rem;
+  animation: fadeIn 0.4s ease-out;
 }
 
-.iso-header { margin-bottom: 2rem; }
-.iso-header h2 { font-size: 1.75rem; color: #1e293b; margin: 0 0 0.5rem 0; }
-.iso-header p { color: #64748b; margin: 0; }
+.iso-header { margin-bottom: 2.5rem; }
+.iso-header h2 { font-size: 1.85rem; font-weight: 800; color: #fff; margin: 0 0 0.5rem 0; letter-spacing: -0.02em; }
+.iso-header p { color: var(--text-muted); margin: 0; font-size: 1.05rem; }
 
 /* Tabs */
 .iso-tabs {
   display: flex;
   gap: 1rem;
-  border-bottom: 1px solid #e2e8f0;
-  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 2.5rem;
 }
 
 .iso-tabs button {
-  padding: 0.75rem 1.5rem;
+  padding: 1rem 1.5rem;
   background: none;
   border: none;
   border-bottom: 3px solid transparent;
   color: #64748b;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
+  font-size: 0.95rem;
 }
 
-.iso-tabs button:hover { color: #0f172a; }
+.iso-tabs button:hover { color: #fff; }
 .iso-tabs button.active {
-  color: #2563eb;
-  border-bottom-color: #2563eb;
+  color: var(--accent-color);
+  border-bottom-color: var(--accent-color);
 }
 
 /* Card & Table */
 .iso-card {
-  background: #fff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
 }
 
@@ -50,56 +51,70 @@
 }
 
 .iso-table th {
-  padding: 1rem 1.5rem;
-  background-color: #f8fafc;
-  color: #64748b;
-  font-size: 0.8rem;
+  padding: 1.25rem 1.5rem;
+  background-color: #1e293b;
+  color: #94a3b8;
+  font-size: 0.75rem;
+  font-weight: 800;
   text-transform: uppercase;
-  border-bottom: 2px solid #e2e8f0;
+  letter-spacing: 0.1em;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .iso-table td {
-  padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid #e2e8f0;
-  color: #1e293b;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  color: #f1f5f9;
   font-size: 0.95rem;
 }
 
 .iso-select {
-  padding: 0.5rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  background: #f8fafc;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: #1e293b;
+  color: #fff;
   font-size: 0.85rem;
+  outline: none;
 }
 
 .iso-btn-outline {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  background: #fff;
-  border: 1px solid #cbd5e1;
-  padding: 0.4rem 0.8rem;
-  border-radius: 6px;
+  gap: 0.5rem;
+  background: #1e293b;
+  border: 1px solid var(--border-color);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
   font-size: 0.85rem;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s;
+}
+
+.iso-btn-outline:hover {
+  background-color: var(--sidebar-hover);
+  border-color: var(--accent-color);
 }
 
 /* CAL Badges */
 .cal-selector-group { display: flex; align-items: center; gap: 1rem; }
 .cal-badge {
-  padding: 0.25rem 0.6rem;
-  border-radius: 4px;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
   font-size: 0.75rem;
   font-weight: 800;
+  text-transform: uppercase;
 }
-.cal-1 { background-color: #f1f5f9; color: #475569; }
-.cal-2 { background-color: #ecfdf5; color: #047857; }
-.cal-3 { background-color: #fffbeb; color: #b45309; }
-.cal-4 { background-color: #fef2f2; color: #b91c1c; }
+
+.cal-1 { background-color: rgba(148, 163, 184, 0.1); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.2); }
+.cal-2 { background-color: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
+.cal-3 { background-color: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.2); }
+.cal-4 { background-color: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
 
 /* Stepper (Lifecycle) */
-.iso-stepper-card { padding: 3rem 2rem; }
+.iso-stepper-card { padding: 4rem 2rem; }
 .iso-stepper { display: flex; justify-content: space-between; position: relative; }
 
 .step-item {
@@ -113,44 +128,48 @@
 }
 
 .step-circle {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: #f1f5f9;
-  border: 2px solid #e2e8f0;
+  background: #1e293b;
+  border: 2px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  margin-bottom: 1rem;
+  font-weight: 800;
+  margin-bottom: 1.25rem;
   transition: all 0.3s;
+  color: #64748b;
 }
 
 .step-line {
   position: absolute;
-  top: 20px;
+  top: 22px;
   left: 50%;
   width: 100%;
   height: 2px;
-  background: #e2e8f0;
+  background: var(--border-color);
   z-index: -1;
 }
 
-.step-item.done .step-circle { background: #10b981; border-color: #059669; color: #fff; }
+.step-item.done .step-circle { background: #10b981; border-color: #10b981; color: #fff; box-shadow: 0 0 15px rgba(16, 185, 129, 0.2); }
 .step-item.done .step-line { background: #10b981; }
-.step-item.active .step-circle { background: #2563eb; border-color: #1d4ed8; color: #fff; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
+.step-item.active .step-circle { background: var(--accent-color); border-color: var(--accent-color); color: #fff; box-shadow: 0 0 20px rgba(37, 99, 235, 0.3); }
 
-.step-content h4 { margin: 0 0 0.25rem 0; font-size: 0.95rem; color: #1e293b; }
-.step-content p { font-size: 0.8rem; color: #64748b; margin: 0 0 0.5rem 0; padding: 0 0.5rem; }
+.step-content h4 { margin: 0 0 0.4rem 0; font-size: 1rem; color: #fff; font-weight: 700; }
+.step-content p { font-size: 0.85rem; color: #64748b; margin: 0 0 0.75rem 0; padding: 0 1rem; line-height: 1.4; }
 
 .step-status-tag {
-  font-size: 0.7rem;
-  padding: 0.1rem 0.5rem;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  font-size: 0.65rem;
+  padding: 0.2rem 0.6rem;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid var(--border-color);
   border-radius: 99px;
-  font-weight: 600;
+  font-weight: 800;
   text-transform: uppercase;
+  color: #94a3b8;
+  letter-spacing: 0.05em;
 }
 
-.iso-text-link { color: #2563eb; font-weight: 600; cursor: pointer; font-size: 0.85rem; }
+.iso-text-link { color: var(--accent-color); font-weight: 700; cursor: pointer; font-size: 0.85rem; }
+.iso-text-link:hover { text-decoration: underline; }

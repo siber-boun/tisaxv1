@@ -1,5 +1,5 @@
 .reports-view-container {
-  animation: fadeIn 0.3s ease;
+  animation: fadeIn 0.4s ease-out;
 }
 
 .view-header {
@@ -8,26 +8,26 @@
 
 .reports-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 2rem;
 }
 
 .report-card {
-  background: #ffffff;
+  background: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: 1rem;
-  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  padding: 2rem;
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
 }
 
 .report-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-5px);
   box-shadow: var(--shadow-md);
-  border-color: #cbd5e1;
+  border-color: var(--accent-color);
 }
 
 .chart-wrapper {
@@ -38,7 +38,7 @@
 
 .report-footer {
   width: 100%;
-  padding-top: 1.25rem;
+  padding-top: 1.5rem;
   border-top: 1px solid var(--border-color);
   display: flex;
   justify-content: center;
@@ -47,33 +47,32 @@
 .report-date-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  background-color: #f1f5f9;
-  padding: 0.4rem 0.8rem;
+  gap: 0.6rem;
+  background-color: #1e293b;
+  padding: 0.5rem 1rem;
   border-radius: 99px;
-  color: var(--text-main);
+  color: #f1f5f9;
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   border: 1px solid var(--border-color);
+  letter-spacing: 0.02em;
 }
 
 .report-date-badge svg {
-  color: #64748b;
+  color: var(--accent-color);
 }
 
 /* Placeholder for inactive views */
 .placeholder-view {
-  padding: 4rem 2rem;
+  padding: 6rem 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  height: 100%;
-  color: #547086;
 }
 
-.placeholder-view h3 {
-  color: #103d62;
-  margin-bottom: 0.5rem;
+.placeholder-view h2 {
+  color: #fff;
+  margin-bottom: 1rem;
 }

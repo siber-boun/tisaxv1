@@ -109,7 +109,7 @@ export default function Layout({ children, activeTab, onTabChange, activeRole, o
     <div className="app-container">
       <header className="top-header">
         <div className="header-brand">
-          <h1>BUSİBER Otomotiv Siber Güvenliği Platformu</h1>
+          <h1>BUSİBER OTOMOTİV SİBER GÜVENLİĞİ PLATFORMU</h1>
         </div>
 
         {/* SAĞ ÜST: Profil Rozeti */}
