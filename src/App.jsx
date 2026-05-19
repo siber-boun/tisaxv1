@@ -569,7 +569,13 @@ export default function App() {
 
   let mainView;
   if (activeView === "dashboard") {
-    mainView = <MainDashboardPage onNavigate={(id) => setActiveView(id)} />;
+    mainView = (
+      <MainDashboardPage 
+        onNavigate={(id) => setActiveView(id)} 
+        assets={assets}
+        vulnerabilities={vulnerabilities}
+      />
+    );
   } else if (activeView === "hizli-test") {
     mainView = appContent;
   } else if (activeView === "tisax") {

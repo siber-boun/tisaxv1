@@ -2,136 +2,139 @@ import React from 'react';
 import RadarChart from './RadarChart';
 import './MainDashboardPage.css';
 
-export default function MainDashboardPage({ onNavigate }) {
-  // Örnek Radar Verisi (Son Testten çekilmiş gibi simüle edilmiştir)
-  const radarMockScores = {
-    governance: 3, asset_protection: 3, iam: 2, 
-    third_party: 1, incident_response: 2, business_continuity: 3, awareness: 4
-  };
+export default function MainDashboardPage({ onNavigate, assets = [], vulnerabilities = [] }) {
+  
+  // İstatistikleri Hesapla
+  const totalAssets = assets.length;
+  const criticalVulns = vulnerabilities.filter(v => v.severity === 'Kritik').length;
+  
+  const handleNavigate = (viewId) => onNavigate && onNavigate(viewId);
 
-  // Kartlara tıklandığında ilgili modüle yönlendirme
-  const handleCardClick = (viewId) => {
-    if (onNavigate) {
-      onNavigate(viewId);
-    }
-  };
+  // Mock Radar Verisi (Entegrasyon için)
+  const radarScores = { governance: 3, asset_protection: 3, iam: 2, third_party: 1, incident_response: 2, business_continuity: 3, awareness: 4 };
 
   return (
-    <div className="md-container">
-      <div className="md-header">
-        <h2>Kurumsal Güvenlik Panosu</h2>
-        <p>Tüm bilgi güvenliği modüllerinin genel durum özetini buradan takip edebilirsiniz.</p>
-      </div>
+    <div className="dashboard-console">
+      
+      {/* 1. ÜST KARŞILAMA VE ÖZET BANDI */}
+      <header className="console-header">
+        <div className="header-greeting">
+          <h2>Merkezi Siber Güvenlik Konsolu</h2>
+          <p>Sistem genelinde otomotiv güvenlik duruşunuz anlık olarak izleniyor.</p>
+        </div>
+        <div className="header-stats">
+          <div className="stat-badge">
+            <small>AKTİF VARLIK</small>
+            <span>{totalAssets}</span>
+          </div>
+          <div className="stat-badge critical">
+            <small>KRİTİK ZAFİYET</small>
+            <span>{criticalVulns}</span>
+          </div>
+          <div className="stat-badge compliance">
+            <small>GENEL UYUM</small>
+            <span>%58</span>
+          </div>
+        </div>
+      </header>
 
-      <div className="md-grid">
+      <div className="console-grid">
         
-        {/* A. Siber Olgunluk Durum Kartı (Geniş Kart) */}
-        <div className="md-card md-card-large" onClick={() => handleCardClick('raporlama')}>
-          <div className="md-card-header">
+        {/* 2. SOL GENİŞ BLOK: RADAR ANALİZİ */}
+        <div className="console-card radar-main-card" onClick={() => handleNavigate('raporlama')}>
+          <div className="card-info">
             <h3>Mevcut Siber Olgunluk Analizi</h3>
-            <span className="md-link-icon">Genişlet ↗</span>
+            <span className="expand-trigger">Detaylı Rapor ↗</span>
           </div>
-          <div className="md-card-content md-radar-preview">
-            <div className="md-radar-wrapper">
-              <RadarChart scores={radarMockScores} size={250} />
+          <div className="radar-layout">
+            <div className="radar-viz-area">
+              <RadarChart scores={radarScores} size={320} />
             </div>
-            <div className="md-radar-summary">
-              <div className="md-score-highlight">
-                <strong>Genel Hazırlık: %68</strong>
-                <span className="md-badge md-badge-warning">Orta Seviye</span>
+            <div className="radar-legend-area">
+              <div className="legend-item-pro">
+                <div className="item-label"><span>Yönetişim</span><strong>%75</strong></div>
+                <div className="item-bar"><div className="fill" style={{width: '75%'}}></div></div>
               </div>
-              <p>Son teste göre 'Tedarikçi Güvenliği' ve 'Olay Müdahale' alanlarında iyileştirmeye ihtiyaç var.</p>
+              <div className="legend-item-pro">
+                <div className="item-label"><span>Varlık Koruması</span><strong>%80</strong></div>
+                <div className="item-bar"><div className="fill" style={{width: '80%'}}></div></div>
+              </div>
+              <div className="legend-item-pro">
+                <div className="item-label"><span>IAM Güvenliği</span><strong>%60</strong></div>
+                <div className="item-bar"><div className="fill" style={{width: '60%'}}></div></div>
+              </div>
+              <div className="legend-item-pro">
+                <div className="item-label"><span>Tedarikçi Risk</span><strong>%40</strong></div>
+                <div className="item-bar red-fill"><div className="fill" style={{width: '40%'}}></div></div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* B. Varlık Yönetimi Özet Kartı */}
-        <div className="md-card" onClick={() => handleCardClick('varlik')}>
-          <div className="md-card-header">
-            <h3>Kritik Varlık Envanteri</h3>
-            <span className="md-link-icon">↗</span>
+        {/* 3. SAĞ ÜST BLOK: RİSK ISI MATRİSİ */}
+        <div className="console-card risk-matrix-card" onClick={() => handleNavigate('risk')}>
+          <div className="card-info">
+            <h3>Canlı TARA & Risk Isı Matrisi</h3>
           </div>
-          <div className="md-card-content">
-            <div className="md-stat-big">4 <small>Aktif Varlık</small></div>
-            <ul className="md-list-preview">
-              <li>
-                <span className="md-dot red"></span> Sunucu (Sistem Odası)
-              </li>
-              <li>
-                <span className="md-dot red"></span> Laptop (Yönetim)
-              </li>
-              <li>
-                <span className="md-dot yellow"></span> Ağ Cihazları (Kat 1)
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        {/* C. Risk Yönetimi Özet Kartı */}
-        <div className="md-card" onClick={() => handleCardClick('risk')}>
-          <div className="md-card-header">
-            <h3>Aktif Risk Dağılımı</h3>
-            <span className="md-link-icon">↗</span>
-          </div>
-          <div className="md-card-content md-risk-content">
-             <div className="md-risk-row">
-               <span className="md-risk-label">Kritik / Yüksek</span>
-               <span className="md-badge md-badge-danger">2</span>
-             </div>
-             <div className="md-risk-row">
-               <span className="md-risk-label">Orta</span>
-               <span className="md-badge md-badge-warning">1</span>
-             </div>
-             <div className="md-risk-row">
-               <span className="md-risk-label">Düşük</span>
-               <span className="md-badge md-badge-success">1</span>
-             </div>
-             <p className="md-micro-text">Riski 15 ve üzeri olan 2 varlık acil aksiyon bekliyor.</p>
-          </div>
-        </div>
-
-        {/* D. Denetim ve Kullanıcı Takip Kartı */}
-        <div className="md-card" onClick={() => handleCardClick('kullanici-yonetimi')}>
-          <div className="md-card-header">
-            <h3>Denetçi Görevleri</h3>
-            <span className="md-link-icon">↗</span>
-          </div>
-          <div className="md-card-content">
-            <div className="md-progress-item">
-              <div className="md-progress-info">
-                <span>Ahmet Y. (TISAX)</span>
-                <strong>%65</strong>
-              </div>
-              <div className="md-progress-bar"><div className="md-progress-fill" style={{width: '65%'}}></div></div>
+          <div className="matrix-preview">
+            <div className="matrix-grid-mini">
+              {[...Array(25)].map((_, i) => (
+                <div key={i} className={`matrix-cell-mini ${i === 4 || i === 9 ? 'high-risk' : ''}`}></div>
+              ))}
             </div>
-            <div className="md-progress-item">
-              <div className="md-progress-info">
-                <span>Elif K. (ISO 21434)</span>
-                <strong>%20</strong>
+            <div className="matrix-stats-mini">
+              <div className="glow-stat red">
+                <div className="dot"></div>
+                <span><strong>2</strong> Kritik Risk</span>
               </div>
-              <div className="md-progress-bar"><div className="md-progress-fill" style={{width: '20%'}}></div></div>
+              <div className="glow-stat yellow">
+                <div className="dot"></div>
+                <span><strong>1</strong> Orta Risk</span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* E. Tehdit Modellemesi (STRIDE) Kartı */}
-        <div className="md-card" onClick={() => handleCardClick('tehdit')}>
-          <div className="md-card-header">
-            <h3>STRIDE Tehdit Analizi</h3>
-            <span className="md-link-icon">↗</span>
+        {/* 4. SOL ALT BLOK: ZAFİYET TAKİBİ */}
+        <div className="console-card vuln-card" onClick={() => handleNavigate('zafiyet')}>
+          <div className="card-info">
+            <h3>Açık Zafiyet Takibi</h3>
           </div>
-          <div className="md-card-content md-threat-content">
-            <div className="md-threat-stat">
-              <div className="md-threat-box open">
-                <strong>4</strong>
-                <span>Açık Risk</span>
+          <div className="vuln-list-mini">
+            {vulnerabilities.slice(0, 3).map(v => (
+              <div key={v.id} className="vuln-row-mini">
+                <span className={`severity-tag ${v.severity === 'Kritik' ? 'crit' : 'high'}`}>{v.severity}</span>
+                <div className="vuln-details-mini">
+                  <strong>{v.id}</strong>
+                  <small>{v.asset}</small>
+                </div>
               </div>
-              <div className="md-threat-box resolved">
-                <strong>2</strong>
-                <span>Giderildi</span>
-              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 5. SAĞ ALT BLOK: SERTİFİKASYON İLERLEMESİ */}
+        <div className="console-card compliance-card" onClick={() => handleNavigate('tisax')}>
+          <div className="card-info">
+            <h3>Uyum ve Sertifikasyon</h3>
+          </div>
+          <div className="circular-viz-row">
+            <div className="circle-stat">
+              <svg viewBox="0 0 36 36" className="circular-chart blue">
+                <path className="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <path className="circle" strokeDasharray="75, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <text x="18" y="20.35" className="percentage">%75</text>
+              </svg>
+              <span>TISAX Hazırlık</span>
             </div>
-            <p className="md-micro-text">Sistemde toplam 6 tehdit tanımlandı. Kimlik sahtekarlığı (S) en sık görülen vektör.</p>
+            <div className="circle-stat">
+              <svg viewBox="0 0 36 36" className="circular-chart green">
+                <path className="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <path className="circle" strokeDasharray="40, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <text x="18" y="20.35" className="percentage">%40</text>
+              </svg>
+              <span>ISO 21434</span>
+            </div>
           </div>
         </div>
 
