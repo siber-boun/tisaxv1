@@ -1,22 +1,13 @@
 import React, { useState } from 'react';
 import './AssetManagementPage.css';
 
-// Varsayılan Mock Veriler (CIA eklendi)
-const INITIAL_ASSETS = [
-  { id: "V-1001", name: "Sunucu", type: "Sunucu / Donanım", location: "Veri Merkezi - Sistem Odası", owner: "Bilgi İşlem", status: "Aktif", cia: { c: 3, i: 3, a: 3 } },
-  { id: "V-1002", name: "Kullanıcı Bilgisayarı", type: "İş İstasyonu", location: "Mühendislik Departmanı", owner: "Melih Kaan", status: "Aktif", cia: { c: 2, i: 2, a: 2 } },
-  { id: "V-1003", name: "Laptop", type: "Taşınabilir Cihaz", location: "Yönetim Ofisi", owner: "Banu Sencer", status: "Aktif", cia: { c: 3, i: 2, a: 2 } },
-  { id: "V-1004", name: "Switch ve Ağ Cihazları", type: "Ağ Altyapısı", location: "Omurga Kabini - Kat 1", owner: "Ağ Yönetimi", status: "Aktif", cia: { c: 1, i: 2, a: 3 } }
-];
-
 const CIA_OPTIONS = [
   { value: 1, label: "Düşük (1)" },
   { value: 2, label: "Orta (2)" },
   { value: 3, label: "Yüksek (3)" }
 ];
 
-export default function AssetManagementPage() {
-  const [assets, setAssets] = useState(INITIAL_ASSETS);
+export default function AssetManagementPage({ assets = [], setAssets }) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [newAsset, setNewAsset] = useState({
     name: '', type: 'Sunucu / Donanım', location: '', owner: '',
@@ -37,7 +28,10 @@ export default function AssetManagementPage() {
       cia: { ...newAsset.cia }
     };
 
-    setAssets([...assets, assetObj]);
+    if (setAssets) {
+      setAssets([...assets, assetObj]);
+    }
+    
     setNewAsset({ name: '', type: 'Sunucu / Donanım', location: '', owner: '', cia: { c: 2, i: 2, a: 2 } });
     setIsFormOpen(false);
   };

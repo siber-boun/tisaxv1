@@ -19,6 +19,7 @@ import MainDashboardPage from "./components/MainDashboardPage";
 import Iso21434AuditPage from "./components/Iso21434AuditPage";
 import TisaxAuditPage from "./components/TisaxAuditPage";
 import LoginPage from "./components/LoginPage";
+import VulnerabilityPage from "./components/VulnerabilityPage";
 
 const USERS_KEY = "tisax_prototype_users";
 const SESSION_KEY = "tisax_prototype_session";
@@ -26,11 +27,26 @@ const PROFILE_KEY_PREFIX = "tisax_prototype_profile";
 const STAGE2_ANSWERS_KEY_PREFIX = "tisax_prototype_stage2_answers";
 const STAGE2_RESULTS_KEY_PREFIX = "tisax_prototype_stage2_results";
 const LANGUAGE_KEY = "tisax_prototype_language";
+const ASSETS_KEY = "busiber_assets";
+const THREATS_KEY = "busiber_threats";
+const VULNS_KEY = "busiber_vulnerabilities";
 
 const seedUsers = [
   { username: "bilgin", password: "1qaz2wsx", role: "Yönetici", name: "Bilgin Yönetici", firstLogin: false },
   { username: "bilginx", password: "1qazwsX", companyName: "BUSİBER Admin", firstLogin: false },
   { username: "new_admin", password: "Welcome123!", companyName: "BlueForge Mobility", firstLogin: true },
+];
+
+const initialAssets = [
+  { id: "V-1001", name: "Sunucu", type: "Sunucu / Donanım", location: "Veri Merkezi - Sistem Odası", owner: "Bilgi İşlem", status: "Aktif", cia: { c: 3, i: 3, a: 3 } },
+  { id: "V-1002", name: "Kullanıcı Bilgisayarı", type: "İş İstasyonu", location: "Mühendislik Departmanı", owner: "Melih Kaan", status: "Aktif", cia: { c: 2, i: 2, a: 2 } },
+  { id: "V-1003", name: "Laptop", type: "Taşınabilir Cihaz", location: "Yönetim Ofisi", owner: "Banu Sencer", status: "Aktif", cia: { c: 3, i: 2, a: 2 } },
+  { id: "V-1004", name: "Switch ve Ağ Cihazları", type: "Ağ Altyapısı", location: "Omurga Kabini - Kat 1", owner: "Ağ Yönetimi", status: "Aktif", cia: { c: 1, i: 2, a: 3 } }
+];
+
+const initialVulnerabilities = [
+  { id: 'CVE-2024-001', asset: 'Merkezi Sunucu', severity: 'Kritik', status: 'Açık', date: '18.05.2026' },
+  { id: 'CVE-2024-012', asset: 'Ağ Switch (Kat 1)', severity: 'Yüksek', status: 'İşlemde', date: '17.05.2026' }
 ];
 
 const emptyProfile = {
@@ -192,6 +208,17 @@ export default function App() {
   const [screen, setScreen] = useState(() => getScreenForSession(readJson(SESSION_KEY, null)));
   const [activeView, setActiveView] = useState("dashboard");
   const [feedback, setFeedback] = useState("");
+
+  // Shared Centralized Data Havuzu (Lifted Up + LocalStorage Persistence)
+  const [assets, setAssets] = useState(() => readJson(ASSETS_KEY, initialAssets));
+  const [threats, setThreats] = useState(() => readJson(THREATS_KEY, []));
+  const [vulnerabilities, setVulnerabilities] = useState(() => readJson(VULNS_KEY, initialVulnerabilities));
+
+  // Sync states to localStorage
+  useEffect(() => { writeJson(ASSETS_KEY, assets); }, [assets]);
+  useEffect(() => { writeJson(THREATS_KEY, threats); }, [threats]);
+  useEffect(() => { writeJson(VULNS_KEY, vulnerabilities); }, [vulnerabilities]);
+  useEffect(() => { writeJson(USERS_KEY, users); }, [users]);
 
   const [stage1Step, setStage1Step] = useState(1);
   const [stage1Errors, setStage1Errors] = useState({});
@@ -545,6 +572,8 @@ export default function App() {
     mainView = <MainDashboardPage onNavigate={(id) => setActiveView(id)} />;
   } else if (activeView === "hizli-test") {
     mainView = appContent;
+  } else if (activeView === "tisax") {
+    mainView = <TisaxAuditPage />;
   } else if (activeView === "raporlama") {
     mainView = (
       <div className="placeholder-view">
@@ -555,15 +584,15 @@ export default function App() {
   } else if (activeView === "kullanici-yonetimi") {
     mainView = <UserManagementPage onAddUser={handleAddUserGlobal} initialUsers={users} />;
   } else if (activeView === "varlik") {
-    mainView = <AssetManagementPage />;
+    mainView = <AssetManagementPage assets={assets} setAssets={setAssets} />;
   } else if (activeView === "risk") {
-    mainView = <RiskManagementPage />;
+    mainView = <RiskManagementPage assets={assets} />;
   } else if (activeView === "tehdit") {
-    mainView = <ThreatModelingPage />;
+    mainView = <ThreatModelingPage assets={assets} threats={threats} setThreats={setThreats} />;
   } else if (activeView === "iso") {
-    mainView = <Iso21434AuditPage assets={[]} />;
-  } else if (activeView === "tisax") {
-    mainView = <TisaxAuditPage />;
+    mainView = <Iso21434AuditPage assets={assets} />;
+  } else if (activeView === "zafiyet") {
+    mainView = <VulnerabilityPage assets={assets} vulnerabilities={vulnerabilities} setVulnerabilities={setVulnerabilities} />;
   } else {
     mainView = (
       <div className="placeholder-view">

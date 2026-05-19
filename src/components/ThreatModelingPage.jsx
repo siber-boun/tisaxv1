@@ -16,9 +16,8 @@ const MOCK_ASSETS = [
   { id: "V-1002", name: "Kullanıcı Bilgisayarı", location: "Mühendislik Departmanı" }
 ];
 
-export default function ThreatModelingPage({ assets = MOCK_ASSETS }) {
+export default function ThreatModelingPage({ assets = MOCK_ASSETS, threats = [], setThreats }) {
   const [selectedAssetId, setSelectedAssetId] = useState('');
-  const [threats, setThreats] = useState([]);
   const [inputs, setInputs] = useState({ S: '', T: '', R: '', I: '', D: '', E: '' });
 
   // İlgili kategoriye yeni tehdit ekleme
