@@ -21,7 +21,7 @@ export default function AssessmentFlow({
   const currentStage2 = stage2Sections[stage2Step - 1];
 
   return (
-    <div className="container onboarding-layout">
+    <div className="onboarding-content">
       <StageIndicator step={stage2Step} total={stage2Sections.length} title={currentStage2.title} stageLabel={text.journey.stage2} stepLabel={text.common.step} />
       <section className="card stage-context">
         <p className="kicker">{text.journey.sharedProfile}</p>

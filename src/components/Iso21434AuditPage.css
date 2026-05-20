@@ -2,174 +2,69 @@
   max-width: 1400px;
   margin: 0 auto;
   padding: 2.5rem;
-  animation: fadeIn 0.4s ease-out;
 }
 
-.iso-header { margin-bottom: 2.5rem; }
-.iso-header h2 { font-size: 1.85rem; font-weight: 800; color: #fff; margin: 0 0 0.5rem 0; letter-spacing: -0.02em; }
-.iso-header p { color: var(--text-muted); margin: 0; font-size: 1.05rem; }
+.iso-header h2 { font-size: 1.85rem; font-weight: 800; color: var(--text-main); }
+.iso-header p { color: var(--text-muted); margin-bottom: 2rem; }
 
 /* Tabs */
 .iso-tabs {
   display: flex;
-  gap: 1rem;
+  gap: 2rem;
   border-bottom: 1px solid var(--border-color);
   margin-bottom: 2.5rem;
 }
 
 .iso-tabs button {
-  padding: 1rem 1.5rem;
+  padding: 1rem 0;
   background: none;
   border: none;
   border-bottom: 3px solid transparent;
-  color: #64748b;
+  color: var(--text-tab-inactive);
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
   font-size: 0.95rem;
 }
 
-.iso-tabs button:hover { color: #fff; }
 .iso-tabs button.active {
-  color: var(--accent-color);
-  border-bottom-color: var(--accent-color);
+  color: var(--accent-blue) !important;
+  border-bottom-color: var(--accent-blue);
 }
 
-/* Card & Table */
+/* Card & Table Harmony */
 .iso-card {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  border-radius: 16px;
+  box-shadow: var(--shadow-premium);
   overflow: hidden;
 }
 
-.iso-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-}
+.iso-table { width: 100%; border-collapse: collapse; text-align: left; }
+.iso-table th { padding: 1.25rem 1.5rem; background-color: var(--header-strip); color: var(--header-strip-text); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid var(--border-color); }
+.iso-table td { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
 
-.iso-table th {
-  padding: 1.25rem 1.5rem;
-  background-color: #1e293b;
-  color: #94a3b8;
-  font-size: 0.75rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  border-bottom: 1px solid var(--border-color);
-}
+/* Compliance Tints */
+.row-compliant { background-color: rgba(16, 185, 129, 0.07); color: #1b4332 !important; }
+.row-partial { background-color: rgba(245, 158, 11, 0.07); color: #78350f !important; }
+.row-noncompliant { background-color: rgba(239, 68, 68, 0.07); color: #63171d !important; }
 
-.iso-table td {
-  padding: 1.5rem;
-  border-bottom: 1px solid var(--border-color);
-  color: #f1f5f9;
-  font-size: 0.95rem;
-}
+.iso-table td strong { display: block; font-weight: 700; color: inherit; }
+.iso-table td small { font-size: 0.85rem; opacity: 0.75; color: inherit; }
 
-.iso-select {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background: #1e293b;
-  color: #fff;
-  font-size: 0.85rem;
-  outline: none;
-}
+/* Actions */
+.actions-cell { display: flex; gap: 10px; justify-content: flex-end; }
+.action-btn { background: none; border: none; cursor: pointer; padding: 6px; border-radius: 6px; transition: all 0.2s; }
+.btn-edit { color: #2563eb; background: rgba(37, 99, 235, 0.1); }
+.btn-delete { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
 
-.iso-btn-outline {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: #1e293b;
-  border: 1px solid var(--border-color);
-  color: #fff;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.iso-btn-outline:hover {
-  background-color: var(--sidebar-hover);
-  border-color: var(--accent-color);
-}
-
-/* CAL Badges */
-.cal-selector-group { display: flex; align-items: center; gap: 1rem; }
-.cal-badge {
-  padding: 0.4rem 0.8rem;
+/* Buttons & Selects */
+.iso-select, .iso-btn-midnight {
+  padding: 0.6rem 1rem;
   border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 800;
-  text-transform: uppercase;
+  background: var(--btn-midnight);
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
 }
-
-.cal-1 { background-color: rgba(148, 163, 184, 0.1); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.2); }
-.cal-2 { background-color: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
-.cal-3 { background-color: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.2); }
-.cal-4 { background-color: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
-
-/* Stepper (Lifecycle) */
-.iso-stepper-card { padding: 4rem 2rem; }
-.iso-stepper { display: flex; justify-content: space-between; position: relative; }
-
-.step-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  position: relative;
-  flex: 1;
-  z-index: 1;
-}
-
-.step-circle {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: #1e293b;
-  border: 2px solid var(--border-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  margin-bottom: 1.25rem;
-  transition: all 0.3s;
-  color: #64748b;
-}
-
-.step-line {
-  position: absolute;
-  top: 22px;
-  left: 50%;
-  width: 100%;
-  height: 2px;
-  background: var(--border-color);
-  z-index: -1;
-}
-
-.step-item.done .step-circle { background: #10b981; border-color: #10b981; color: #fff; box-shadow: 0 0 15px rgba(16, 185, 129, 0.2); }
-.step-item.done .step-line { background: #10b981; }
-.step-item.active .step-circle { background: var(--accent-color); border-color: var(--accent-color); color: #fff; box-shadow: 0 0 20px rgba(37, 99, 235, 0.3); }
-
-.step-content h4 { margin: 0 0 0.4rem 0; font-size: 1rem; color: #fff; font-weight: 700; }
-.step-content p { font-size: 0.85rem; color: #64748b; margin: 0 0 0.75rem 0; padding: 0 1rem; line-height: 1.4; }
-
-.step-status-tag {
-  font-size: 0.65rem;
-  padding: 0.2rem 0.6rem;
-  background: rgba(30, 41, 59, 0.8);
-  border: 1px solid var(--border-color);
-  border-radius: 99px;
-  font-weight: 800;
-  text-transform: uppercase;
-  color: #94a3b8;
-  letter-spacing: 0.05em;
-}
-
-.iso-text-link { color: var(--accent-color); font-weight: 700; cursor: pointer; font-size: 0.85rem; }
-.iso-text-link:hover { text-decoration: underline; }

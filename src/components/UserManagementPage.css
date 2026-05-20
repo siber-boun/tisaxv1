@@ -1,201 +1,59 @@
 .um-container {
-  max-width: 1400px;
-  margin: 0 auto;
   padding: 2.5rem;
-  animation: fadeIn 0.4s ease-out;
-}
-
-.um-header {
-  margin-bottom: 2.5rem;
 }
 
 .um-header h2 {
   font-size: 1.85rem;
   font-weight: 800;
-  color: #fff;
-  margin: 0 0 0.5rem 0;
-  letter-spacing: -0.02em;
+  color: var(--text-main);
+  margin-bottom: 0.5rem;
 }
 
 .um-header p {
   color: var(--text-muted);
-  margin: 0;
-  font-size: 1.05rem;
-}
-
-.um-top-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 2rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
 }
 
 .um-card {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
+  border-radius: 16px;
   padding: 2rem;
   box-shadow: var(--shadow-sm);
-  display: flex;
-  flex-direction: column;
-}
-
-.um-table-card {
-  width: 100%;
-}
-
-.um-card-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
   margin-bottom: 2rem;
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 1.25rem;
-}
-
-.um-card-header h3 {
-  margin: 0;
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #fff;
-}
-
-.um-card-header svg {
-  color: var(--accent-color);
-}
-
-.um-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  flex-grow: 1;
-}
-
-.um-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-}
-
-.um-field label {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #94a3b8;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.um-field input, .um-field select {
-  padding: 0.85rem 1rem;
-  border: 1px solid var(--border-color);
-  border-radius: 10px;
-  font-size: 1rem;
-  color: #fff;
-  outline: none;
-  background-color: #1e293b;
-  transition: all 0.2s ease;
-}
-
-.um-field input:focus, .um-field select:focus {
-  border-color: var(--accent-color);
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
-}
-
-.um-btn-primary {
-  background-color: var(--accent-color);
-  color: #fff;
-  border: none;
-  padding: 1rem;
-  border-radius: 10px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-top: 0.5rem;
-}
-
-.um-btn-primary:hover {
-  background-color: #1d4ed8;
-  transform: translateY(-1px);
-}
-
-.um-error {
-  color: #ef4444;
-  font-size: 0.85rem;
-  font-weight: 600;
-  margin: 0;
-}
-
-/* Table Styles */
-.um-table-wrapper {
-  overflow-x: auto;
 }
 
 .um-table {
   width: 100%;
   border-collapse: collapse;
-  text-align: left;
 }
 
 .um-table th {
-  padding: 1.25rem 1.5rem;
-  background-color: #1e293b;
-  color: #94a3b8;
-  font-size: 0.75rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  text-align: left;
+  padding: 1rem;
+  background: var(--secondary-bg);
+  color: var(--text-muted);
   border-bottom: 1px solid var(--border-color);
 }
 
 .um-table td {
-  padding: 1.5rem;
+  padding: 1.25rem 1rem;
   border-bottom: 1px solid var(--border-color);
-  color: #f1f5f9;
-  font-size: 1rem;
-  vertical-align: middle;
+  color: var(--text-main);
 }
 
-.um-badge {
-  padding: 0.35rem 0.75rem;
-  border-radius: 99px;
+.role-badge {
+  padding: 4px 10px;
+  border-radius: 6px;
   font-size: 0.75rem;
   font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  background: var(--secondary-bg);
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
 }
 
-.badge-admin { background-color: rgba(37, 99, 235, 0.1); color: #60a5fa; border: 1px solid rgba(37, 99, 235, 0.2); }
-.badge-auditor { background-color: rgba(148, 163, 184, 0.1); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.2); }
-
-.um-progress-container {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.um-progress-bar {
-  flex-grow: 1;
-  height: 8px;
-  background-color: #1e293b;
-  border-radius: 99px;
-  overflow: hidden;
-  max-width: 200px;
-}
-
-.um-progress-fill {
-  height: 100%;
-  background-color: #10b981;
-  border-radius: 99px;
-  box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
-  transition: width 0.3s ease;
-}
-
-.um-progress-text {
-  font-size: 0.85rem;
-  font-weight: 800;
-  color: #10b981;
-}
-
-.um-no-task {
-  color: #475569;
+.role-admin {
+  background: rgba(26, 115, 232, 0.1);
+  color: var(--accent-blue);
+  border-color: var(--accent-blue);
 }

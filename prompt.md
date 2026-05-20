@@ -28,5 +28,12 @@ Bu dosya, projenin gelişim sürecinde verilen ana direktifleri kronolojik olara
 17. **LocalStorage Kalıcılığı:** Tüm modül verilerini (Assets, Threats, Vulns, Users) tarayıcı hafızasıyla senkronize ederek sayfayı yenileseniz bile verilerin korunmasını sağla.
 18. **Türkçe Karakter Hassasiyeti:** Ana başlığı "BUSİBER OTOMOTİV SİBER GÜVENLİĞİ PLATFORMU" olarak Türkçe karakterlere dikkat ederek güncelle.
 
+## 🟣 Bölüm 5: Optimizasyon, Modülerlik ve Light Mode
+19. **Kod Modülerleştirme:** `App.jsx` üzerindeki yükü azaltmak için `storage.js`, `initialData.js`, `OnboardingFlow.jsx` ve `AssessmentFlow.jsx` bileşenlerini oluştur ve mantığı buraya taşı.
+20. **Merkezi İkon Kütüphanesi:** Tüm SVG ikonlarını `Icons.jsx` bileşeni altında topla ve `Layout.jsx` üzerinden yönet.
+21. **Light Mode (Gündüz Modu):** Koyu tema yerine modern bir ışık modu alternatifi ekle (#F8F9FA arka plan, #FFFFFF sidebar). Pill-shaped tema değiştirme anahtarı (Switch) oluştur.
+22. **Dinamik Renk Sistemi:** Progress bar renklerini başarı oranına göre (Yeşil >= 75%, Turuncu %50-74, Kırmızı < 50%) dinamik hale getir.
+23. **Kurumsal Kimlik Uyumu:** Light Mode'da aktif öğeler için Royal Blue (#1A73E8) ve logout butonu için özel pastel kırmızı tasarımını uygula.
+
 ---
 *Bu günlük projenin evrimini ve mimari kararlarını izlemek için oluşturulmuştur.*

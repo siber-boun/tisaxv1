@@ -49,7 +49,7 @@ export default function RadarChart({ scores, size = 400 }) {
               key={`grid-${level}`}
               points={levelPoints}
               fill="none"
-              stroke="#e2e8f0"
+              stroke="var(--border-color)"
               strokeWidth="1"
             />
           );
@@ -65,7 +65,7 @@ export default function RadarChart({ scores, size = 400 }) {
               y1={center}
               x2={center + radius * Math.cos(angle)}
               y2={center + radius * Math.sin(angle)}
-              stroke="#e2e8f0"
+              stroke="var(--border-color)"
               strokeWidth="1"
             />
           );
@@ -74,15 +74,15 @@ export default function RadarChart({ scores, size = 400 }) {
         {/* Data Polygon */}
         <polygon
           points={polygonPoints}
-          fill="rgba(37, 99, 235, 0.15)"
-          stroke="#2563eb"
-          strokeWidth="2"
+          fill="rgba(26, 115, 232, 0.1)"
+          stroke="var(--accent-blue)"
+          strokeWidth="2.5"
           strokeLinejoin="round"
         />
 
         {/* Data Points */}
         {points.map((p, i) => (
-          <circle key={`point-${i}`} cx={p.x} cy={p.y} r="4" fill="#1d4ed8" />
+          <circle key={`point-${i}`} cx={p.x} cy={p.y} r="4" fill="var(--accent-blue)" />
         ))}
 
         {/* Labels */}
@@ -93,8 +93,8 @@ export default function RadarChart({ scores, size = 400 }) {
             y={p.labelY}
             textAnchor="middle"
             alignmentBaseline="middle"
-            fill="#64748b"
-            style={{ fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}
+            fill="var(--text-main)"
+            style={{ fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', transition: 'fill 0.3s' }}
           >
             {p.label}
           </text>

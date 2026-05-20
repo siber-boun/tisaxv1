@@ -18,7 +18,7 @@ export default function OnboardingFlow({
   const stage1Text = text.stage1.sections[stage1Step - 1];
 
   return (
-    <div className="container onboarding-layout">
+    <div className="onboarding-content">
       <StageIndicator
         step={stage1Step}
         total={config.length}

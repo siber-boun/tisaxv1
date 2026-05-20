@@ -2,98 +2,68 @@
   max-width: 1400px;
   margin: 0 auto;
   padding: 2.5rem;
-  animation: fadeIn 0.4s ease-out;
 }
 
 .tisax-header { margin-bottom: 2.5rem; }
-.tisax-title-row { display: flex; align-items: center; gap: 1.25rem; margin-bottom: 0.75rem; }
-.tisax-header h2 { font-size: 1.85rem; font-weight: 800; color: #fff; margin: 0; letter-spacing: -0.02em; }
-.tisax-version-badge { background: #1e293b; color: #94a3b8; padding: 0.3rem 0.75rem; border-radius: 8px; font-size: 0.75rem; font-weight: 800; border: 1px solid var(--border-color); text-transform: uppercase; letter-spacing: 0.05em; }
-.tisax-header p { color: var(--text-muted); margin: 0; font-size: 1.05rem; }
+.tisax-header h2 { font-size: 1.85rem; font-weight: 800; color: var(--text-main); margin: 0; }
+.tisax-header p { color: var(--text-muted); font-size: 1.05rem; }
 
-/* Tabs */
+/* Tabs Navigation */
 .tisax-tabs {
   display: flex;
-  gap: 1rem;
+  gap: 2rem;
   border-bottom: 1px solid var(--border-color);
   margin-bottom: 2.5rem;
 }
 
 .tisax-tabs button {
-  padding: 1rem 1.5rem;
+  padding: 1rem 0;
   background: none;
   border: none;
   border-bottom: 3px solid transparent;
-  color: #64748b;
+  color: var(--text-tab-inactive);
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
   font-size: 0.95rem;
 }
 
-.tisax-tabs button:hover { color: #fff; }
 .tisax-tabs button.active {
-  color: var(--accent-color);
-  border-bottom-color: var(--accent-color);
+  color: var(--accent-blue) !important;
+  border-bottom-color: var(--accent-blue);
 }
 
-/* Card & Table */
+/* Table Harmony System */
 .tisax-card {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  border-radius: 16px;
+  box-shadow: var(--shadow-premium);
   overflow: hidden;
 }
 
 .tisax-table { width: 100%; border-collapse: collapse; text-align: left; }
-.tisax-table th { padding: 1.25rem 1.5rem; background-color: #1e293b; color: #94a3b8; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 1px solid var(--border-color); }
-.tisax-table td { padding: 1.5rem; border-bottom: 1px solid var(--border-color); color: #f1f5f9; font-size: 0.95rem; }
+.tisax-table th { padding: 1.25rem 1.5rem; background-color: var(--header-strip); color: var(--header-strip-text); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid var(--border-color); }
 
-.tisax-select { padding: 0.5rem 0.75rem; border: 1px solid var(--border-color); border-radius: 8px; background: #1e293b; color: #fff; font-size: 0.85rem; outline: none; }
-.tisax-select:focus { border-color: var(--accent-color); }
+.tisax-table td { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
 
-.target-badge { background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 0.3rem 0.6rem; border-radius: 6px; font-weight: 800; font-size: 0.7rem; border: 1px solid rgba(16, 185, 129, 0.2); text-transform: uppercase; }
+/* Compliance Tints */
+.row-compliant { background-color: rgba(16, 185, 129, 0.07); color: #1b4332 !important; }
+.row-partial { background-color: rgba(245, 158, 11, 0.07); color: #78350f !important; }
+.row-noncompliant { background-color: rgba(239, 68, 68, 0.07); color: #63171d !important; }
 
-/* Dashboard Panel */
-.dashboard-panel { padding: 2.5rem; }
-.dashboard-panel h3 { margin: 0 0 0.5rem 0; color: #fff; font-weight: 700; }
-.dashboard-panel p { color: #64748b; margin-bottom: 3.5rem; font-size: 0.95rem; }
-.tisax-chart-container { height: 320px; width: 100%; max-width: 700px; margin: 0 auto; }
+.tisax-table td strong { display: block; font-weight: 700; color: inherit; }
+.tisax-table td small { font-size: 0.85rem; opacity: 0.75; color: inherit; }
 
-/* Labels Grid */
+/* Actions */
+.actions-cell { display: flex; gap: 10px; justify-content: flex-end; }
+.action-btn { background: none; border: none; cursor: pointer; padding: 6px; border-radius: 6px; transition: all 0.2s; }
+.btn-edit { color: #2563eb; background: rgba(37, 99, 235, 0.1); }
+.btn-delete { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
+
+/* Select Midnight Blue */
+.tisax-select { padding: 0.6rem 1rem; border-radius: 6px; background: var(--btn-midnight); color: #fff; font-weight: 600; border: none; cursor: pointer; }
+
+/* Labels & Status */
 .tisax-labels-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
-.label-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 1.75rem;
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  position: relative;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
-}
-.label-card:hover { transform: translateY(-5px); border-color: var(--accent-color); }
-
-.label-icon { 
-  width: 54px; 
-  height: 54px; 
-  border-radius: 12px; 
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  background: #1e293b; 
-  color: var(--accent-color);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-}
-
-.label-info h4 { margin: 0 0 0.4rem 0; font-size: 1.1rem; color: #fff; font-weight: 700; }
-.label-info p { margin: 0; font-size: 0.85rem; color: #64748b; }
-
-.status-pill { padding: 0.35rem 0.85rem; border-radius: 99px; font-size: 0.7rem; font-weight: 800; position: absolute; top: 1.5rem; right: 1.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
-.status-pill.ready { background: rgba(16, 185, 129, 0.1); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.2); }
-.status-pill.missing { background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); }
-
-.label-card.ready { border-left: 5px solid #10b981; }
-.label-card.missing { border-left: 5px solid #ef4444; }
+.label-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 1.75rem; display: flex; align-items: center; gap: 1.5rem; box-shadow: var(--shadow-premium); }
+.label-icon { width: 54px; height: 54px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--accent-hover); color: var(--accent-blue); }

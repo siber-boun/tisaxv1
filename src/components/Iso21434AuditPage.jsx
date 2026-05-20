@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import './Iso21434AuditPage.css';
+import { Icons } from './Icons';
 
 const CSMS_CONTROLS = [
-  { id: '5.1', item: 'Siber Güvenlik Politikası ve Sorumluluklar', desc: 'Kurumsal düzeyde politikaların tanımlanması.' },
-  { id: '5.2', item: 'Siber Güvenlik Yönetim Sistemi (CSMS)', desc: 'Sürekli yönetim süreçlerinin işletilmesi.' },
-  { id: '6.1', item: 'Proje Bazlı Siber Güvenlik Planı', desc: 'Her araç projesi için özel planlama.' },
-  { id: '6.2', item: 'Bağımsız Denetçi Ataması', desc: 'Güvenlik değerlendirmesi için bağımsız onay.' }
+  { id: '5.1', item: 'Siber Güvenlik Politikası ve Sorumluluklar', desc: 'Kurumsal düzeyde politikaların tanımlanması.', status: 'Done' },
+  { id: '5.2', item: 'Siber Güvenlik Yönetim Sistemi (CSMS)', desc: 'Sürekli yönetim süreçlerinin işletilmesi.', status: 'Partial' },
+  { id: '6.1', item: 'Proje Bazlı Siber Güvenlik Planı', desc: 'Her araç projesi için özel planlama.', status: 'None' },
+  { id: '6.2', item: 'Bağımsız Denetçi Ataması', desc: 'Güvenlik değerlendirmesi için bağımsız onay.', status: 'None' }
 ];
 
 const LIFECYCLE_STEPS = [
@@ -20,7 +21,6 @@ export default function Iso21434AuditPage({ assets = [] }) {
   const [activeTab, setActiveTab] = useState('csms');
   const [calLevels, setCalLevels] = useState({});
 
-  // CAL Seviyesi Değişimi
   const handleCalChange = (assetId, level) => {
     setCalLevels({ ...calLevels, [assetId]: level });
   };
@@ -39,7 +39,6 @@ export default function Iso21434AuditPage({ assets = [] }) {
         <p>Otomotiv siber güvenlik mühendisliği süreçlerinizi standart gereksinimlerine göre yönetin.</p>
       </div>
 
-      {/* Üst Sekme Navigasyonu */}
       <div className="iso-tabs">
         <button className={activeTab === 'csms' ? 'active' : ''} onClick={() => setActiveTab('csms')}>CSMS Organizasyonel Uyum</button>
         <button className={activeTab === 'tara' ? 'active' : ''} onClick={() => setActiveTab('tara')}>TARA & CAL Seviyeleri</button>
@@ -47,8 +46,6 @@ export default function Iso21434AuditPage({ assets = [] }) {
       </div>
 
       <div className="iso-content">
-        
-        {/* Sekme 1: CSMS Organizasyonel Uyum */}
         {activeTab === 'csms' && (
           <div className="iso-tab-panel">
             <div className="iso-card">
@@ -58,36 +55,37 @@ export default function Iso21434AuditPage({ assets = [] }) {
                     <th>Kontrol Maddesi</th>
                     <th>Açıklama</th>
                     <th>Uyum Durumu</th>
-                    <th>Kanıt Dosyası</th>
+                    <th style={{textAlign: 'right'}}>Aksiyonlar</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {CSMS_CONTROLS.map((c) => (
-                    <tr key={c.id}>
-                      <td><strong>{c.id} - {c.item}</strong></td>
-                      <td><small>{c.desc}</small></td>
-                      <td>
-                        <select className="iso-select">
-                          <option>Uyumlu</option>
-                          <option>Kısmen Uyumlu</option>
-                          <option>Uyumsuz</option>
-                        </select>
-                      </td>
-                      <td>
-                        <button className="iso-btn-outline">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                          Yükle
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  {CSMS_CONTROLS.map((c) => {
+                    const rowClass = c.status === 'Done' ? 'row-compliant' : 
+                                     c.status === 'Partial' ? 'row-partial' : 'row-noncompliant';
+                    return (
+                      <tr key={c.id} className={rowClass}>
+                        <td><strong>{c.id} - {c.item}</strong></td>
+                        <td><small>{c.desc}</small></td>
+                        <td>
+                          <select className="iso-select" defaultValue={c.status === 'Done' ? 'Uyumlu' : c.status === 'Partial' ? 'Kısmen Uyumlu' : 'Uyumsuz'}>
+                            <option>Uyumlu</option>
+                            <option>Kısmen Uyumlu</option>
+                            <option>Uyumsuz</option>
+                          </select>
+                        </td>
+                        <td className="actions-cell">
+                          <button className="action-btn btn-edit" title="Düzenle"><Icons.Edit size={14}/></button>
+                          <button className="action-btn btn-delete" title="Sil"><Icons.Trash size={14}/></button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
           </div>
         )}
 
-        {/* Sekme 2: TARA & CAL Seviyeleri */}
         {activeTab === 'tara' && (
           <div className="iso-tab-panel">
             <div className="iso-card">
@@ -96,37 +94,33 @@ export default function Iso21434AuditPage({ assets = [] }) {
                   <tr>
                     <th>Varlık Adı</th>
                     <th>Lokasyon</th>
-                    <th>Hedef CAL Seviyesi</th>
-                    <th>Risk Özeti</th>
+                    <th>CAL Seviyesi</th>
+                    <th style={{textAlign: 'right'}}>Aksiyonlar</th>
                   </tr>
                 </thead>
                 <tbody>
                   {assets.length === 0 ? (
-                    <tr><td colSpan="4" style={{textAlign:'center', padding: '2rem'}}>Lütfen önce Varlık Yönetimi kısmından varlık ekleyin.</td></tr>
+                    <tr><td colSpan="4" style={{textAlign:'center', padding: '2rem'}}>Varlık ekleyin.</td></tr>
                   ) : (
                     assets.map((asset) => (
                       <tr key={asset.id}>
                         <td><strong>{asset.name}</strong></td>
                         <td>{asset.location}</td>
                         <td>
-                          <div className="cal-selector-group">
-                            <select 
-                              className={`iso-select ${getCalClass(calLevels[asset.id] || 'CAL 1')}`}
-                              value={calLevels[asset.id] || 'CAL 1'}
-                              onChange={(e) => handleCalChange(asset.id, e.target.value)}
-                            >
-                              <option value="CAL 1">CAL 1 (Düşük)</option>
-                              <option value="CAL 2">CAL 2 (Orta)</option>
-                              <option value="CAL 3">CAL 3 (Yüksek)</option>
-                              <option value="CAL 4">CAL 4 (Kritik)</option>
-                            </select>
-                            <span className={`cal-badge ${getCalClass(calLevels[asset.id] || 'CAL 1')}`}>
-                              {calLevels[asset.id] || 'CAL 1'}
-                            </span>
-                          </div>
+                          <select 
+                            className="iso-select"
+                            value={calLevels[asset.id] || 'CAL 1'}
+                            onChange={(e) => handleCalChange(asset.id, e.target.value)}
+                          >
+                            <option value="CAL 1">CAL 1</option>
+                            <option value="CAL 2">CAL 2</option>
+                            <option value="CAL 3">CAL 3</option>
+                            <option value="CAL 4">CAL 4</option>
+                          </select>
                         </td>
-                        <td>
-                          <span className="iso-text-link">Analiz Görüntüle</span>
+                        <td className="actions-cell">
+                          <button className="action-btn btn-edit" title="Düzenle"><Icons.Edit size={14}/></button>
+                          <button className="action-btn btn-delete" title="Sil"><Icons.Trash size={14}/></button>
                         </td>
                       </tr>
                     ))
@@ -137,7 +131,6 @@ export default function Iso21434AuditPage({ assets = [] }) {
           </div>
         )}
 
-        {/* Sekme 3: Yaşam Döngüsü (Lifecycle) İzleme */}
         {activeTab === 'lifecycle' && (
           <div className="iso-tab-panel">
             <div className="iso-card iso-stepper-card">
@@ -157,7 +150,6 @@ export default function Iso21434AuditPage({ assets = [] }) {
             </div>
           </div>
         )}
-
       </div>
     </div>
   );

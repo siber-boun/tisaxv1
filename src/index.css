@@ -1,7 +1,9 @@
 :root {
+  /* DARK MODE (Default) */
   --primary-bg: #0b0e14;
   --secondary-bg: #161b22;
   --card-bg: #1c2128;
+  --sidebar-bg: #161b22;
   --border-color: #30363d;
   --text-main: #c9d1d9;
   --text-muted: #8b949e;
@@ -9,8 +11,47 @@
   --accent-green: #3fb950;
   --accent-red: #f85149;
   --accent-yellow: #d29922;
+  --header-bg: #0b0e14;
+  --logout-bg: #21262d;
+  --logout-text: #f85149;
+  
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --transition-fast: 0.2s ease;
+  --transition-speed: 0.3s;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.4);
+}
+
+.light-mode {
+  /* PREMIUM SaaS LIGHT MODE - SOPHISTICATED COLOR HARMONY */
+  --primary-bg: #F1F5F9; /* High-end ice-blue/gray tone */
+  --secondary-bg: #FFFFFF;
+  --card-bg: #FFFFFF;
+  --sidebar-bg: #FFFFFF;
+  --border-color: #E2E8F0; /* Ultra-thin divider line */
+  
+  --text-main: #0F172A; /* Rich, deep slate/navy (Eliminated #000000) */
+  --text-secondary: #334155; /* Dark indigo-gray for labels/clauses */
+  --text-muted: #64748B; /* Sleek slate gray for descriptions */
+  --text-sidebar-inactive: #475569; /* Steel gray for balanced menus */
+  --text-tab-inactive: #64748B;
+  
+  --accent-blue: #2563EB; /* Brand's vibrant signature blue */
+  --accent-hover: #EFF6FF; /* Soft pastel blue highlight */
+  --accent-green: #10B981;
+  --accent-red: #EF4444;
+  --accent-yellow: #F59E0B;
+  
+  --header-bg: #FFFFFF;
+  --header-strip: #E2E8F0; /* Refined light slate blue header */
+  --header-strip-text: #1E293B; /* Sharp navy for header text */
+  
+  --btn-midnight: #1E293B; /* Modern midnight-blue matte finish */
+  --logout-bg: #FFF5F5;
+  --logout-text: #C92A2A;
+  
+  --shadow-premium: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.1);
 }
 
 * {
@@ -25,11 +66,14 @@ body {
   color: var(--text-main);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  transition: background-color var(--transition-speed);
 }
 
-button,
-input,
-select,
-textarea {
-  font: inherit;
+/* Global Transition */
+*, *::before, *::after {
+  transition: background-color var(--transition-speed), border-color var(--transition-speed), color var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+.light-mode h1, .light-mode h2, .light-mode h3, .light-mode h4 {
+  color: var(--text-main);
 }

@@ -1,0 +1,56 @@
+.theme-toggle-wrapper {
+  width: 54px;
+  height: 28px;
+  background-color: #21262d;
+  border-radius: 100px;
+  padding: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  position: relative;
+  transition: background-color 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-right: 12px;
+}
+
+.theme-toggle-wrapper.light {
+  background-color: #ffe082;
+  border-color: rgba(0, 0, 0, 0.05);
+}
+
+.toggle-pill {
+  width: 20px;
+  height: 20px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.theme-toggle-wrapper.dark .toggle-pill {
+  transform: translateX(0);
+  background-color: #f0f6fc;
+}
+
+.theme-toggle-wrapper.light .toggle-pill {
+  transform: translateX(26px);
+  background-color: #ffffff;
+}
+
+.toggle-icon {
+  color: #0b0e14;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-toggle-wrapper.light .toggle-icon {
+  color: #e67e22;
+}
+
+.theme-toggle-wrapper:hover {
+  filter: brightness(1.1);
+}

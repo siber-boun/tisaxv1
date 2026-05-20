@@ -84,6 +84,7 @@ function JourneyNav({ current, text }) {
 
 export default function App() {
   const [language, setLanguage] = useState(() => localStorage.getItem(storage.LANGUAGE_KEY) || defaultLanguage);
+  const [theme, setTheme] = useState(() => storage.readJson(storage.THEME_KEY, "dark"));
   const text = getText(language);
 
   const stage2Sections = useMemo(() => getStage2Sections(text), [text]);
@@ -97,6 +98,20 @@ export default function App() {
   const [screen, setScreen] = useState(() => getScreenForSession(storage.readJson(storage.SESSION_KEY, null)));
   const [activeView, setActiveView] = useState("dashboard");
   const [feedback, setFeedback] = useState("");
+
+  const toggleTheme = () => {
+    const nextTheme = theme === "dark" ? "light" : "dark";
+    setTheme(nextTheme);
+    storage.writeJson(storage.THEME_KEY, nextTheme);
+  };
+
+  useEffect(() => {
+    if (theme === "light") {
+      document.body.classList.add("light-mode");
+    } else {
+      document.body.classList.remove("light-mode");
+    }
+  }, [theme]);
 
   const [assets, setAssets] = useState(() => storage.readJson(storage.ASSETS_KEY, initialAssets));
   const [threats, setThreats] = useState(() => storage.readJson(storage.THREATS_KEY, []));
@@ -327,7 +342,7 @@ export default function App() {
   }
 
   const appContent = (
-    <main className="app-shell">
+    <>
       <section className="language-switcher card">
         <span>{text.language.switcherLabel}</span>
         <div>
@@ -341,7 +356,7 @@ export default function App() {
       </section>
 
       {screen === "onboarding" && (
-        <div className="container onboarding-layout">
+        <div className="onboarding-wrapper">
           <JourneyNav current="onboarding" text={text} />
           <OnboardingFlow 
             stage1Step={stage1Step}
@@ -358,7 +373,7 @@ export default function App() {
       )}
 
       {screen === "stage2Assessment" && (
-        <div className="container onboarding-layout">
+        <div className="onboarding-wrapper">
           <JourneyNav current="stage2Assessment" text={text} />
           <AssessmentFlow 
             stage2Step={stage2Step}
@@ -380,7 +395,7 @@ export default function App() {
       )}
 
       {screen === "stage2Results" && (
-        <div className="container summary-layout results-screen">
+        <div className="results-wrapper">
           <JourneyNav current="stage2Results" text={text} />
           <ScoreDashboard results={activeResults} executiveSummary={executiveSummary} text={text.results} />
           <div className="actions results-actions">
@@ -390,7 +405,7 @@ export default function App() {
           </div>
         </div>
       )}
-    </main>
+    </>
   );
 
   const getViewTitle = (view) => {
@@ -461,6 +476,8 @@ export default function App() {
       onRoleChange={setActiveRole}
       currentUser={currentUser}
       onLogout={handleSignOut}
+      theme={theme}
+      toggleTheme={toggleTheme}
     >
       {mainView}
     </Layout>

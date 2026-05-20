@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './AssetManagementPage.css';
+import { Icons } from './Icons';
 
 const CIA_OPTIONS = [
   { value: 1, label: "Düşük (1)" },
@@ -10,7 +11,7 @@ const CIA_OPTIONS = [
 export default function AssetManagementPage({ assets = [], setAssets }) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [newAsset, setNewAsset] = useState({
-    name: '', type: 'Sunucu / Donanım', location: '', owner: '',
+    name: '', type: 'Donanım', location: '', owner: '',
     cia: { c: 2, i: 2, a: 2 }
   });
 
@@ -32,20 +33,14 @@ export default function AssetManagementPage({ assets = [], setAssets }) {
       setAssets([...assets, assetObj]);
     }
     
-    setNewAsset({ name: '', type: 'Sunucu / Donanım', location: '', owner: '', cia: { c: 2, i: 2, a: 2 } });
+    setNewAsset({ name: '', type: 'Donanım', location: '', owner: '', cia: { c: 2, i: 2, a: 2 } });
     setIsFormOpen(false);
   };
 
-  const getCiaLabel = (val) => {
-    if (val === 3) return "Yüksek";
-    if (val === 2) return "Orta";
-    return "Düşük";
-  };
-
-  const getCiaClass = (val) => {
-    if (val === 3) return "cia-high";
-    if (val === 2) return "cia-medium";
-    return "cia-low";
+  const handleDelete = (id) => {
+    if (setAssets) {
+      setAssets(assets.filter(a => a.id !== id));
+    }
   };
 
   return (
@@ -55,8 +50,8 @@ export default function AssetManagementPage({ assets = [], setAssets }) {
           <h2>Varlık Yönetimi</h2>
           <p>Kurumunuza ait kritik bilgi varlıklarını, lokasyonlarını, sahiplerini ve CIA değerlerini merkezi olarak yönetin.</p>
         </div>
-        <button className="am-btn-primary am-add-btn" onClick={() => setIsFormOpen(!isFormOpen)}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <button className="primary-btn am-add-btn" onClick={() => setIsFormOpen(!isFormOpen)}>
+          <Icons.Plus size={18} />
           {isFormOpen ? "Formu Kapat" : "Yeni Varlık Ekle"}
         </button>
       </div>
@@ -75,12 +70,10 @@ export default function AssetManagementPage({ assets = [], setAssets }) {
               <div className="am-field">
                 <label>Varlık Tipi</label>
                 <select value={newAsset.type} onChange={e => setNewAsset({...newAsset, type: e.target.value})}>
-                  <option value="Sunucu / Donanım">Sunucu / Donanım</option>
-                  <option value="İş İstasyonu">İş İstasyonu</option>
-                  <option value="Taşınabilir Cihaz">Taşınabilir Cihaz</option>
-                  <option value="Ağ Altyapısı">Ağ Altyapısı</option>
-                  <option value="Yazılım / Uygulama">Yazılım / Uygulama</option>
-                  <option value="Veri Tabanı">Veri Tabanı</option>
+                  <option value="Donanım">Donanım / Sunucu</option>
+                  <option value="Yazılım">Yazılım / Uygulama</option>
+                  <option value="Veri">Veri Tabanı / Bilgi</option>
+                  <option value="Servis">Ağ / Bulut Servisi</option>
                 </select>
               </div>
             </div>
@@ -95,25 +88,24 @@ export default function AssetManagementPage({ assets = [], setAssets }) {
               </div>
             </div>
 
-            {/* CIA Alanları */}
             <div className="am-panel-subheader">
-              <h4>CIA Değerlendirmesi (Gizlilik, Bütünlük, Erişilebilirlik)</h4>
+              <h4>CIA Değerlendirmesi</h4>
             </div>
             <div className="am-form-row cia-row">
               <div className="am-field">
-                <label>Gizlilik (Confidentiality)</label>
+                <label>Gizlilik (C)</label>
                 <select value={newAsset.cia.c} onChange={e => setNewAsset({...newAsset, cia: {...newAsset.cia, c: Number(e.target.value)}})}>
                   {CIA_OPTIONS.map(opt => <option key={`c-${opt.value}`} value={opt.value}>{opt.label}</option>)}
                 </select>
               </div>
               <div className="am-field">
-                <label>Bütünlük (Integrity)</label>
+                <label>Bütünlük (I)</label>
                 <select value={newAsset.cia.i} onChange={e => setNewAsset({...newAsset, cia: {...newAsset.cia, i: Number(e.target.value)}})}>
                   {CIA_OPTIONS.map(opt => <option key={`i-${opt.value}`} value={opt.value}>{opt.label}</option>)}
                 </select>
               </div>
               <div className="am-field">
-                <label>Erişilebilirlik (Availability)</label>
+                <label>Erişilebilirlik (A)</label>
                 <select value={newAsset.cia.a} onChange={e => setNewAsset({...newAsset, cia: {...newAsset.cia, a: Number(e.target.value)}})}>
                   {CIA_OPTIONS.map(opt => <option key={`a-${opt.value}`} value={opt.value}>{opt.label}</option>)}
                 </select>
@@ -121,7 +113,7 @@ export default function AssetManagementPage({ assets = [], setAssets }) {
             </div>
 
             <div className="am-form-actions">
-              <button type="submit" className="am-btn-primary">Varlığı Kaydet</button>
+              <button type="submit" className="primary-btn">Varlığı Kaydet</button>
             </div>
           </form>
         </div>
@@ -132,47 +124,51 @@ export default function AssetManagementPage({ assets = [], setAssets }) {
           <table className="am-table">
             <thead>
               <tr>
-                <th>ID</th>
-                <th>Varlık Adı</th>
-                <th>Tipi & Lokasyon</th>
-                <th>Sahibi</th>
-                <th>CIA Değerlendirmesi</th>
-                <th>Durum</th>
+                <th>Varlık Kimliği</th>
+                <th>Varlık Adı & Tip</th>
+                <th>Sahibi & Lokasyon</th>
+                <th>CIA Değerleri</th>
+                <th style={{textAlign: 'right'}}>Aksiyonlar</th>
               </tr>
             </thead>
             <tbody>
-              {assets.map((asset, index) => (
-                <tr key={index}>
-                  <td className="am-id-cell">{asset.id}</td>
-                  <td><strong>{asset.name}</strong></td>
-                  <td>
-                    <div className="am-cell-stack">
-                      <span>{asset.type}</span>
-                      <small>{asset.location}</small>
-                    </div>
-                  </td>
-                  <td>{asset.owner}</td>
-                  <td>
-                    <div className="cia-badges">
-                      <span className={`cia-badge ${getCiaClass(asset.cia.c)}`} title="Gizlilik (Confidentiality)">
-                        <strong>C:</strong> {getCiaLabel(asset.cia.c)}
-                      </span>
-                      <span className={`cia-badge ${getCiaClass(asset.cia.i)}`} title="Bütünlük (Integrity)">
-                        <strong>I:</strong> {getCiaLabel(asset.cia.i)}
-                      </span>
-                      <span className={`cia-badge ${getCiaClass(asset.cia.a)}`} title="Erişilebilirlik (Availability)">
-                        <strong>A:</strong> {getCiaLabel(asset.cia.a)}
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <span className="am-status-badge">
-                      <span className="am-status-dot"></span>
-                      {asset.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
+              {assets.map((asset) => {
+                const rowClass = asset.type === 'Donanım' ? 'row-hardware' : 
+                                 asset.type === 'Yazılım' ? 'row-software' : 
+                                 asset.type === 'Veri' ? 'row-data' : 'row-service';
+                return (
+                  <tr key={asset.id} className={rowClass}>
+                    <td className="am-id-cell">{asset.id}</td>
+                    <td>
+                      <div className="am-cell-stack">
+                        <strong>{asset.name}</strong>
+                        <small>{asset.type}</small>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="am-cell-stack">
+                        <strong>{asset.owner}</strong>
+                        <small>{asset.location}</small>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="cia-badges">
+                        <span className={`cia-badge ${asset.cia.c >= 3 ? 'cia-high' : asset.cia.c >= 2 ? 'cia-medium' : 'cia-low'}`}>C:{asset.cia.c}</span>
+                        <span className={`cia-badge ${asset.cia.i >= 3 ? 'cia-high' : asset.cia.i >= 2 ? 'cia-medium' : 'cia-low'}`}>I:{asset.cia.i}</span>
+                        <span className={`cia-badge ${asset.cia.a >= 3 ? 'cia-high' : asset.cia.a >= 2 ? 'cia-medium' : 'cia-low'}`}>A:{asset.cia.a}</span>
+                      </div>
+                    </td>
+                    <td className="actions-cell">
+                      <button className="action-btn btn-edit" title="Düzenle">
+                        <Icons.Edit size={16} />
+                      </button>
+                      <button className="action-btn btn-delete" title="Sil" onClick={() => handleDelete(asset.id)}>
+                        <Icons.Trash size={16} />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

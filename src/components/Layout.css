@@ -1,213 +1,175 @@
-:root {
-  --primary-bg: #0f172a; /* Dark Console Background */
-  --header-bg: #0f172a;
-  --sidebar-bg: #0f172a;
-  --sidebar-hover: #1e293b;
-  --sidebar-active: #2563eb;
-  --accent-color: #2563eb;
-  --text-main: #f1f5f9;
-  --text-muted: #94a3b8;
-  --text-sidebar: #94a3b8;
-  --text-sidebar-active: #ffffff;
-  --border-color: #1e293b;
-  --header-height: 72px;
-  --sidebar-width: 280px;
-  --card-bg: #111a2e;
-  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
-  --radius-lg: 16px;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body, html {
-  margin: 0;
-  padding: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background-color: var(--primary-bg);
-  color: var(--text-main);
-  -webkit-font-smoothing: antialiased;
-}
-
 .app-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
+  min-height: 100vh;
+  background-color: var(--primary-bg);
 }
 
 .top-header {
-  height: var(--header-height);
+  height: 70px;
   background-color: var(--header-bg);
   border-bottom: 1px solid var(--border-color);
-  padding: 0 2rem;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  flex-shrink: 0;
+  padding: 0 24px;
+  z-index: 100;
+  box-shadow: var(--shadow-premium);
 }
 
 .header-brand h1 {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: -0.01em;
-  text-transform: uppercase;
-}
-
-.dashboard-layout {
-  display: flex;
-  flex: 1;
-  width: 100%;
-  overflow: hidden;
-}
-
-/* Sidebar */
-.sidebar {
-  width: var(--sidebar-width);
-  background-color: var(--sidebar-bg);
-  color: var(--text-sidebar);
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  z-index: 40;
-  border-right: 1px solid var(--border-color);
-}
-
-.sidebar-header-wrapper {
-  padding: 1.5rem 0;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.sidebar-header {
-  padding: 0 1.5rem;
-  display: flex;
-  align-items: center;
-}
-
-.brand-title {
-  margin: 0;
   font-size: 1.25rem;
   font-weight: 800;
-  color: #fff;
-  letter-spacing: 0.02em;
+  letter-spacing: -0.02em;
+  color: var(--text-main);
 }
 
-.sidebar-nav {
-  flex-grow: 1;
-  overflow-y: auto;
-  padding: 1.5rem 0.75rem;
-}
-
-.sidebar-nav ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.nav-item {
-  width: 100%;
+.header-actions {
   display: flex;
   align-items: center;
-  gap: 0.875rem;
-  padding: 0.75rem 1rem;
-  margin-bottom: 0.25rem;
-  background: none;
-  border: none;
-  color: var(--text-sidebar);
-  font-size: 0.9rem;
-  font-weight: 600;
-  border-radius: 0.75rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: left;
-}
-
-.nav-item:hover {
-  background-color: var(--sidebar-hover);
-  color: #fff;
-}
-
-.nav-item.active {
-  background-color: var(--accent-color);
-  color: #fff;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-}
-
-.nav-item .icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.nav-item .icon svg {
-  width: 1.25rem;
-  height: 1.25rem;
-  stroke-width: 2px;
-}
-
-.nav-item .label {
-  flex-grow: 1;
-}
-
-/* Header Profil Rozeti */
-.header-profile {
-  margin-left: auto;
+  gap: 20px;
 }
 
 .profile-badge {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 6px 6px 6px 16px;
-  background: #1e293b;
+  padding: 6px 16px;
+  background: var(--secondary-bg);
   border: 1px solid var(--border-color);
-  border-radius: 99px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
 }
 
 .profile-info {
   display: flex;
   flex-direction: column;
-  text-align: right;
+  align-items: flex-end;
 }
 
 .profile-name {
   font-size: 0.85rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--text-main);
 }
 
 .profile-role {
   font-size: 0.7rem;
-  color: #94a3b8;
-  text-transform: uppercase;
-  font-weight: 700;
+  color: var(--text-muted);
+  font-weight: 600;
 }
 
 .profile-avatar {
   width: 32px;
   height: 32px;
-  background: var(--accent-color);
+  background: var(--accent-blue);
   color: white;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 800;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
 }
 
-/* Sidebar Footer & Logout */
+.dashboard-layout {
+  display: flex;
+  flex: 1;
+}
+
+.sidebar {
+  width: 280px;
+  background-color: var(--sidebar-bg);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 0;
+  position: sticky;
+  top: 70px;
+  height: calc(100vh - 70px);
+  box-shadow: var(--shadow-premium);
+}
+
+.sidebar-header {
+  padding: 0 24px 24px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 24px;
+}
+
+.brand-title {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--accent-blue);
+}
+
+.role-selector-container {
+  padding: 0 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.role-selector-container label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.role-selector-container select {
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sidebar-nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 12px;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+}
+
+.nav-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: transparent;
+  border: none;
+  color: var(--text-sidebar-inactive);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 600;
+  text-align: left;
+  margin-bottom: 4px;
+}
+
+.nav-item:hover {
+  background: var(--accent-hover);
+  color: var(--accent-blue);
+}
+
+.nav-item.active {
+  background: var(--accent-blue);
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.nav-item .label {
+  color: inherit;
+}
+
 .sidebar-footer {
-  margin-top: auto;
-  padding: 1.5rem;
+  padding: 24px 12px 0;
   border-top: 1px solid var(--border-color);
 }
 
@@ -215,84 +177,26 @@ body, html {
   width: 100%;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
-  padding: 0.75rem 1rem;
-  background: rgba(239, 68, 68, 0.1);
-  color: #f87171;
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  border-radius: 12px;
-  font-weight: 600;
+  padding: 12px;
+  border-radius: 10px;
+  background-color: var(--logout-bg);
+  color: var(--logout-text);
+  border: 1px solid transparent;
   cursor: pointer;
-  transition: all 0.2s;
+  font-weight: 700;
+  transition: all 0.2s ease;
 }
 
-.logout-action-btn:hover {
-  background: #ef4444;
-  color: white;
-  border-color: #ef4444;
-}
-
-/* Main Content */
 .main-content-wrapper {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  position: relative;
+  flex: 1;
+  padding: 32px;
   overflow-y: auto;
   background-color: var(--primary-bg);
 }
 
 .main-content {
-  padding: 2.5rem;
-  max-width: 1400px;
-  width: 100%;
+  max-width: 1200px;
   margin: 0 auto;
 }
-
-.view-title {
-  font-size: 1.75rem;
-  font-weight: 800;
-  color: #fff;
-  margin-bottom: 2rem;
-  letter-spacing: -0.02em;
-}
-
-/* Global Card Component Styles (to be used in all pages) */
-.card {
-  background-color: var(--card-bg) !important;
-  border: 1px solid var(--border-color) !important;
-  border-radius: var(--radius-lg) !important;
-  padding: 2rem;
-  box-shadow: var(--shadow-sm);
-  transition: all 0.3s ease;
-}
-
-.card:hover {
-  border-color: var(--accent-color);
-  box-shadow: var(--shadow-md);
-}
-
-.placeholder-view {
-  animation: fadeIn 0.4s ease;
-}
-
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 6rem 2rem;
-  text-align: center;
-}
-
-.empty-state p {
-  color: var(--text-muted);
-  margin-bottom: 2rem;
-  font-size: 1.1rem;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-

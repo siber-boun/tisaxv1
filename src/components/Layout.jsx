@@ -1,8 +1,19 @@
 import { useState } from "react";
 import "./Layout.css";
 import { Icons } from "./Icons";
+import ThemeToggle from "./ThemeToggle";
 
-export default function Layout({ children, activeTab, onTabChange, activeRole, onRoleChange, currentUser, onLogout }) {
+export default function Layout({ 
+  children, 
+  activeTab, 
+  onTabChange, 
+  activeRole, 
+  onRoleChange, 
+  currentUser, 
+  onLogout,
+  theme,
+  toggleTheme
+}) {
   const menuItems = [
     {
       id: "dashboard",
@@ -53,14 +64,17 @@ export default function Layout({ children, activeTab, onTabChange, activeRole, o
           <h1>BUSİBER OTOMOTİV SİBER GÜVENLİĞİ PLATFORMU</h1>
         </div>
 
-        <div className="header-profile">
-          <div className="profile-badge">
-            <div className="profile-info">
-              <span className="profile-name">{currentUser?.name || currentUser?.username}</span>
-              <span className="profile-role">{currentUser?.role}</span>
-            </div>
-            <div className="profile-avatar">
-              {(currentUser?.name || currentUser?.username || 'U').charAt(0).toUpperCase()}
+        <div className="header-actions">
+          <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
+          <div className="header-profile">
+            <div className="profile-badge">
+              <div className="profile-info">
+                <span className="profile-name">{currentUser?.name || currentUser?.username}</span>
+                <span className="profile-role">{currentUser?.role}</span>
+              </div>
+              <div className="profile-avatar">
+                {(currentUser?.name || currentUser?.username || 'U').charAt(0).toUpperCase()}
+              </div>
             </div>
           </div>
         </div>

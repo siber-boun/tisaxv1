@@ -4,6 +4,7 @@ export const PROFILE_KEY_PREFIX = "tisax_prototype_profile";
 export const STAGE2_ANSWERS_KEY_PREFIX = "tisax_prototype_stage2_answers";
 export const STAGE2_RESULTS_KEY_PREFIX = "tisax_prototype_stage2_results";
 export const LANGUAGE_KEY = "tisax_prototype_language";
+export const THEME_KEY = "busiber_theme";
 export const ASSETS_KEY = "busiber_assets";
 export const THREATS_KEY = "busiber_threats";
 export const VULNS_KEY = "busiber_vulnerabilities";

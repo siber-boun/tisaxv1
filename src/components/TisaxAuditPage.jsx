@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './TisaxAuditPage.css';
+import { Icons } from './Icons';
 
 const ISA_CONTROLS = [
   { id: '1.1', item: 'Bilgi Güvenliği Politikaları', status: 'Politikalar yayınlandı, yönetim onayı alındı.' },
@@ -94,21 +95,30 @@ export default function TisaxAuditPage() {
                   <th>Mevcut Durum Özeti</th>
                   <th>Olgunluk Skoru</th>
                   <th>Hedef</th>
+                  <th>Aksiyonlar</th>
                 </tr>
               </thead>
               <tbody>
-                {ISA_CONTROLS.map((c) => (
-                  <tr key={c.id}>
-                    <td><strong>{c.id} - {c.item}</strong></td>
-                    <td><small>{c.status}</small></td>
-                    <td>
-                      <select className="tisax-select" value={scores[c.id]} onChange={(e) => handleScoreChange(c.id, e.target.value)}>
-                        {[0, 1, 2, 3, 4, 5].map(v => <option key={v} value={v}>Level {v}</option>)}
-                      </select>
-                    </td>
-                    <td><span className="target-badge">Lvl 3</span></td>
-                  </tr>
-                ))}
+                {ISA_CONTROLS.map((c) => {
+                  const score = scores[c.id];
+                  const rowClass = score >= 3 ? 'row-compliant' : (score > 0 ? 'row-partial' : 'row-noncompliant');
+                  return (
+                    <tr key={c.id} className={rowClass}>
+                      <td><strong>{c.id} - {c.item}</strong></td>
+                      <td><small>{c.status}</small></td>
+                      <td>
+                        <select className="tisax-select" value={scores[c.id]} onChange={(e) => handleScoreChange(c.id, e.target.value)}>
+                          {[0, 1, 2, 3, 4, 5].map(v => <option key={v} value={v}>Level {v}</option>)}
+                        </select>
+                      </td>
+                      <td><span className="target-badge">Lvl 3</span></td>
+                      <td className="actions-cell">
+                        <button className="action-btn btn-edit" title="Düzenle"><Icons.Edit size={14}/></button>
+                        <button className="action-btn btn-delete" title="Sil"><Icons.Trash size={14}/></button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

@@ -10,8 +10,22 @@ export default function MainDashboardPage({ onNavigate, assets = [], vulnerabili
   
   const handleNavigate = (viewId) => onNavigate && onNavigate(viewId);
 
+  // Dinamik Renk Hesaplama
+  const getProgressColor = (percentage) => {
+    if (percentage >= 75) return 'var(--accent-green)';
+    if (percentage >= 50) return 'var(--accent-yellow)';
+    return 'var(--accent-red)';
+  };
+
   // Mock Radar Verisi (Entegrasyon için)
   const radarScores = { governance: 3, asset_protection: 3, iam: 2, third_party: 1, incident_response: 2, business_continuity: 3, awareness: 4 };
+
+  const scores = [
+    { label: "Yönetişim", value: 75 },
+    { label: "Varlık Koruması", value: 80 },
+    { label: "IAM Güvenliği", value: 60 },
+    { label: "Tedarikçi Risk", value: 40 }
+  ];
 
   return (
     <div className="dashboard-console">
@@ -51,22 +65,14 @@ export default function MainDashboardPage({ onNavigate, assets = [], vulnerabili
               <RadarChart scores={radarScores} size={320} />
             </div>
             <div className="radar-legend-area">
-              <div className="legend-item-pro">
-                <div className="item-label"><span>Yönetişim</span><strong>%75</strong></div>
-                <div className="item-bar"><div className="fill" style={{width: '75%'}}></div></div>
-              </div>
-              <div className="legend-item-pro">
-                <div className="item-label"><span>Varlık Koruması</span><strong>%80</strong></div>
-                <div className="item-bar"><div className="fill" style={{width: '80%'}}></div></div>
-              </div>
-              <div className="legend-item-pro">
-                <div className="item-label"><span>IAM Güvenliği</span><strong>%60</strong></div>
-                <div className="item-bar"><div className="fill" style={{width: '60%'}}></div></div>
-              </div>
-              <div className="legend-item-pro">
-                <div className="item-label"><span>Tedarikçi Risk</span><strong>%40</strong></div>
-                <div className="item-bar red-fill"><div className="fill" style={{width: '40%'}}></div></div>
-              </div>
+              {scores.map(score => (
+                <div key={score.label} className="legend-item-pro">
+                  <div className="item-label"><span>{score.label}</span><strong>%{score.value}</strong></div>
+                  <div className="item-bar">
+                    <div className="fill" style={{width: `${score.value}%`, backgroundColor: getProgressColor(score.value)}}></div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -78,9 +84,12 @@ export default function MainDashboardPage({ onNavigate, assets = [], vulnerabili
           </div>
           <div className="matrix-preview">
             <div className="matrix-grid-mini">
-              {[...Array(25)].map((_, i) => (
-                <div key={i} className={`matrix-cell-mini ${i === 4 || i === 9 ? 'high-risk' : ''}`}></div>
-              ))}
+              {[...Array(25)].map((_, i) => {
+                let cellClass = "";
+                if (i === 4 || i === 9) cellClass = "high-risk"; // Top right cells
+                if (i === 3) cellClass = "med-risk"; // Medium risk cell
+                return <div key={i} className={`matrix-cell-mini ${cellClass}`}></div>;
+              })}
             </div>
             <div className="matrix-stats-mini">
               <div className="glow-stat red">
