@@ -7,6 +7,7 @@ function scoreClass(score) {
   return "score-low";
 }
 
+
 function parseAiOneri(text) {
   if (!text) return { intro: "", zorunlu: [], tavsiye: [], outro: "" };
   
@@ -23,15 +24,15 @@ function parseAiOneri(text) {
 
     // Detect header changes
     const lower = trimmed.toLowerCase();
-    if (lower.includes('zorunlu') || lower.includes('yapılmalı') || lower.includes('must') || lower.includes('kategori 1')) {
+    if (lower.includes('zorunlu') || lower.includes('must') || lower.includes('kategori 1')) {
       currentCategory = 'zorunlu';
       continue;
     }
-    if (lower.includes('tavsiye') || lower.includes('yapılabilir') || lower.includes('should') || lower.includes('kategori 2')) {
+    if (lower.includes('tavsiye') || lower.includes('should') || lower.includes('kategori 2') || lower.includes('önerilenler')) {
       currentCategory = 'tavsiye';
       continue;
     }
-    if ((lower.includes('sonuç') || lower.includes('özetle') || lower.includes('değerlendirme') || lower.includes('genel olarak')) && 
+    if ((lower.includes('matris') || lower.includes('matri̇s') || lower.includes('önceliklendirme') || lower.includes('aksiyon')) && 
         (currentCategory === 'zorunlu' || currentCategory === 'tavsiye')) {
       currentCategory = 'outro';
     }
@@ -53,6 +54,109 @@ function parseAiOneri(text) {
     tavsiye: tavsiye.filter(l => l.trim().length > 2),
     outro: outroLines.join('\n')
   };
+}
+
+function renderMarkdown(text) {
+  if (!text) return null;
+
+  const lines = text.split('\n');
+  const elements = [];
+  let inTable = false;
+  let tableRows = [];
+  let inList = false;
+  let listItems = [];
+
+  const flushList = (key) => {
+    if (listItems.length > 0) {
+      elements.push(
+        <ul key={`list-${key}`} style={{ paddingLeft: '1.5rem', margin: '0 0 1rem 0', color: 'var(--text-main)', textAlign: 'left' }}>
+          {listItems.map((li, i) => (
+            <li key={i} style={{ marginBottom: '0.4rem', lineHeight: '1.5', fontSize: '0.9rem' }}>{li}</li>
+          ))}
+        </ul>
+      );
+      listItems = [];
+    }
+    inList = false;
+  };
+
+  const flushTable = (key) => {
+    if (tableRows.length > 0) {
+      const headers = tableRows[0];
+      const rows = tableRows.slice(1).filter(row => !row.every(c => c.trim().match(/^-+$/)));
+      elements.push(
+        <div key={`table-wrapper-${key}`} style={{ overflowX: 'auto', margin: '1rem 0', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.08)' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem', color: 'var(--text-main)' }}>
+            <thead>
+              <tr style={{ background: 'rgba(255,255,255,0.04)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                {headers.map((h, i) => (
+                  <th key={i} style={{ padding: '0.6rem 0.8rem', textAlign: 'left', fontWeight: 600, borderRight: '1px solid rgba(255,255,255,0.04)' }}>{h.trim()}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, rIdx) => (
+                <tr key={rIdx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', background: rIdx % 2 === 0 ? 'rgba(255,255,255,0.01)' : 'transparent' }}>
+                  {row.map((cell, cIdx) => (
+                    <td key={cIdx} style={{ padding: '0.6rem 0.8rem', borderRight: '1px solid rgba(255,255,255,0.04)' }}>{cell.trim()}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+      tableRows = [];
+    }
+    inTable = false;
+  };
+
+  const parseInlineStyles = (txt) => {
+    const parts = txt.split('**');
+    return parts.map((part, i) => {
+      if (i % 2 === 1) {
+        return <strong key={i} style={{ fontWeight: 600, color: '#fff' }}>{part}</strong>;
+      }
+      return part;
+    });
+  };
+
+  lines.forEach((line, idx) => {
+    const trimmed = line.trim();
+
+    if (trimmed.startsWith('|')) {
+      flushList(idx);
+      inTable = true;
+      const cells = trimmed.split('|').slice(1, -1);
+      tableRows.push(cells);
+      return;
+    } else if (inTable && !trimmed.startsWith('|')) {
+      flushTable(idx);
+    }
+
+    if (trimmed.startsWith('* ') || trimmed.startsWith('- ')) {
+      inList = true;
+      listItems.push(parseInlineStyles(trimmed.substring(2)));
+      return;
+    } else if (inList && !(trimmed.startsWith('* ') || trimmed.startsWith('- '))) {
+      flushList(idx);
+    }
+
+    if (trimmed.startsWith('###')) {
+      elements.push(<h5 key={idx} style={{ fontSize: '1rem', color: '#fff', fontWeight: 600, margin: '1.25rem 0 0.5rem 0', textAlign: 'left' }}>{parseInlineStyles(trimmed.replace('###', '').trim())}</h5>);
+    } else if (trimmed.startsWith('##')) {
+      elements.push(<h4 key={idx} style={{ fontSize: '1.15rem', color: '#fff', fontWeight: 600, margin: '1.5rem 0 0.75rem 0', textAlign: 'left', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '0.4rem' }}>{parseInlineStyles(trimmed.replace('##', '').trim())}</h4>);
+    } else if (trimmed.startsWith('#')) {
+      elements.push(<h3 key={idx} style={{ fontSize: '1.3rem', color: '#fff', fontWeight: 600, margin: '1.75rem 0 1rem 0', textAlign: 'left' }}>{parseInlineStyles(trimmed.replace('#', '').trim())}</h3>);
+    } else if (trimmed) {
+      elements.push(<p key={idx} style={{ margin: '0 0 0.75rem 0', lineHeight: '1.6', fontSize: '0.95rem', color: 'var(--text-main)', textAlign: 'left' }}>{parseInlineStyles(trimmed)}</p>);
+    }
+  });
+
+  flushList(lines.length);
+  flushTable(lines.length);
+
+  return elements;
 }
 
 export default function ScoreDashboard({ results, executiveSummary, text, profile }) {
@@ -80,8 +184,15 @@ export default function ScoreDashboard({ results, executiveSummary, text, profil
           body: JSON.stringify({
             contents: [{
               parts: [{
-                text: `Sen bir siber güvenlik ve otomotiv uyumluluk uzmanısın. 
-                Lütfen şu değerlendirilen kurum profili bilgilerini kullanarak detaylı ve özelleştirilmiş TISAX ve ISO/SAE 21434 uyumluluk önerileri üret:
+                text: `Sen üst düzey bir kurumsal tasarımcı ve siber güvenlik stratejistisin. Aşağıdaki teknik raporu, C-level yöneticiler için modern, şık ve güven veren bir Dijital Rapor Formatına dönüştürmeni istiyorum.
+
+                Tasarım Prensipleri:
+                - Stil: Minimalist, kurumsal, C-level seviyesinde net, çözüm odakli ve 'Tech-Forward'.
+                - Renk Paleti: Siber güvenliği temsil eden lacivert, güven veren gri tonları ve 'Zorunlu' maddeler için dikkat çekici bir bordo tonu kullan.
+                - Öğeler: Her maddeyi modern bir 'kart' yapısı şeklinde sun. Her maddenin başına konuyu özetleyen sembolik ikonlar (örn: 🛡️, ⚙️, 🏢, 🔑, 💻, 📊) ekle.
+                - Okunabilirlik: Karmaşık teknik paragrafları, madde imleri ve kısa, vurucu cümlelerle (bullet points) modernize et.
+
+                Kurum Bilgileri:
                 - Kurum / Şirket Adı: ${profile?.companyName || "Belirtilmedi"}
                 - Sektör: ${sektor}
                 - Şirket Ölçeği: ${sirketBuyuklugu}
@@ -90,9 +201,11 @@ export default function ScoreDashboard({ results, executiveSummary, text, profil
                 - Ülke / Konum: ${profile?.countryRegion || "Belirtilmedi"}
                 - Mevcut / Hedeflenen TISAX Seviyesi: ${tisaxDuzeyi}
                 - Risk İştahı: ${riskIstahi}
-                
-                Önerilerinde mutlaka bu kurum profili bilgilerine değin ve şirketin çalışan sayısına, sektörüne ve hedeflerine özel yorumlarda bulun.
-                Önerileri iki ana kategoriye ayır: "Zorunlu Öneriler (Yapılmalı)" ve "Tavsiye Edilen Öneriler (Yapılabilir)".`
+
+                Görev:
+                1. Raporun en başına, yukarıdaki verileri içeren büyük puntolu bir 'Yönetici Özeti' ve kritik metrikleri gösteren bir tablo (markdown table formatında) ekle.
+                2. Önerileri mutlaka ikiye ayır: "Zorunlu Öneriler (Yapılmalı)" ve "Tavsiye Edilen Öneriler (Yapılabilir)".
+                3. Raporun sonunda, önerileri aksiyon durumuna göre kategorize eden bir 'Önceliklendirme Matrisi' (markdown tablo formatında) oluştur.`
               }]
             }]
           })
@@ -299,33 +412,35 @@ export default function ScoreDashboard({ results, executiveSummary, text, profil
               {/* AI Expert Intro Card */}
               {parsed.intro && (
                 <div className="ai-expert-intro-card" style={{
-                  background: 'rgba(88, 166, 255, 0.03)',
-                  borderLeft: '4px solid var(--accent-blue)',
-                  padding: '1.2rem',
+                  background: 'rgba(27, 38, 59, 0.05)',
+                  borderLeft: '4px solid #415a77',
+                  padding: '1.5rem',
                   borderRadius: '0 8px 8px 0',
-                  marginBottom: '1.5rem',
-                  fontSize: '0.9rem',
+                  marginBottom: '2rem',
+                  fontSize: '0.95rem',
                   color: 'var(--text-main)',
                   lineHeight: '1.6',
-                  textAlign: 'left'
+                  textAlign: 'left',
+                  border: '1px solid rgba(65, 90, 119, 0.15)',
+                  borderLeftWidth: '4px'
                 }}>
-                  {parsed.intro.split('\n').map((l, i) => <p key={i} style={{ margin: '0 0 0.5rem 0' }}>{l.replace(/^[#*-\s]+/, '')}</p>)}
+                  {renderMarkdown(parsed.intro)}
                 </div>
               )}
 
               {hasCategorized ? (
                 <div className="ai-recommendations-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '1.5rem' }}>
                   {parsed.zorunlu.length > 0 && (
-                    <div className="ai-column must" style={{ background: 'rgba(248, 81, 73, 0.02)', border: '1px solid rgba(248, 81, 73, 0.15)', borderRadius: '12px', padding: '1.25rem' }}>
-                      <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#ff6b6b', margin: '0 0 1rem 0', fontSize: '1rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                        <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ff6b6b', boxShadow: '0 0 8px #ff6b6b' }}></span>
+                    <div className="ai-column must" style={{ background: 'rgba(155, 28, 28, 0.03)', border: '1px solid rgba(155, 28, 28, 0.25)', borderRadius: '12px', padding: '1.25rem' }}>
+                      <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#e05a5a', margin: '0 0 1rem 0', fontSize: '1rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#a31d1d', boxShadow: '0 0 8px #a31d1d' }}></span>
                         Zorunlu Öneriler (Must)
                       </h4>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                         {parsed.zorunlu.map((item, idx) => (
-                          <div key={idx} className="ai-card" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '0.8rem 1rem', textAlign: 'left' }}>
-                            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-main)', lineHeight: '1.5' }}>
-                              {item.replace(/^[#*-\s]+/, '')}
+                          <div key={idx} className="ai-card" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '8px', padding: '0.8rem 1rem', textAlign: 'left', display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                            <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-main)', lineHeight: '1.5' }}>
+                              {item}
                             </p>
                           </div>
                         ))}
@@ -334,16 +449,16 @@ export default function ScoreDashboard({ results, executiveSummary, text, profil
                   )}
 
                   {parsed.tavsiye.length > 0 && (
-                    <div className="ai-column should" style={{ background: 'rgba(59, 130, 246, 0.02)', border: '1px solid rgba(59, 130, 246, 0.15)', borderRadius: '12px', padding: '1.25rem' }}>
-                      <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-blue)', margin: '0 0 1rem 0', fontSize: '1rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                        <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent-blue)', boxShadow: '0 0 8px var(--accent-blue)' }}></span>
+                    <div className="ai-column should" style={{ background: 'rgba(27, 38, 59, 0.05)', border: '1px solid rgba(65, 90, 119, 0.25)', borderRadius: '12px', padding: '1.25rem' }}>
+                      <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#7eaef4', margin: '0 0 1rem 0', fontSize: '1rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#415a77', boxShadow: '0 0 8px #415a77' }}></span>
                         Tavsiye Öneriler (Should)
                       </h4>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                         {parsed.tavsiye.map((item, idx) => (
-                          <div key={idx} className="ai-card" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '0.8rem 1rem', textAlign: 'left' }}>
-                            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-main)', lineHeight: '1.5' }}>
-                              {item.replace(/^[#*-\s]+/, '')}
+                          <div key={idx} className="ai-card" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '8px', padding: '0.8rem 1rem', textAlign: 'left', display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                            <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-main)', lineHeight: '1.5' }}>
+                              {item}
                             </p>
                           </div>
                         ))}
@@ -354,34 +469,24 @@ export default function ScoreDashboard({ results, executiveSummary, text, profil
               ) : (
                 // Fallback rendering
                 <div className="ai-suggestions-body" style={{ padding: '1.2rem', textAlign: 'left', lineHeight: '1.6', background: 'rgba(255,255,255,0.01)', borderRadius: '8px', border: '1px solid var(--border-color)', marginBottom: '1.5rem' }}>
-                  {aiOneri.split('\n').map((line, idx) => {
-                    if (line.trim().startsWith('###')) {
-                      return <h6 key={idx} className="ai-heading-3">{line.replace('###', '').trim()}</h6>;
-                    }
-                    if (line.trim().startsWith('##')) {
-                      return <h5 key={idx} className="ai-heading-2">{line.replace('##', '').trim()}</h5>;
-                    }
-                    if (line.trim().startsWith('*') || line.trim().startsWith('-')) {
-                      return <li key={idx} className="ai-bullet">{line.replace(/^[*\-]\s*/, '').trim()}</li>;
-                    }
-                    return <p key={idx} className="ai-text-line" style={{ margin: '0 0 0.5rem 0' }}>{line}</p>;
-                  })}
+                  {renderMarkdown(aiOneri)}
                 </div>
               )}
 
-              {/* AI Expert Outro Card */}
+              {/* AI Expert Outro / Priority Matrix Card */}
               {parsed.outro && (
                 <div className="ai-expert-outro-card" style={{
                   background: 'rgba(255, 255, 255, 0.01)',
-                  padding: '1rem 1.2rem',
+                  padding: '1.5rem',
                   borderRadius: '8px',
-                  fontSize: '0.85rem',
-                  color: 'var(--text-muted)',
-                  lineHeight: '1.5',
+                  fontSize: '0.9rem',
+                  color: 'var(--text-main)',
+                  lineHeight: '1.6',
                   textAlign: 'left',
-                  border: '1px solid rgba(255, 255, 255, 0.04)'
+                  border: '1px solid rgba(255, 255, 255, 0.06)',
+                  marginTop: '1.5rem'
                 }}>
-                  {parsed.outro.split('\n').map((l, i) => <p key={i} style={{ margin: '0 0 0.4rem 0' }}>{l.replace(/^[#*-\s]+/, '')}</p>)}
+                  {renderMarkdown(parsed.outro)}
                 </div>
               )}
             </div>
