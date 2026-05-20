@@ -17,6 +17,8 @@ export default function OnboardingFlow({
 }) {
   const stage1Text = text.stage1.sections[stage1Step - 1];
 
+
+
   return (
     <div className="onboarding-content">
       <StageIndicator
@@ -35,7 +37,10 @@ export default function OnboardingFlow({
             <InputField label={text.stage1.fields.numberOfEmployees.label} required type="number" helper={text.stage1.fields.numberOfEmployees.helper} value={profile.numberOfEmployees} onChange={(v) => updateField("numberOfEmployees", v)} error={stage1Errors.numberOfEmployees} />
             <InputField label={text.stage1.fields.countryRegion.label} required helper={text.stage1.fields.countryRegion.helper} value={profile.countryRegion} onChange={(v) => updateField("countryRegion", v)} error={stage1Errors.countryRegion} />
             <InputField label={text.stage1.fields.officeLocations.label} required type="number" helper={text.stage1.fields.officeLocations.helper} value={profile.officeLocations} onChange={(v) => updateField("officeLocations", v)} error={stage1Errors.officeLocations} />
+            <SelectField label={text.stage1.fields.tisaxLevel.label} required helper={text.stage1.fields.tisaxLevel.helper} options={text.stage1.options.tisaxLevel} value={profile.tisaxLevel || "Bilinmiyor"} onChange={(v) => updateField("tisaxLevel", v)} error={stage1Errors.tisaxLevel} />
+            <SelectField label={text.stage1.fields.riskAppetite.label} required helper={text.stage1.fields.riskAppetite.helper} options={text.stage1.options.riskAppetite} value={profile.riskAppetite || "Orta"} onChange={(v) => updateField("riskAppetite", v)} error={stage1Errors.riskAppetite} />
           </div>
+
         </FormSection>
       )}
       {stage1Step === 2 && (

@@ -45,11 +45,133 @@ const MOCK_REPORTS = [
 ];
 
 export default function ReportsView() {
+  const [apiKey, setApiKey] = React.useState(() => localStorage.getItem("tisax_gemini_api_key") || "");
+  const [selectedModel, setSelectedModel] = React.useState(() => localStorage.getItem("tisax_gemini_model") || "gemini-3.5-flash");
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [showKey, setShowKey] = React.useState(false);
+  const [testing, setTesting] = React.useState(false);
+  const [testResult, setTestResult] = React.useState(null);
+
+  const testConnection = async () => {
+    if (!apiKey) return;
+    setTesting(true);
+    setTestResult(null);
+    try {
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: "Hello" }] }]
+          })
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      setTestResult({ success: true, message: "Bağlantı başarılı! Yapay Zeka modeli aktif." });
+    } catch (err) {
+      setTestResult({ success: false, message: "Bağlantı başarısız. Lütfen API anahtarını kontrol edin." });
+    } finally {
+      setTesting(false);
+    }
+  };
+
+  const saveSettings = () => {
+    localStorage.setItem("tisax_gemini_api_key", apiKey);
+    localStorage.setItem("tisax_gemini_model", selectedModel);
+    setTestResult({ success: true, message: "Yapılandırma kaydedildi!" });
+  };
+
   return (
     <div className="reports-view-container">
       <div className="view-header">
         <h2 className="view-title">Raporlama ve Analiz</h2>
         <p>Kurumunuzun siber olgunluk gelişimini tarihsel olarak takip edin.</p>
+      </div>
+
+      {/* AI API Control Panel */}
+      <div className="ai-api-panel">
+        <div className="ai-api-header">
+          <div className="ai-api-title-group">
+            <div className="ai-api-icon-glow">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="sparkle-icon">
+                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+              </svg>
+            </div>
+            <div>
+              <h3>Yapay Zeka API Durumu</h3>
+              <p className="ai-api-subtitle">Otomatik uyumluluk önerileri için Gemini entegrasyonu</p>
+            </div>
+          </div>
+          <div className="ai-api-status-wrapper">
+            <span className={`status-badge ${apiKey ? 'active' : 'inactive'}`}>
+              <span className="pulse-dot"></span>
+              {apiKey ? 'Aktif' : 'Kurulum Gerekli'}
+            </span>
+            <button className="settings-toggle-btn" onClick={() => setIsOpen(!isOpen)} title="Yapılandır">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={isOpen ? 'rotate-180' : ''}>
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        {isOpen && (
+          <div className="ai-api-content">
+            <div className="ai-api-grid">
+              <div className="ai-api-input-group">
+                <label htmlFor="api-key-input">Gemini API Anahtarı (API Key)</label>
+                <div className="input-with-button">
+                  <input
+                    id="api-key-input"
+                    type={showKey ? 'text' : 'password'}
+                    placeholder="AIzaSy..."
+                    value={apiKey}
+                    onChange={(e) => setApiKey(e.target.value)}
+                  />
+                  <button type="button" className="icon-btn-toggle" onClick={() => setShowKey(!showKey)}>
+                    {showKey ? 'Gizle' : 'Göster'}
+                  </button>
+                </div>
+              </div>
+
+              <div className="ai-api-model-group">
+                <label htmlFor="model-select">Yapay Zeka Modeli</label>
+                <select
+                  id="model-select"
+                  value={selectedModel}
+                  onChange={(e) => setSelectedModel(e.target.value)}
+                >
+                  <option value="gemini-3.5-flash">Gemini 3.5 Flash (Önerilen)</option>
+                  <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+                  <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="ai-api-actions">
+              <button 
+                className="secondary-btn" 
+                onClick={testConnection} 
+                disabled={!apiKey || testing}
+              >
+                {testing ? 'Test Ediliyor...' : 'Bağlantıyı Test Et'}
+              </button>
+              <button className="primary-btn-save" onClick={saveSettings}>
+                Yapılandırmayı Kaydet
+              </button>
+            </div>
+
+            {testResult && (
+              <div className={`test-feedback ${testResult.success ? 'success' : 'error'}`}>
+                <span className="feedback-icon">{testResult.success ? '✓' : '✗'}</span>
+                <span>{testResult.message}</span>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="reports-grid">
@@ -83,7 +205,12 @@ export default function ReportsView() {
               <path d="M12 8h.01"/>
             </svg>
           </div>
-          <h3>Yapay Zeka Uyum Analizi</h3>
+          <div className="ai-title-badge-wrap">
+            <h3>Yapay Zeka Uyum Analizi</h3>
+            <span className={`ai-mode-badge ${apiKey ? 'active' : 'demo'}`}>
+              {apiKey ? 'Canlı API Aktif' : 'Demo Modu'}
+            </span>
+          </div>
         </div>
 
         <div className="ai-recommendations-grid">

@@ -76,3 +76,327 @@
   color: #fff;
   margin-bottom: 1rem;
 }
+
+/* AI API Box Styles */
+.ai-api-panel {
+  background: rgba(28, 33, 40, 0.65);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+.ai-api-panel:hover {
+  border-color: rgba(88, 166, 255, 0.35);
+}
+
+.ai-api-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ai-api-title-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ai-api-icon-glow {
+  background: rgba(88, 166, 255, 0.1);
+  color: var(--accent-blue);
+  padding: 0.6rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(88, 166, 255, 0.15);
+}
+
+.sparkle-icon {
+  animation: spin-glow 8s linear infinite;
+}
+
+.ai-api-title-group h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+  color: #fff;
+}
+
+.ai-api-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.ai-api-status-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.status-badge.active {
+  background: rgba(63, 185, 80, 0.1);
+  color: var(--accent-green);
+  border: 1px solid rgba(63, 185, 80, 0.2);
+}
+
+.status-badge.inactive {
+  background: rgba(210, 153, 34, 0.1);
+  color: var(--accent-yellow);
+  border: 1px solid rgba(210, 153, 34, 0.2);
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-badge.active .pulse-dot {
+  background: var(--accent-green);
+  box-shadow: 0 0 8px var(--accent-green);
+  animation: badge-pulse 1.5s infinite alternate;
+}
+
+.status-badge.inactive .pulse-dot {
+  background: var(--accent-yellow);
+  box-shadow: 0 0 8px var(--accent-yellow);
+}
+
+.settings-toggle-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.settings-toggle-btn:hover {
+  border-color: var(--accent-blue);
+  color: #fff;
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
+  transition: transform 0.3s ease;
+}
+
+.ai-api-content {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+  animation: slideDown 0.3s ease-out;
+}
+
+.ai-api-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+@media (max-width: 768px) {
+  .ai-api-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ai-api-input-group, .ai-api-model-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ai-api-input-group label, .ai-api-model-group label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+.input-with-button {
+  display: flex;
+  position: relative;
+  width: 100%;
+}
+
+.input-with-button input {
+  width: 100%;
+  padding: 0.65rem 4.5rem 0.65rem 0.8rem;
+  border-radius: 6px;
+  background: var(--primary-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  outline: none;
+  font-size: 0.9rem;
+  transition: border-color 0.2s ease;
+}
+
+.input-with-button input:focus {
+  border-color: var(--accent-blue);
+}
+
+.icon-btn-toggle {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.icon-btn-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.ai-api-model-group select {
+  padding: 0.65rem 0.8rem;
+  border-radius: 6px;
+  background: var(--primary-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  outline: none;
+  font-size: 0.9rem;
+  height: 38px;
+  cursor: pointer;
+}
+
+.ai-api-model-group select:focus {
+  border-color: var(--accent-blue);
+}
+
+.ai-api-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.primary-btn-save {
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  background: linear-gradient(135deg, var(--accent-blue), #1d4ed8);
+  border: none;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.primary-btn-save:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3);
+}
+
+.secondary-btn {
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.secondary-btn:hover:not(:disabled) {
+  border-color: var(--text-main);
+}
+
+.secondary-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.test-feedback {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  animation: slideDown 0.2s ease-out;
+}
+
+.test-feedback.success {
+  background: rgba(63, 185, 80, 0.1);
+  border: 1px solid rgba(63, 185, 80, 0.3);
+  color: var(--accent-green);
+}
+
+.test-feedback.error {
+  background: rgba(248, 81, 73, 0.1);
+  border: 1px solid rgba(248, 81, 73, 0.3);
+  color: var(--accent-red);
+}
+
+.feedback-icon {
+  font-weight: 700;
+}
+
+.ai-title-badge-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.ai-mode-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+}
+
+.ai-mode-badge.active {
+  background: rgba(63, 185, 80, 0.15);
+  color: var(--accent-green);
+  border: 1px solid rgba(63, 185, 80, 0.3);
+}
+
+.ai-mode-badge.demo {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+}
+
+@keyframes spin-glow {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes badge-pulse {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  100% { transform: scale(1.1); opacity: 1; }
+}

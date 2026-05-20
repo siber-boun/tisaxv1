@@ -120,6 +120,14 @@ export const translations = {
           label: "Main Cybersecurity Concerns",
           helper: "Example: ransomware risk, IAM gaps, supplier risk, incident readiness.",
         },
+        riskAppetite: {
+          label: "Risk Appetite",
+          helper: "The level of risk the company is willing to accept.",
+        },
+        tisaxLevel: {
+          label: "Current TISAX Level / Goal",
+          helper: "The targeted or achieved TISAX Level.",
+        },
       },
       options: {
         companySize: ["Micro (1-10)", "Small (11-50)", "Medium (51-250)", "Large (251-1000)", "Enterprise (1000+)"],
@@ -128,6 +136,8 @@ export const translations = {
         yesNoPartial: ["Yes", "No", "Partially"],
         certification: ["ISO 27001 Certified", "ISO 27001 In Progress", "TISAX Label Achieved", "SOC 2", "None"],
         maturity: ["Initial", "Developing", "Defined", "Managed", "Optimized"],
+        riskAppetite: ["Low", "Medium", "High"],
+        tisaxLevel: ["Level 1", "Level 2 (Info Security)", "Level 3 (High Security)", "Unknown"],
       },
     },
     stage2: {
@@ -350,6 +360,8 @@ export const translations = {
         regulatoryRequirements: { label: "Regulasyon Gereksinimleri", helper: "Ornek: GDPR, NIS2, otomotiv sektoru yukumlulukleri." },
         maturityLevel: { label: "Mevcut Siber Guvenlik Olgunluk Seviyesi", helper: "En yakin olgunluk seviyesini secin." },
         mainConcerns: { label: "Ana Siber Guvenlik Endiseleri", helper: "Ornek: ransomware riski, IAM aciklari, tedarikci riski, olay hazirligi." },
+        riskAppetite: { label: "Risk Istahi", helper: "Kurumun kabul etmeye hazir oldugu siber guvenlik risk seviyesi." },
+        tisaxLevel: { label: "Hedeflenen / Mevcut TISAX Seviyesi", helper: "Ulasilmak istenen veya sahip olunan TISAX Seviyesi." },
       },
       options: {
         companySize: ["Mikro (1-10)", "Kucuk (11-50)", "Orta (51-250)", "Buyuk (251-1000)", "Kurumsal (1000+)"] ,
@@ -358,6 +370,8 @@ export const translations = {
         yesNoPartial: ["Evet", "Hayir", "Kismen"],
         certification: ["ISO 27001 Sertifikali", "ISO 27001 Surecinde", "TISAX Etiketi Alindi", "SOC 2", "Yok"],
         maturity: ["Baslangic", "Gelisen", "Tanimli", "Yonetilen", "Optimize"],
+        riskAppetite: ["Dusuk", "Orta", "Yuksek"],
+        tisaxLevel: ["Seviye 1", "Seviye 2 (Bilgi Guvenligi)", "Seviye 3 (Yuksek Guvenlik)", "Bilinmiyor"],
       },
     },
     stage2: {

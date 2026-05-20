@@ -31,11 +31,13 @@ export const emptyProfile = {
   criticalAssets: "",
   maturityLevel: "",
   mainConcerns: "",
+  riskAppetite: "Orta",
+  tisaxLevel: "Bilinmiyor",
 };
 
 export const stage1Config = [
   {
-    requiredFields: ["companyName", "companySize", "industrySector", "numberOfEmployees", "countryRegion", "officeLocations"],
+    requiredFields: ["companyName", "companySize", "industrySector", "numberOfEmployees", "countryRegion", "officeLocations", "riskAppetite", "tisaxLevel"],
   },
   {
     requiredFields: ["itEnvironment", "thirdPartyProviders", "criticalAssets"],
