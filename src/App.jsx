@@ -114,7 +114,7 @@ export default function App() {
   }, [theme]);
 
   const [assets, setAssets] = useState(() => storage.readJson(storage.ASSETS_KEY, initialAssets));
-  const [threats, setThreats] = useState(() => storage.readJson(storage.THREATS_KEY, []));
+  const [threats, setThreats] = useState(() => storage.readJson(storage.THREATS_KEY, {}));
   const [vulnerabilities, setVulnerabilities] = useState(() => storage.readJson(storage.VULNS_KEY, initialVulnerabilities));
 
   useEffect(() => { storage.writeJson(storage.ASSETS_KEY, assets); }, [assets]);
