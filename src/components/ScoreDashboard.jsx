@@ -87,11 +87,11 @@ function parseInlineStyles(txt, stripBullet = false) {
     const token = match[0];
     const key = match.index;
     if (token.startsWith('**')) {
-      result.push(<strong key={key} style={{ fontWeight: 700, color: '#fff' }}>{token.slice(2, -2)}</strong>);
+      result.push(<strong key={key} style={{ fontWeight: 700, color: 'var(--text-main)' }}>{token.slice(2, -2)}</strong>);
     } else if (token.startsWith('`')) {
-      result.push(<code key={key} style={{ background: 'rgba(255,255,255,0.08)', padding: '2px 5px', borderRadius: '4px', fontFamily: 'monospace', fontSize: '0.85em', color: '#f4b8b8' }}>{token.slice(1, -1)}</code>);
+      result.push(<code key={key} style={{ background: 'var(--border-color)', padding: '2px 5px', borderRadius: '4px', fontFamily: 'monospace', fontSize: '0.85em', color: 'var(--accent-red)' }}>{token.slice(1, -1)}</code>);
     } else {
-      result.push(<em key={key} style={{ fontStyle: 'italic', color: 'rgba(255,255,255,0.85)' }}>{token.slice(1, -1)}</em>);
+      result.push(<em key={key} style={{ fontStyle: 'italic', color: 'var(--text-muted)' }}>{token.slice(1, -1)}</em>);
     }
     lastIndex = TOKEN.lastIndex;
   }
@@ -181,11 +181,11 @@ function renderMarkdown(text) {
     }
 
     if (trimmed.startsWith('###')) {
-      elements.push(<h5 key={idx} style={{ fontSize: '1rem', color: '#fff', fontWeight: 600, margin: '1.25rem 0 0.5rem 0', textAlign: 'left' }}>{parseInlineStyles(trimmed.replace('###', '').trim())}</h5>);
+      elements.push(<h5 key={idx} style={{ fontSize: '1rem', color: 'var(--text-main)', fontWeight: 600, margin: '1.25rem 0 0.5rem 0', textAlign: 'left' }}>{parseInlineStyles(trimmed.replace(/^###\s*/, '').trim())}</h5>);
     } else if (trimmed.startsWith('##')) {
-      elements.push(<h4 key={idx} style={{ fontSize: '1.15rem', color: '#fff', fontWeight: 600, margin: '1.5rem 0 0.75rem 0', textAlign: 'left', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '0.4rem' }}>{parseInlineStyles(trimmed.replace('##', '').trim())}</h4>);
+      elements.push(<h4 key={idx} style={{ fontSize: '1.15rem', color: 'var(--text-main)', fontWeight: 600, margin: '1.5rem 0 0.75rem 0', textAlign: 'left', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.4rem' }}>{parseInlineStyles(trimmed.replace(/^##\s*/, '').trim())}</h4>);
     } else if (trimmed.startsWith('#')) {
-      elements.push(<h3 key={idx} style={{ fontSize: '1.3rem', color: '#fff', fontWeight: 600, margin: '1.75rem 0 1rem 0', textAlign: 'left' }}>{parseInlineStyles(trimmed.replace('#', '').trim())}</h3>);
+      elements.push(<h3 key={idx} style={{ fontSize: '1.3rem', color: 'var(--text-main)', fontWeight: 600, margin: '1.75rem 0 1rem 0', textAlign: 'left' }}>{parseInlineStyles(trimmed.replace(/^#\s*/, '').trim())}</h3>);
     } else if (trimmed) {
       elements.push(<p key={idx} style={{ margin: '0 0 0.75rem 0', lineHeight: '1.6', fontSize: '0.95rem', color: 'var(--text-main)', textAlign: 'left' }}>{parseInlineStyles(trimmed)}</p>);
     }
@@ -299,7 +299,7 @@ ZORUNLU FORMAT KURALLARI:
             </svg>
           </div>
           <div>
-            <h3 style={{ margin: 0, fontSize: '1.15rem', color: '#fff', fontWeight: 600 }}>Kurum Profili & Değerlendirme Kapsamı</h3>
+            <h3 style={{ margin: 0, fontSize: '1.15rem', color: 'var(--text-main)', fontWeight: 600 }}>Kurum Profili & Değerlendirme Kapsamı</h3>
             <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)' }}>Değerlendirilen kuruluşa ait kurumsal parametreler</p>
           </div>
         </div>
@@ -307,19 +307,19 @@ ZORUNLU FORMAT KURALLARI:
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.25rem' }}>
           <div className="profile-stat-item">
             <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Kurum Adı</div>
-            <div style={{ fontSize: '1rem', fontWeight: 600, color: '#fff', marginTop: '0.2rem' }}>{profile?.companyName || "Belirtilmedi"}</div>
+            <div style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-main)', marginTop: '0.2rem' }}>{profile?.companyName || "Belirtilmedi"}</div>
           </div>
           <div className="profile-stat-item">
             <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Sektör</div>
-            <div style={{ fontSize: '1rem', fontWeight: 600, color: '#fff', marginTop: '0.2rem' }}>{profile?.industrySector || "Belirtilmedi"}</div>
+            <div style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-main)', marginTop: '0.2rem' }}>{profile?.industrySector || "Belirtilmedi"}</div>
           </div>
           <div className="profile-stat-item">
             <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Çalışan Sayısı</div>
-            <div style={{ fontSize: '1rem', fontWeight: 600, color: '#fff', marginTop: '0.2rem' }}>{profile?.numberOfEmployees ? Number(profile.numberOfEmployees).toLocaleString('tr-TR') : "Belirtilmedi"}</div>
+            <div style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-main)', marginTop: '0.2rem' }}>{profile?.numberOfEmployees ? Number(profile.numberOfEmployees).toLocaleString('tr-TR') : "Belirtilmedi"}</div>
           </div>
           <div className="profile-stat-item">
             <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Ülke / Konum</div>
-            <div style={{ fontSize: '1rem', fontWeight: 600, color: '#fff', marginTop: '0.2rem' }}>{profile?.countryRegion || "Belirtilmedi"}</div>
+            <div style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-main)', marginTop: '0.2rem' }}>{profile?.countryRegion || "Belirtilmedi"}</div>
           </div>
           <div className="profile-stat-item">
             <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Hedef TISAX Seviyesi</div>
@@ -516,8 +516,8 @@ ZORUNLU FORMAT KURALLARI:
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                           <span style={{
                             fontSize: '1.3rem',
-                            background: 'rgba(155, 28, 28, 0.2)',
-                            color: '#ff6b6b',
+                            background: 'rgba(155, 28, 28, 0.15)',
+                            color: '#c0392b',
                             border: '1px solid rgba(155, 28, 28, 0.3)',
                             width: '40px',
                             height: '40px',
@@ -526,16 +526,16 @@ ZORUNLU FORMAT KURALLARI:
                             alignItems: 'center',
                             justifyContent: 'center'
                           }}>🛡️</span>
-                          <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: '#fca5a5', letterSpacing: '0.02em', textAlign: 'left' }}>Zorunlu Uyumluluk</h3>
+                          <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: 'var(--accent-red)', letterSpacing: '0.02em', textAlign: 'left' }}>Zorunlu Uyumluluk</h3>
                         </div>
-                        <span style={{ fontSize: '0.75rem', fontWeight: 600, padding: '4px 8px', borderRadius: '6px', textTransform: 'uppercase', letterSpacing: '0.05em', background: 'rgba(155, 28, 28, 0.3)', color: '#fca5a5', border: '1px solid rgba(155, 28, 28, 0.5)' }}>Must</span>
+                        <span style={{ fontSize: '0.75rem', fontWeight: 600, padding: '4px 8px', borderRadius: '6px', textTransform: 'uppercase', letterSpacing: '0.05em', background: 'rgba(155, 28, 28, 0.15)', color: 'var(--accent-red)', border: '1px solid rgba(155, 28, 28, 0.4)' }}>Must</span>
                       </header>
                       
                       <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '0.75rem', flexGrow: 1 }}>
                         {parsed.zorunlu.map((item, idx) => (
                           <div key={idx} style={{ 
-                            background: 'rgba(255,255,255,0.02)', 
-                            border: '1px solid rgba(255,255,255,0.06)', 
+                            background: 'var(--secondary-bg)', 
+                            border: '1px solid var(--border-color)', 
                             borderRadius: '8px', 
                             padding: '1rem', 
                             textAlign: 'left', 
@@ -546,12 +546,10 @@ ZORUNLU FORMAT KURALLARI:
                             cursor: 'default'
                           }}
                           onMouseEnter={(e) => {
-                            e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
-                            e.currentTarget.style.borderColor = 'rgba(155, 28, 28, 0.2)';
+                            e.currentTarget.style.borderColor = 'rgba(155, 28, 28, 0.4)';
                           }}
                           onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'rgba(255,255,255,0.02)';
-                            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)';
+                            e.currentTarget.style.borderColor = 'var(--border-color)';
                           }}>
                             {parseInlineStyles(item, true)}
                           </div>
@@ -562,8 +560,8 @@ ZORUNLU FORMAT KURALLARI:
 
                   {parsed.tavsiye.length > 0 && (
                     <div className="insight-card should" style={{
-                      background: 'rgba(255, 255, 255, 0.03)',
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      background: 'var(--card-bg)',
+                      border: '1px solid var(--border-color)',
                       borderRadius: '16px',
                       overflow: 'hidden',
                       display: 'flex',
@@ -579,15 +577,15 @@ ZORUNLU FORMAT KURALLARI:
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-                        background: 'linear-gradient(135deg, rgba(30, 58, 138, 0.2) 0%, rgba(0, 0, 0, 0) 100%)'
+                        borderBottom: '1px solid var(--border-color)',
+                        background: 'linear-gradient(135deg, rgba(30, 58, 138, 0.1) 0%, transparent 100%)'
                       }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                           <span style={{
                             fontSize: '1.3rem',
-                            background: 'rgba(30, 58, 138, 0.3)',
-                            color: '#60a5fa',
-                            border: '1px solid rgba(30, 58, 138, 0.4)',
+                            background: 'rgba(30, 58, 138, 0.15)',
+                            color: 'var(--accent-blue)',
+                            border: '1px solid rgba(30, 58, 138, 0.3)',
                             width: '40px',
                             height: '40px',
                             borderRadius: '10px',
@@ -595,16 +593,16 @@ ZORUNLU FORMAT KURALLARI:
                             alignItems: 'center',
                             justifyContent: 'center'
                           }}>💡</span>
-                          <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: '#93c5fd', letterSpacing: '0.02em', textAlign: 'left' }}>Stratejik Tavsiyeler</h3>
+                          <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: 'var(--accent-blue)', letterSpacing: '0.02em', textAlign: 'left' }}>Stratejik Tavsiyeler</h3>
                         </div>
-                        <span style={{ fontSize: '0.75rem', fontWeight: 600, padding: '4px 8px', borderRadius: '6px', textTransform: 'uppercase', letterSpacing: '0.05em', background: 'rgba(30, 58, 138, 0.4)', color: '#93c5fd', border: '1px solid rgba(30, 58, 138, 0.6)' }}>Should</span>
+                        <span style={{ fontSize: '0.75rem', fontWeight: 600, padding: '4px 8px', borderRadius: '6px', textTransform: 'uppercase', letterSpacing: '0.05em', background: 'rgba(30, 58, 138, 0.15)', color: 'var(--accent-blue)', border: '1px solid rgba(30, 58, 138, 0.4)' }}>Should</span>
                       </header>
                       
                       <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '0.75rem', flexGrow: 1 }}>
                         {parsed.tavsiye.map((item, idx) => (
                           <div key={idx} style={{ 
-                            background: 'rgba(255,255,255,0.02)', 
-                            border: '1px solid rgba(255,255,255,0.06)', 
+                            background: 'var(--secondary-bg)', 
+                            border: '1px solid var(--border-color)', 
                             borderRadius: '8px', 
                             padding: '1rem', 
                             textAlign: 'left', 
@@ -615,12 +613,10 @@ ZORUNLU FORMAT KURALLARI:
                             cursor: 'default'
                           }}
                           onMouseEnter={(e) => {
-                            e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
-                            e.currentTarget.style.borderColor = 'rgba(30, 58, 138, 0.2)';
+                            e.currentTarget.style.borderColor = 'rgba(30, 58, 138, 0.4)';
                           }}
                           onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'rgba(255,255,255,0.02)';
-                            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)';
+                            e.currentTarget.style.borderColor = 'var(--border-color)';
                           }}>
                             {parseInlineStyles(item, true)}
                           </div>
