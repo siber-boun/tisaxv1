@@ -93,22 +93,23 @@ function renderMarkdown(text) {
   const flushTable = (key) => {
     if (tableRows.length > 0) {
       const headers = tableRows[0];
-      const rows = tableRows.slice(1).filter(row => !row.every(c => c.trim().match(/^-+$/)));
+      // filter alignment rows: | :--- | --- | ---: | etc.
+      const rows = tableRows.slice(1).filter(row => !row.every(c => c.trim().match(/^:?-+:?$/)));
       elements.push(
-        <div key={`table-wrapper-${key}`} style={{ overflowX: 'auto', margin: '1rem 0', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.08)' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem', color: 'var(--text-main)' }}>
+        <div key={`table-wrapper-${key}`} style={{ overflowX: 'auto', margin: '1rem 0', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem', color: 'var(--text-main)' }}>
             <thead>
-              <tr style={{ background: 'rgba(255,255,255,0.04)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+              <tr style={{ background: 'var(--secondary-bg)', borderBottom: '2px solid var(--border-color)' }}>
                 {headers.map((h, i) => (
-                  <th key={i} style={{ padding: '0.6rem 0.8rem', textAlign: 'left', fontWeight: 600, borderRight: '1px solid rgba(255,255,255,0.04)' }}>{parseInlineStyles(h.trim())}</th>
+                  <th key={i} style={{ padding: '0.75rem 1rem', textAlign: 'left', fontWeight: 700, fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-muted)', borderRight: '1px solid var(--border-color)' }}>{parseInlineStyles(h.trim())}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {rows.map((row, rIdx) => (
-                <tr key={rIdx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', background: rIdx % 2 === 0 ? 'rgba(255,255,255,0.01)' : 'transparent' }}>
+                <tr key={rIdx} style={{ borderBottom: '1px solid var(--border-color)', background: rIdx % 2 === 0 ? 'var(--card-bg)' : 'var(--secondary-bg)', transition: 'background 0.15s' }}>
                   {row.map((cell, cIdx) => (
-                    <td key={cIdx} style={{ padding: '0.6rem 0.8rem', borderRight: '1px solid rgba(255,255,255,0.04)' }}>{parseInlineStyles(cell.trim())}</td>
+                    <td key={cIdx} style={{ padding: '0.7rem 1rem', borderRight: '1px solid var(--border-color)', verticalAlign: 'middle' }}>{parseInlineStyles(cell.trim())}</td>
                   ))}
                 </tr>
               ))}
@@ -459,17 +460,16 @@ Alan açıklamaları:
               {/* AI Expert Intro Card */}
               {parsed.intro && (
                 <div className="ai-expert-intro-card" style={{
-                  background: 'rgba(27, 38, 59, 0.05)',
-                  borderLeft: '4px solid #415a77',
-                  padding: '1.5rem',
-                  borderRadius: '0 8px 8px 0',
+                  background: 'var(--card-bg)',
+                  border: '1px solid var(--border-color)',
+                  borderTop: '3px solid var(--accent-blue)',
+                  borderRadius: '12px',
+                  padding: '1.75rem 2rem',
                   marginBottom: '2rem',
-                  fontSize: '0.95rem',
                   color: 'var(--text-main)',
-                  lineHeight: '1.6',
+                  lineHeight: '1.7',
                   textAlign: 'left',
-                  border: '1px solid rgba(65, 90, 119, 0.15)',
-                  borderLeftWidth: '4px'
+                  boxShadow: 'var(--shadow-sm)',
                 }}>
                   {renderMarkdown(parsed.intro)}
                 </div>
@@ -621,15 +621,17 @@ Alan açıklamaları:
               {/* AI Expert Outro / Priority Matrix Card */}
               {parsed.outro && (
                 <div className="ai-expert-outro-card" style={{
-                  background: 'rgba(255, 255, 255, 0.01)',
-                  padding: '1.5rem',
-                  borderRadius: '8px',
+                  background: 'var(--card-bg)',
+                  border: '1px solid var(--border-color)',
+                  borderTop: '3px solid var(--accent-yellow)',
+                  borderRadius: '12px',
+                  padding: '1.75rem 2rem',
                   fontSize: '0.9rem',
                   color: 'var(--text-main)',
                   lineHeight: '1.6',
                   textAlign: 'left',
-                  border: '1px solid rgba(255, 255, 255, 0.06)',
-                  marginTop: '1.5rem'
+                  marginTop: '1.5rem',
+                  boxShadow: 'var(--shadow-sm)',
                 }}>
                   {renderMarkdown(parsed.outro)}
                 </div>
