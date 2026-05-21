@@ -61,30 +61,47 @@ function parseAiOneri(text) {
   };
 }
 
+// Render inline markdown: **bold**, *italic*, `code`
+// Priority: bold (**) MUST be matched before italic (*)
 function parseInlineStyles(txt, stripBullet = false) {
   if (!txt) return null;
-  
+
   let cleanTxt = txt.trim();
   if (stripBullet) {
-    cleanTxt = cleanTxt.replace(/^[\*\-\+]\s+/, "");
+    // Remove leading bullet: "* ", "- ", "+ "
+    cleanTxt = cleanTxt.replace(/^[-*+]\s+/, '');
   }
 
-  // Tokenize bold (**), inline code (`), and italic (*)
-  const regex = /(\*\*[^*]+\*\*|`[^`]+`|\*[^*]+\*)/g;
-  const parts = cleanTxt.split(regex);
-  
-  return parts.map((part, i) => {
-    if (part.startsWith('**') && part.endsWith('**')) {
-      return <strong key={i} style={{ fontWeight: 700, color: '#fff' }}>{part.slice(2, -2)}</strong>;
+  // Split by bold first (**...**), then code (`...`), then italic (*...*)
+  // Using alternation with bold before italic to avoid greedy mismatch
+  const TOKEN = /(\*\*[^*]+?\*\*|`[^`]+?`|\*(?!\*)[^*]+?\*)/g;
+  const result = [];
+  let lastIndex = 0;
+  let match;
+
+  while ((match = TOKEN.exec(cleanTxt)) !== null) {
+    // Push plain text before this match
+    if (match.index > lastIndex) {
+      result.push(cleanTxt.slice(lastIndex, match.index));
     }
-    if (part.startsWith('`') && part.endsWith('`')) {
-      return <code key={i} style={{ background: 'rgba(255,255,255,0.08)', padding: '2px 6px', borderRadius: '4px', fontFamily: 'monospace', fontSize: '0.85em', color: '#e0a0a0' }}>{part.slice(1, -1)}</code>;
+    const token = match[0];
+    const key = match.index;
+    if (token.startsWith('**')) {
+      result.push(<strong key={key} style={{ fontWeight: 700, color: '#fff' }}>{token.slice(2, -2)}</strong>);
+    } else if (token.startsWith('`')) {
+      result.push(<code key={key} style={{ background: 'rgba(255,255,255,0.08)', padding: '2px 5px', borderRadius: '4px', fontFamily: 'monospace', fontSize: '0.85em', color: '#f4b8b8' }}>{token.slice(1, -1)}</code>);
+    } else {
+      result.push(<em key={key} style={{ fontStyle: 'italic', color: 'rgba(255,255,255,0.85)' }}>{token.slice(1, -1)}</em>);
     }
-    if (part.startsWith('*') && part.endsWith('*')) {
-      return <em key={i} style={{ fontStyle: 'italic', color: 'rgba(255,255,255,0.9)' }}>{part.slice(1, -1)}</em>;
-    }
-    return part;
-  });
+    lastIndex = TOKEN.lastIndex;
+  }
+
+  // Push remaining plain text
+  if (lastIndex < cleanTxt.length) {
+    result.push(cleanTxt.slice(lastIndex));
+  }
+
+  return result.length > 0 ? result : cleanTxt;
 }
 
 function renderMarkdown(text) {
@@ -121,7 +138,7 @@ function renderMarkdown(text) {
             <thead>
               <tr style={{ background: 'rgba(255,255,255,0.04)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
                 {headers.map((h, i) => (
-                  <th key={i} style={{ padding: '0.6rem 0.8rem', textAlign: 'left', fontWeight: 600, borderRight: '1px solid rgba(255,255,255,0.04)' }}>{h.trim()}</th>
+                  <th key={i} style={{ padding: '0.6rem 0.8rem', textAlign: 'left', fontWeight: 600, borderRight: '1px solid rgba(255,255,255,0.04)' }}>{parseInlineStyles(h.trim())}</th>
                 ))}
               </tr>
             </thead>
@@ -129,7 +146,7 @@ function renderMarkdown(text) {
               {rows.map((row, rIdx) => (
                 <tr key={rIdx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', background: rIdx % 2 === 0 ? 'rgba(255,255,255,0.01)' : 'transparent' }}>
                   {row.map((cell, cIdx) => (
-                    <td key={cIdx} style={{ padding: '0.6rem 0.8rem', borderRight: '1px solid rgba(255,255,255,0.04)' }}>{cell.trim()}</td>
+                    <td key={cIdx} style={{ padding: '0.6rem 0.8rem', borderRight: '1px solid rgba(255,255,255,0.04)' }}>{parseInlineStyles(cell.trim())}</td>
                   ))}
                 </tr>
               ))}
@@ -205,28 +222,29 @@ export default function ScoreDashboard({ results, executiveSummary, text, profil
           body: JSON.stringify({
             contents: [{
               parts: [{
-                text: `Sen üst düzey bir kurumsal tasarımcı ve siber güvenlik stratejistisin. Aşağıdaki teknik raporu, C-level yöneticiler için modern, şık ve güven veren bir Dijital Rapor Formatına dönüştürmeni istiyorum.
+                text: `Sen üst düzey bir siber güvenlik stratejisti ve TISAX uzmanısın. Aşağıdaki kurum profiline göre kesinlikle aşağıdaki ZORUNLU YAPI formatında yanıt ver:
 
-                Tasarım Prensipleri:
-                - Stil: Minimalist, kurumsal, C-level seviyesinde net, çözüm odakli ve 'Tech-Forward'.
-                - Renk Paleti: Siber güvenliği temsil eden lacivert, güven veren gri tonları ve 'Zorunlu' maddeler için dikkat çekici bir bordo tonu kullan.
-                - Öğeler: Her maddeyi modern bir 'kart' yapısı şeklinde sun. Her maddenin başına konuyu özetleyen sembolik ikonlar (örn: 🛡️, ⚙️, 🏢, 🔑, 💻, 📊) ekle.
-                - Okunabilirlik: Karmaşık teknik paragrafları, madde imleri ve kısa, vurucu cümlelerle (bullet points) modernize et.
+Kurum Bilgileri:
+- Kurum Adı: ${profile?.companyName || "Belirtilmedi"}
+- Sektör: ${sektor}
+- Ölçek: ${sirketBuyuklugu}
+- Çalışan Sayısı: ${profile?.numberOfEmployees || "Belirtilmedi"}
+- Ofis Sayısı: ${profile?.officeLocations || "Belirtilmedi"}
+- Ülke: ${profile?.countryRegion || "Belirtilmedi"}
+- TISAX Seviyesi: ${tisaxDuzeyi}
+- Risk İştahı: ${riskIstahi}
 
-                Kurum Bilgileri:
-                - Kurum / Şirket Adı: ${profile?.companyName || "Belirtilmedi"}
-                - Sektör: ${sektor}
-                - Şirket Ölçeği: ${sirketBuyuklugu}
-                - Çalışan Sayısı: ${profile?.numberOfEmployees || "Belirtilmedi"}
-                - Ofis Sayısı: ${profile?.officeLocations || "Belirtilmedi"}
-                - Ülke / Konum: ${profile?.countryRegion || "Belirtilmedi"}
-                - Mevcut / Hedeflenen TISAX Seviyesi: ${tisaxDuzeyi}
-                - Risk İştahı: ${riskIstahi}
-
-                Görev:
-                1. Raporun en başına, yukarıdaki verileri içeren büyük puntolu bir 'Yönetici Özeti' ve kritik metrikleri gösteren bir tablo (markdown table formatında) ekle.
-                2. Önerileri mutlaka ikiye ayır: "Zorunlu Öneriler (Yapılmalı)" ve "Tavsiye Edilen Öneriler (Yapılabilir)".
-                3. Raporun sonunda, önerileri aksiyon durumuna göre kategorize eden bir 'Önceliklendirme Matrisi' (markdown tablo formatında) oluştur.`
+ZORUNLU FORMAT KURALLARI:
+1. Yanıtın yalnızca 4 bölümden oluşsun.
+2. Bölüm başlıkları TAMAMEN aşağıdaki gibi olsun (değiştirme):
+   ## Yönetici Özeti
+   ## Zorunlu Öneriler (Yapılmalı)
+   ## Tavsiye Edilen Öneriler (Yapılabilir)
+   ## Önceliklendirme Matrisi
+3. Her öneri maddesi "- 🛡️ **Başlık**: Açıklama" formatında olsun.
+4. Yönetici Özeti bölümünde bir markdown tablosu olsun.
+5. Önceliklendirme Matrisi bölümünde bir markdown tablosu olsun.
+6. Başka bölüm başlığı veya format kullanma.`
               }]
             }]
           })
@@ -380,8 +398,8 @@ export default function ScoreDashboard({ results, executiveSummary, text, profil
           Şirketinizin TISAX ({profile?.tisaxLevel || "Bilinmiyor"}) ve ISO/SAE 21434 standartlarına göre siber güvenlik yol haritasını Gemini 3.5 Flash ile özelleştirilmiş olarak oluşturun.
         </p>
 
-        <div className="ai-api-input-row" style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end', marginTop: '1rem', marginBottom: '1rem' }}>
-          <div className="api-input-wrap" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.4rem', textAlign: 'left' }}>
+        <div className="ai-api-input-row" style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end', marginTop: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+          <div className="api-input-wrap" style={{ flex: 1, minWidth: '200px', display: 'flex', flexDirection: 'column', gap: '0.4rem', textAlign: 'left' }}>
             <label htmlFor="dashboard-api-key" style={{ fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-main)' }}>Gemini API Anahtarı (API Key)</label>
             <input
               id="dashboard-api-key"
@@ -420,6 +438,28 @@ export default function ScoreDashboard({ results, executiveSummary, text, profil
               "Önerileri Getir"
             )}
           </button>
+
+          {aiOneri && (
+            <button
+              type="button"
+              onClick={() => {
+                setAiOneri("");
+                localStorage.removeItem("tisax_ai_oneri");
+              }}
+              style={{
+                padding: '0.65rem 1rem',
+                borderRadius: '6px',
+                background: 'transparent',
+                border: '1px solid rgba(255,255,255,0.15)',
+                color: 'var(--text-muted)',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              🗑 Sıfırla
+            </button>
+          )}
         </div>
 
         {aiError && <div className="ai-error-message">⚠️ {aiError}</div>}
