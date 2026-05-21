@@ -164,8 +164,6 @@ export default function ScoreDashboard({ results, executiveSummary, text, profil
   const [aiOneri, setAiOneri] = useState(() => localStorage.getItem("tisax_ai_oneri") || "");
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState("");
-  const [showMustInsights, setShowMustInsights] = useState(false);
-  const [showShouldInsights, setShowShouldInsights] = useState(false);
 
   const handleGenerateAiRecommendations = async () => {
     if (!apiKey) return;
@@ -472,72 +470,32 @@ export default function ScoreDashboard({ results, executiveSummary, text, profil
                         <span style={{ fontSize: '0.75rem', fontWeight: 600, padding: '4px 8px', borderRadius: '6px', textTransform: 'uppercase', letterSpacing: '0.05em', background: 'rgba(155, 28, 28, 0.3)', color: '#fca5a5', border: '1px solid rgba(155, 28, 28, 0.5)' }}>Must</span>
                       </header>
                       
-                      <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px', flexGrow: 1 }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                          <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', padding: '10px', borderRadius: '8px', background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(255,255,255,0.02)', textAlign: 'left' }}>
-                            <span style={{ fontSize: '1.2rem' }}>🏢</span>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                              <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#fff' }}>TISAX Uyum Hedefi</span>
-                              <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Mevcut skorunuza göre gerekli organizasyonel ve süreçsel iyileştirmeler.</span>
-                            </div>
-                          </div>
-                          <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', padding: '10px', borderRadius: '8px', background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(255,255,255,0.02)', textAlign: 'left' }}>
-                            <span style={{ fontSize: '1.2rem' }}>⚙️</span>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                              <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#fff' }}>ISO/SAE 21434</span>
-                              <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Yaşam döngüsü siber güvenliği ve otomotiv tedarik zinciri entegrasyonu.</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {showMustInsights && (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '12px', borderTop: '1px dashed rgba(255,255,255,0.08)', paddingTop: '16px' }}>
-                            {parsed.zorunlu.map((item, idx) => (
-                              <div key={idx} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '8px', padding: '0.8rem 1rem', textAlign: 'left', fontSize: '0.9rem', color: 'var(--text-main)', lineHeight: '1.5' }}>
-                                {item}
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      
-                      <footer style={{ padding: '20px 24px 24px', borderTop: '1px solid rgba(255, 255, 255, 0.05)', background: 'rgba(0, 0, 0, 0.15)' }}>
-                        <button 
-                          type="button"
-                          onClick={() => setShowMustInsights(!showMustInsights)}
-                          style={{
-                            width: '100%',
-                            padding: '12px',
-                            borderRadius: '8px',
-                            fontSize: '0.9rem',
-                            fontWeight: '600',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '8px',
-                            transition: 'all 0.2s ease',
-                            background: 'transparent',
-                            outline: 'none',
-                            border: '1px solid rgba(155, 28, 28, 0.4)',
-                            color: '#fca5a5'
+                      <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '0.75rem', flexGrow: 1 }}>
+                        {parsed.zorunlu.map((item, idx) => (
+                          <div key={idx} style={{ 
+                            background: 'rgba(255,255,255,0.02)', 
+                            border: '1px solid rgba(255,255,255,0.06)', 
+                            borderRadius: '8px', 
+                            padding: '1rem', 
+                            textAlign: 'left', 
+                            fontSize: '0.92rem', 
+                            color: 'var(--text-main)', 
+                            lineHeight: '1.5',
+                            transition: 'background 0.2s ease, border-color 0.2s ease',
+                            cursor: 'default'
                           }}
                           onMouseEnter={(e) => {
-                            e.currentTarget.style.background = '#9b1c1c';
-                            e.currentTarget.style.color = '#fff';
-                            e.currentTarget.style.borderColor = '#9b1c1c';
-                            e.currentTarget.style.boxShadow = '0 0 15px rgba(155, 28, 28, 0.4)';
+                            e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
+                            e.currentTarget.style.borderColor = 'rgba(155, 28, 28, 0.2)';
                           }}
                           onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'transparent';
-                            e.currentTarget.style.color = '#fca5a5';
-                            e.currentTarget.style.borderColor = 'rgba(155, 28, 28, 0.4)';
-                            e.currentTarget.style.boxShadow = 'none';
-                          }}
-                        >
-                          {showMustInsights ? "Analizi Gizle ↑" : "Analizi Göster →"}
-                        </button>
-                      </footer>
+                            e.currentTarget.style.background = 'rgba(255,255,255,0.02)';
+                            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)';
+                          }}>
+                            {item}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
 
@@ -581,72 +539,32 @@ export default function ScoreDashboard({ results, executiveSummary, text, profil
                         <span style={{ fontSize: '0.75rem', fontWeight: 600, padding: '4px 8px', borderRadius: '6px', textTransform: 'uppercase', letterSpacing: '0.05em', background: 'rgba(30, 58, 138, 0.4)', color: '#93c5fd', border: '1px solid rgba(30, 58, 138, 0.6)' }}>Should</span>
                       </header>
                       
-                      <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px', flexGrow: 1 }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                          <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', padding: '10px', borderRadius: '8px', background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(255,255,255,0.02)', textAlign: 'left' }}>
-                            <span style={{ fontSize: '1.2rem' }}>🔑</span>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                              <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#fff' }}>Zero Trust Mimarisi</span>
-                              <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Segmentasyon ve yetkisiz erişimi engelleme odaklı modern ağ yapılandırması.</span>
-                            </div>
-                          </div>
-                          <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', padding: '10px', borderRadius: '8px', background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(255,255,255,0.02)', textAlign: 'left' }}>
-                            <span style={{ fontSize: '1.2rem' }}>💻</span>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                              <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#fff' }}>Güvenlik Farkındalığı</span>
-                              <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Çalışanların siber tehditlere karşı eğitimi ve simülasyonlarla direncin artırılması.</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {showShouldInsights && (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '12px', borderTop: '1px dashed rgba(255,255,255,0.08)', paddingTop: '16px' }}>
-                            {parsed.tavsiye.map((item, idx) => (
-                              <div key={idx} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '8px', padding: '0.8rem 1rem', textAlign: 'left', fontSize: '0.9rem', color: 'var(--text-main)', lineHeight: '1.5' }}>
-                                {item}
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      
-                      <footer style={{ padding: '20px 24px 24px', borderTop: '1px solid rgba(255, 255, 255, 0.05)', background: 'rgba(0, 0, 0, 0.15)' }}>
-                        <button 
-                          type="button"
-                          onClick={() => setShowShouldInsights(!showShouldInsights)}
-                          style={{
-                            width: '100%',
-                            padding: '12px',
-                            borderRadius: '8px',
-                            fontSize: '0.9rem',
-                            fontWeight: '600',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '8px',
-                            transition: 'all 0.2s ease',
-                            background: 'transparent',
-                            outline: 'none',
-                            border: '1px solid rgba(30, 58, 138, 0.5)',
-                            color: '#93c5fd'
+                      <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '0.75rem', flexGrow: 1 }}>
+                        {parsed.tavsiye.map((item, idx) => (
+                          <div key={idx} style={{ 
+                            background: 'rgba(255,255,255,0.02)', 
+                            border: '1px solid rgba(255,255,255,0.06)', 
+                            borderRadius: '8px', 
+                            padding: '1rem', 
+                            textAlign: 'left', 
+                            fontSize: '0.92rem', 
+                            color: 'var(--text-main)', 
+                            lineHeight: '1.5',
+                            transition: 'background 0.2s ease, border-color 0.2s ease',
+                            cursor: 'default'
                           }}
                           onMouseEnter={(e) => {
-                            e.currentTarget.style.background = '#1e3a8a';
-                            e.currentTarget.style.color = '#fff';
-                            e.currentTarget.style.borderColor = '#1e3a8a';
-                            e.currentTarget.style.boxShadow = '0 0 15px rgba(30, 58, 138, 0.4)';
+                            e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
+                            e.currentTarget.style.borderColor = 'rgba(30, 58, 138, 0.2)';
                           }}
                           onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'transparent';
-                            e.currentTarget.style.color = '#93c5fd';
-                            e.currentTarget.style.borderColor = 'rgba(30, 58, 138, 0.5)';
-                            e.currentTarget.style.boxShadow = 'none';
-                          }}
-                        >
-                          {showShouldInsights ? "Analizi Gizle ↑" : "Analizi Göster →"}
-                        </button>
-                      </footer>
+                            e.currentTarget.style.background = 'rgba(255,255,255,0.02)';
+                            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)';
+                          }}>
+                            {item}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
