@@ -56,6 +56,19 @@ function parseAiOneri(text) {
   };
 }
 
+function parseInlineStyles(txt) {
+  if (!txt) return null;
+  // Clean up bullet list prefixes if present
+  const cleanTxt = txt.trim().replace(/^[\*\-\+]\s+/, "");
+  const parts = cleanTxt.split('**');
+  return parts.map((part, i) => {
+    if (i % 2 === 1) {
+      return <strong key={i} style={{ fontWeight: 700, color: '#fff' }}>{part}</strong>;
+    }
+    return part;
+  });
+}
+
 function renderMarkdown(text) {
   if (!text) return null;
 
@@ -109,16 +122,6 @@ function renderMarkdown(text) {
       tableRows = [];
     }
     inTable = false;
-  };
-
-  const parseInlineStyles = (txt) => {
-    const parts = txt.split('**');
-    return parts.map((part, i) => {
-      if (i % 2 === 1) {
-        return <strong key={i} style={{ fontWeight: 600, color: '#fff' }}>{part}</strong>;
-      }
-      return part;
-    });
   };
 
   lines.forEach((line, idx) => {
@@ -492,7 +495,7 @@ export default function ScoreDashboard({ results, executiveSummary, text, profil
                             e.currentTarget.style.background = 'rgba(255,255,255,0.02)';
                             e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)';
                           }}>
-                            {item}
+                            {parseInlineStyles(item)}
                           </div>
                         ))}
                       </div>
@@ -561,7 +564,7 @@ export default function ScoreDashboard({ results, executiveSummary, text, profil
                             e.currentTarget.style.background = 'rgba(255,255,255,0.02)';
                             e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)';
                           }}>
-                            {item}
+                            {parseInlineStyles(item)}
                           </div>
                         ))}
                       </div>
