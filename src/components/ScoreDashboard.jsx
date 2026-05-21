@@ -22,27 +22,32 @@ function parseAiOneri(text) {
     const trimmed = line.trim();
     if (!trimmed) continue;
 
-    // Detect header changes
-    const lower = trimmed.toLowerCase();
-    if (lower.includes('zorunlu') || lower.includes('must') || lower.includes('kategori 1')) {
-      currentCategory = 'zorunlu';
-      continue;
-    }
-    if (lower.includes('tavsiye') || lower.includes('should') || lower.includes('kategori 2') || lower.includes('önerilenler')) {
-      currentCategory = 'tavsiye';
-      continue;
-    }
-    if ((lower.includes('matris') || lower.includes('matri̇s') || lower.includes('önceliklendirme') || lower.includes('aksiyon')) && 
-        (currentCategory === 'zorunlu' || currentCategory === 'tavsiye')) {
-      currentCategory = 'outro';
+    // Detect actual header lines (starts with # or starts and ends with bold markers, short length)
+    const isHeader = /^#+\s+/.test(trimmed) || 
+                     (/^(\*\*|__)/.test(trimmed) && trimmed.length < 75 && (trimmed.endsWith('**') || trimmed.endsWith('**:') || trimmed.endsWith(':')));
+
+    if (isHeader) {
+      const lower = trimmed.toLowerCase();
+      if (lower.includes('zorunlu') || lower.includes('must') || lower.includes('kategori 1')) {
+        currentCategory = 'zorunlu';
+        continue;
+      }
+      if (lower.includes('tavsiye') || lower.includes('should') || lower.includes('kategori 2') || lower.includes('önerilenler')) {
+        currentCategory = 'tavsiye';
+        continue;
+      }
+      if (lower.includes('matris') || lower.includes('matri̇s') || lower.includes('önceliklendirme') || lower.includes('aksiyon')) {
+        currentCategory = 'outro';
+        continue;
+      }
     }
 
     if (currentCategory === 'intro') {
       introLines.push(line);
     } else if (currentCategory === 'zorunlu') {
-      zorunlu.push(line);
+      if (!isHeader) zorunlu.push(line);
     } else if (currentCategory === 'tavsiye') {
-      tavsiye.push(line);
+      if (!isHeader) tavsiye.push(line);
     } else {
       outroLines.push(line);
     }
@@ -56,14 +61,27 @@ function parseAiOneri(text) {
   };
 }
 
-function parseInlineStyles(txt) {
+function parseInlineStyles(txt, stripBullet = false) {
   if (!txt) return null;
-  // Clean up bullet list prefixes if present
-  const cleanTxt = txt.trim().replace(/^[\*\-\+]\s+/, "");
-  const parts = cleanTxt.split('**');
+  
+  let cleanTxt = txt.trim();
+  if (stripBullet) {
+    cleanTxt = cleanTxt.replace(/^[\*\-\+]\s+/, "");
+  }
+
+  // Tokenize bold (**), inline code (`), and italic (*)
+  const regex = /(\*\*[^*]+\*\*|`[^`]+`|\*[^*]+\*)/g;
+  const parts = cleanTxt.split(regex);
+  
   return parts.map((part, i) => {
-    if (i % 2 === 1) {
-      return <strong key={i} style={{ fontWeight: 700, color: '#fff' }}>{part}</strong>;
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={i} style={{ fontWeight: 700, color: '#fff' }}>{part.slice(2, -2)}</strong>;
+    }
+    if (part.startsWith('`') && part.endsWith('`')) {
+      return <code key={i} style={{ background: 'rgba(255,255,255,0.08)', padding: '2px 6px', borderRadius: '4px', fontFamily: 'monospace', fontSize: '0.85em', color: '#e0a0a0' }}>{part.slice(1, -1)}</code>;
+    }
+    if (part.startsWith('*') && part.endsWith('*')) {
+      return <em key={i} style={{ fontStyle: 'italic', color: 'rgba(255,255,255,0.9)' }}>{part.slice(1, -1)}</em>;
     }
     return part;
   });
@@ -495,7 +513,7 @@ export default function ScoreDashboard({ results, executiveSummary, text, profil
                             e.currentTarget.style.background = 'rgba(255,255,255,0.02)';
                             e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)';
                           }}>
-                            {parseInlineStyles(item)}
+                            {parseInlineStyles(item, true)}
                           </div>
                         ))}
                       </div>
@@ -564,7 +582,7 @@ export default function ScoreDashboard({ results, executiveSummary, text, profil
                             e.currentTarget.style.background = 'rgba(255,255,255,0.02)';
                             e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)';
                           }}>
-                            {parseInlineStyles(item)}
+                            {parseInlineStyles(item, true)}
                           </div>
                         ))}
                       </div>
