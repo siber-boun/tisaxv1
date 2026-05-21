@@ -10,55 +10,17 @@ function scoreClass(score) {
 
 function parseAiOneri(text) {
   if (!text) return { intro: "", zorunlu: [], tavsiye: [], outro: "" };
-  
-  const lines = text.split('\n');
-  let currentCategory = 'intro';
-  const introLines = [];
-  const zorunlu = [];
-  const tavsiye = [];
-  const outroLines = [];
-
-  for (let line of lines) {
-    const trimmed = line.trim();
-    if (!trimmed) continue;
-
-    // Detect actual header lines (starts with # or starts and ends with bold markers, short length)
-    const isHeader = /^#+\s+/.test(trimmed) || 
-                     (/^(\*\*|__)/.test(trimmed) && trimmed.length < 75 && (trimmed.endsWith('**') || trimmed.endsWith('**:') || trimmed.endsWith(':')));
-
-    if (isHeader) {
-      const lower = trimmed.toLowerCase();
-      if (lower.includes('zorunlu') || lower.includes('must') || lower.includes('kategori 1')) {
-        currentCategory = 'zorunlu';
-        continue;
-      }
-      if (lower.includes('tavsiye') || lower.includes('should') || lower.includes('kategori 2') || lower.includes('önerilenler')) {
-        currentCategory = 'tavsiye';
-        continue;
-      }
-      if (lower.includes('matris') || lower.includes('matri̇s') || lower.includes('önceliklendirme') || lower.includes('aksiyon')) {
-        currentCategory = 'outro';
-        continue;
-      }
-    }
-
-    if (currentCategory === 'intro') {
-      introLines.push(line);
-    } else if (currentCategory === 'zorunlu') {
-      if (!isHeader) zorunlu.push(line);
-    } else if (currentCategory === 'tavsiye') {
-      if (!isHeader) tavsiye.push(line);
-    } else {
-      outroLines.push(line);
-    }
+  try {
+    const parsed = JSON.parse(text);
+    return {
+      intro:   typeof parsed.intro  === 'string' ? parsed.intro  : "",
+      zorunlu: Array.isArray(parsed.zorunlu)      ? parsed.zorunlu : [],
+      tavsiye: Array.isArray(parsed.tavsiye)      ? parsed.tavsiye : [],
+      outro:   typeof parsed.outro  === 'string' ? parsed.outro  : "",
+    };
+  } catch {
+    return { intro: "", zorunlu: [], tavsiye: [], outro: "" };
   }
-
-  return {
-    intro: introLines.join('\n'),
-    zorunlu: zorunlu.filter(l => l.trim().length > 2),
-    tavsiye: tavsiye.filter(l => l.trim().length > 2),
-    outro: outroLines.join('\n')
-  };
 }
 
 // Render inline markdown: **bold**, *italic*, `code`
@@ -222,7 +184,7 @@ export default function ScoreDashboard({ results, executiveSummary, text, profil
           body: JSON.stringify({
             contents: [{
               parts: [{
-                text: `Sen üst düzey bir siber güvenlik stratejisti ve TISAX uzmanısın. Aşağıdaki kurum profiline göre kesinlikle aşağıdaki ZORUNLU YAPI formatında yanıt ver:
+                text: `Sen üst düzey bir siber güvenlik stratejisti ve TISAX uzmanısın. Aşağıdaki kurum profiline göre siber güvenlik uyum analizi ve tavsiye raporu oluştur.
 
 Kurum Bilgileri:
 - Kurum Adı: ${profile?.companyName || "Belirtilmedi"}
@@ -234,19 +196,26 @@ Kurum Bilgileri:
 - TISAX Seviyesi: ${tisaxDuzeyi}
 - Risk İştahı: ${riskIstahi}
 
-ZORUNLU FORMAT KURALLARI:
-1. Yanıtın yalnızca 4 bölümden oluşsun.
-2. Bölüm başlıkları TAMAMEN aşağıdaki gibi olsun (değiştirme):
-   ## Yönetici Özeti
-   ## Zorunlu Öneriler (Yapılmalı)
-   ## Tavsiye Edilen Öneriler (Yapılabilir)
-   ## Önceliklendirme Matrisi
-3. Her öneri maddesi "- 🛡️ **Başlık**: Açıklama" formatında olsun.
-4. Yönetici Özeti bölümünde bir markdown tablosu olsun.
-5. Önceliklendirme Matrisi bölümünde bir markdown tablosu olsun.
-6. Başka bölüm başlığı veya format kullanma.`
+Alan açıklamaları:
+- intro: Yönetici özeti. Kuruma özel değerlendirme ve bir markdown tablosu içersin.
+- zorunlu: TISAX/ISO 21434 için mutlaka yapılması gereken aksiyonlar. Her madde "🛡️ **Başlık**: Açıklama" formatında olsun.
+- tavsiye: Güvenlik duruşunu güçlendirecek stratejik öneriler. Her madde "💡 **Başlık**: Açıklama" formatında olsun.
+- outro: Önceliklendirme matrisi. Bir markdown tablosu içersin (Aksiyon, Öncelik, Süre, Etki sütunları).`
               }]
-            }]
+            }],
+            generationConfig: {
+              responseMimeType: "application/json",
+              responseSchema: {
+                type: "OBJECT",
+                properties: {
+                  intro:   { type: "STRING" },
+                  zorunlu: { type: "ARRAY", items: { type: "STRING" } },
+                  tavsiye: { type: "ARRAY", items: { type: "STRING" } },
+                  outro:   { type: "STRING" },
+                },
+                required: ["intro", "zorunlu", "tavsiye", "outro"],
+              },
+            },
           })
         }
       );
@@ -258,7 +227,7 @@ ZORUNLU FORMAT KURALLARI:
 
       const data = await response.json();
 
-      if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
+      if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
         const oneri = data.candidates[0].content.parts[0].text;
         setAiOneri(oneri);
         localStorage.setItem("tisax_ai_oneri", oneri);

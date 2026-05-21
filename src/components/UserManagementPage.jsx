@@ -12,6 +12,7 @@ const STANDARD_LABELS = {
 };
 
 function Avatar({ name }) {
+  if (!name) return <div className="um-avatar" style={{ background: '#374151' }}>?</div>;
   const initials = name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
   const colors = [
     ['#2563eb','#1e3a8a'], ['#7c3aed','#4c1d95'], ['#0891b2','#164e63'],

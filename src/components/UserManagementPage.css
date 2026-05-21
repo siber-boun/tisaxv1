@@ -81,29 +81,39 @@
   letter-spacing: 0.05em;
 }
 
-/* ── Toast ── */
+/* ── Toast — fixed floating overlay ── */
 .um-toast {
+  position: fixed;
+  bottom: 1.75rem;
+  right: 1.75rem;
+  z-index: 9999;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.25rem;
-  border-radius: 10px;
+  gap: 0.6rem;
+  padding: 0.85rem 1.4rem;
+  border-radius: 12px;
   font-size: 0.875rem;
-  font-weight: 500;
-  margin-bottom: 1.25rem;
-  animation: um-slide-in 0.3s ease;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  animation: um-toast-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  max-width: 360px;
 }
 
 .um-toast-success {
-  background: rgba(16,185,129,0.1);
-  border: 1px solid rgba(16,185,129,0.3);
-  color: var(--accent-green);
+  background: #065f46;
+  border: 1px solid rgba(52,211,153,0.35);
+  color: #6ee7b7;
 }
 
 .um-toast-error {
-  background: rgba(239,68,68,0.1);
-  border: 1px solid rgba(239,68,68,0.3);
-  color: var(--accent-red);
+  background: #7f1d1d;
+  border: 1px solid rgba(248,113,113,0.35);
+  color: #fca5a5;
+}
+
+@keyframes um-toast-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @keyframes um-slide-in {
@@ -249,29 +259,39 @@
 .um-role-btn.active-green { background: rgba(16,185,129,0.12); color: var(--accent-green); border-color: rgba(16,185,129,0.4); }
 .um-role-btn.active-blue  { background: rgba(37,99,235,0.12);  color: var(--accent-blue);  border-color: rgba(37,99,235,0.4);  }
 
-/* Standard toggle */
+/* Standard toggle — horizontal pill-style */
 .um-standard-toggle {
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  flex-direction: row;
+  gap: 0;
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 3px;
 }
 
 .um-std-btn {
-  padding: 0.65rem 1rem;
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-  background: var(--secondary-bg);
+  flex: 1;
+  padding: 0.55rem 0.75rem;
+  border-radius: 7px;
+  border: none;
+  background: transparent;
   color: var(--text-muted);
-  font-size: 0.875rem;
+  font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
-  text-align: left;
+  text-align: center;
   transition: all 0.2s ease;
   font-family: inherit;
+  white-space: nowrap;
 }
 
-.um-std-btn:hover { border-color: var(--accent-blue); color: var(--text-main); }
-.um-std-btn.active { background: rgba(37,99,235,0.1); color: var(--accent-blue); border-color: rgba(37,99,235,0.4); }
+.um-std-btn:hover { color: var(--text-main); }
+.um-std-btn.active {
+  background: var(--card-bg);
+  color: var(--accent-blue);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+}
 
 /* Assign preview */
 .um-assign-preview {
@@ -430,7 +450,22 @@
 .um-progress-fill {
   height: 100%;
   border-radius: 99px;
-  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.um-progress-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.25) 50%, transparent 100%);
+  animation: um-shimmer 2s infinite;
+}
+
+@keyframes um-shimmer {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(200%); }
 }
 
 .um-progress-pct {
