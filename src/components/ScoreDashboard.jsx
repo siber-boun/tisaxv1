@@ -159,7 +159,15 @@ function renderMarkdown(text) {
   return elements;
 }
 
-export default function ScoreDashboard({ results, executiveSummary, text, profile }) {
+const MATURITY_LABEL = {
+  not_implemented:      "❌ Uygulanmadı",
+  partially_implemented:"⚠️ Kısmen Uygulandı",
+  defined:              "📋 Tanımlı",
+  managed:              "✅ Yönetilen",
+  optimized:            "🚀 Optimize",
+};
+
+export default function ScoreDashboard({ results, executiveSummary, text, profile, answers = {}, sections = [] }) {
   const [apiKey, setApiKey] = useState(() => localStorage.getItem("tisax_gemini_api_key") || "");
   const [aiOneri, setAiOneri] = useState(() => localStorage.getItem("tisax_ai_oneri") || "");
   const [aiLoading, setAiLoading] = useState(false);
@@ -184,7 +192,7 @@ export default function ScoreDashboard({ results, executiveSummary, text, profil
           body: JSON.stringify({
             contents: [{
               parts: [{
-                text: `Sen üst düzey bir siber güvenlik stratejisti ve TISAX uzmanısın. Aşağıdaki kurum profiline göre siber güvenlik uyum analizi ve tavsiye raporu oluştur.
+                text: `Sen üst düzey bir siber güvenlik stratejisti ve TISAX/ISO 21434 uzmanısın. Aşağıdaki kurum profili ve olgunluk değerlendirmesi sonuçlarına dayanarak kapsamlı bir uyum analizi ve aksiyon raporu oluştur.
 
 Kurum Bilgileri:
 - Kurum Adı: ${profile?.companyName || "Belirtilmedi"}
@@ -193,14 +201,23 @@ Kurum Bilgileri:
 - Çalışan Sayısı: ${profile?.numberOfEmployees || "Belirtilmedi"}
 - Ofis Sayısı: ${profile?.officeLocations || "Belirtilmedi"}
 - Ülke: ${profile?.countryRegion || "Belirtilmedi"}
-- TISAX Seviyesi: ${tisaxDuzeyi}
+- Hedef TISAX Seviyesi: ${tisaxDuzeyi}
 - Risk İştahı: ${riskIstahi}
 
+Olgunluk Değerlendirmesi Sonuçları (Genel Skor: %${results.overall}):
+${results.sectionScores.map(s => `- ${s.title}: %${s.score} (${s.score < 40 ? '🔴 Kritik' : s.score < 70 ? '🟡 Geliştirilmeli' : '🟢 Yeterli'})`).join('\n')}
+
+Kritik Zayıf Alanlar (öncelikli ele alınmalı):
+${results.lowMaturityAreas.length > 0 ? results.lowMaturityAreas.map(a => `- ${a.title}: %${a.score}`).join('\n') : '- Yok'}
+
+Soru Bazlı Cevaplar:
+${sections.map(section => `[${section.title}]\n${section.questions.map(q => `  - ${q.text}: ${MATURITY_LABEL[answers[q.id]] || '— Cevaplanmadı'}`).join('\n')}`).join('\n\n')}
+
 Alan açıklamaları:
-- intro: Yönetici özeti. Kuruma özel değerlendirme ve bir markdown tablosu içersin.
-- zorunlu: TISAX/ISO 21434 için mutlaka yapılması gereken aksiyonlar. Her madde "🛡️ **Başlık**: Açıklama" formatında olsun.
-- tavsiye: Güvenlik duruşunu güçlendirecek stratejik öneriler. Her madde "💡 **Başlık**: Açıklama" formatında olsun.
-- outro: Önceliklendirme matrisi. Bir markdown tablosu içersin (Aksiyon, Öncelik, Süre, Etki sütunları).`
+- intro: Yönetici özeti. Genel skor ve zayıf alanlara atıfla 2-3 paragraflık özet yaz, ardından skor tablosu ekle (Alan | Skor | Durum sütunları).
+- zorunlu: Zayıf alanlar öncelikli olmak üzere TISAX/ISO 21434 uyumu için mutlaka yapılması gereken en az 5 aksiyon. Her madde "🛡️ **Başlık**: Somut adımlar içeren açıklama (hangi alan, neden kritik, ne yapılmalı)" formatında olsun.
+- tavsiye: Orta ve iyi skorlu alanları daha da güçlendirecek en az 4 stratejik öneri. Her madde "💡 **Başlık**: Somut uygulama adımları içeren açıklama" formatında olsun.
+- outro: Önceliklendirme matrisi. Tablo sütunları: Aksiyon | Etkilenen Alan | Öncelik | Tahmini Süre | Beklenen Etki.`
               }]
             }],
             generationConfig: {

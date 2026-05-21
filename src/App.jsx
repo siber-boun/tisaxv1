@@ -397,7 +397,7 @@ export default function App() {
       {screen === "stage2Results" && (
         <div className="results-wrapper">
           <JourneyNav current="stage2Results" text={text} />
-          <ScoreDashboard results={activeResults} executiveSummary={executiveSummary} text={text.results} profile={profile} />
+          <ScoreDashboard results={activeResults} executiveSummary={executiveSummary} text={text.results} profile={profile} answers={stage2Answers} sections={stage2Sections} />
           <div className="actions results-actions">
             <button className="ghost-btn" onClick={handleEditProfile}>{text.journey.editProfile}</button>
             <button className="ghost-btn" onClick={handleRetakeAssessment}>{text.results.retake}</button>
