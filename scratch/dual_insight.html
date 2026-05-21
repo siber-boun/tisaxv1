@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dual-Insight Dashboard Component</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0b0f19;
+      --card-bg-white: rgba(255, 255, 255, 0.03);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      
+      /* Colors */
+      --bordo: #9b1c1c;
+      --bordo-hover: #b91c1c;
+      --bordo-bg: rgba(155, 28, 28, 0.1);
+      
+      --lacivert: #1e3a8a;
+      --lacivert-hover: #1e40af;
+      --lacivert-bg: rgba(30, 58, 138, 0.15);
+      
+      --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .dashboard-container {
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    /* Dual-Insight Grid */
+    .dual-insight-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 24px;
+      margin-top: 20px;
+    }
+
+    /* Card Base */
+    .insight-card {
+      background: var(--card-bg-white);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                  border-color 0.3s ease, 
+                  box-shadow 0.3s ease;
+      position: relative;
+    }
+
+    .insight-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      z-index: 10;
+    }
+
+    /* Must Card Top Indicator */
+    .insight-card.must::before {
+      background: linear-gradient(90deg, var(--bordo), #e05a5a);
+    }
+
+    /* Should Card Top Indicator */
+    .insight-card.should::before {
+      background: linear-gradient(90deg, var(--lacivert), #60a5fa);
+    }
+
+    .insight-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+    }
+
+    .insight-card.must:hover {
+      border-color: rgba(155, 28, 28, 0.4);
+    }
+
+    .insight-card.should:hover {
+      border-color: rgba(30, 58, 138, 0.5);
+    }
+
+    /* Card Header Banners */
+    .card-banner {
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .must .card-banner {
+      background: linear-gradient(135deg, rgba(155, 28, 28, 0.15) 0%, rgba(0, 0, 0, 0) 100%);
+    }
+
+    .should .card-banner {
+      background: linear-gradient(135deg, rgba(30, 58, 138, 0.2) 0%, rgba(0, 0, 0, 0) 100%);
+    }
+
+    .banner-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .banner-icon {
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+    }
+
+    .must .banner-icon {
+      background: rgba(155, 28, 28, 0.2);
+      color: #ff6b6b;
+      border: 1px solid rgba(155, 28, 28, 0.3);
+    }
+
+    .should .banner-icon {
+      background: rgba(30, 58, 138, 0.3);
+      color: #60a5fa;
+      border: 1px solid rgba(30, 58, 138, 0.4);
+    }
+
+    .banner-title {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .must .banner-title {
+      color: #fca5a5;
+    }
+
+    .should .banner-title {
+      color: #93c5fd;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .must .badge {
+      background: rgba(155, 28, 28, 0.3);
+      color: #fca5a5;
+      border: 1px solid rgba(155, 28, 28, 0.5);
+    }
+
+    .should .badge {
+      background: rgba(30, 58, 138, 0.4);
+      color: #93c5fd;
+      border: 1px solid rgba(30, 58, 138, 0.6);
+    }
+
+    /* Card Content */
+    .card-body {
+      padding: 24px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .data-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 12px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid rgba(255, 255, 255, 0.02);
+      transition: background 0.2s ease;
+    }
+
+    .data-item:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .item-bullet {
+      font-size: 1.2rem;
+      margin-top: 2px;
+    }
+
+    .item-text-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      text-align: left;
+    }
+
+    .item-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    .item-value {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Card Footer Actions */
+    .card-footer {
+      padding: 20px 24px 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(0, 0, 0, 0.15);
+    }
+
+    .insights-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      background: transparent;
+      outline: none;
+    }
+
+    .must .insights-btn {
+      border: 1px solid rgba(155, 28, 28, 0.4);
+      color: #fca5a5;
+    }
+
+    .must .insights-btn:hover {
+      background: var(--bordo);
+      color: #ffffff;
+      border-color: var(--bordo);
+      box-shadow: 0 0 15px rgba(155, 28, 28, 0.4);
+    }
+
+    .should .insights-btn {
+      border: 1px solid rgba(30, 58, 138, 0.5);
+      color: #93c5fd;
+    }
+
+    .should .insights-btn:hover {
+      background: var(--lacivert);
+      color: #ffffff;
+      border-color: var(--lacivert);
+      box-shadow: 0 0 15px rgba(30, 58, 138, 0.4);
+    }
+
+    .arrow-icon {
+      transition: transform 0.2s ease;
+    }
+
+    .insights-btn:hover .arrow-icon {
+      transform: translateX(4px);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dashboard-container">
+    
+    <!-- Dual-Insight Grid -->
+    <div class="dual-insight-grid">
+      
+      <!-- Zorunlu Uyumluluk (Must) Card -->
+      <article class="insight-card must">
+        <header class="card-banner">
+          <div class="banner-title-wrap">
+            <span class="banner-icon">🛡️</span>
+            <h3 class="banner-title">Zorunlu Uyumluluk</h3>
+          </div>
+          <span class="badge">Must</span>
+        </header>
+        
+        <div class="card-body">
+          <div class="data-item">
+            <span class="item-bullet">🏢</span>
+            <div class="item-text-wrap">
+              <span class="item-label">TISAX Uyum Hedefi</span>
+              <span class="item-value">AL2/AL3 gereksinimlerine göre bilgi güvenliği kontrolleri ve VDA ISA denetim hazırlığı.</span>
+            </div>
+          </div>
+          
+          <div class="data-item">
+            <span class="item-bullet">⚙️</span>
+            <div class="item-text-wrap">
+              <span class="item-label">ISO/SAE 21434</span>
+              <span class="item-value">TARA analizi (Tehdit Analizi ve Risk Değerlendirmesi) ve ürün yaşam döngüsü siber güvenliği.</span>
+            </div>
+          </div>
+          
+          <div class="data-item">
+            <span class="item-bullet">🔒</span>
+            <div class="item-text-wrap">
+              <span class="item-label">BGYS (ISMS) Yapısı</span>
+              <span class="item-value">Dokümantasyon yönetimi, iç denetimler ve risk azaltıcı temel kurumsal politikalar.</span>
+            </div>
+          </div>
+        </div>
+        
+        <footer class="card-footer">
+          <button class="insights-btn">
+            <span>Analizi Göster</span>
+            <span class="arrow-icon">→</span>
+          </button>
+        </footer>
+      </article>
+
+      <!-- Stratejik Tavsiyeler (Should) Card -->
+      <article class="insight-card should">
+        <header class="card-banner">
+          <div class="banner-title-wrap">
+            <span class="banner-icon">💡</span>
+            <h3 class="banner-title">Stratejik Tavsiyeler</h3>
+          </div>
+          <span class="badge">Should</span>
+        </header>
+        
+        <div class="card-body">
+          <div class="data-item">
+            <span class="item-bullet">🔑</span>
+            <div class="item-text-wrap">
+              <span class="item-label">Zero Trust Mimarisi</span>
+              <span class="item-value">Ağ mikro-segmentasyonu ve ayrıcalıklı erişim yönetimi (PAM) ile sınır güvenliği.</span>
+            </div>
+          </div>
+          
+          <div class="data-item">
+            <span class="item-bullet">📊</span>
+            <div class="item-text-wrap">
+              <span class="item-label">7/24 SOC Yönetimi</span>
+              <span class="item-value">MDR/EDR araçlarıyla entegre sürekli tehdit izleme ve olay müdahale operasyonları.</span>
+            </div>
+          </div>
+          
+          <div class="data-item">
+            <span class="item-bullet">💻</span>
+            <div class="item-text-wrap">
+              <span class="item-label">Farkındalık Dönüşümü</span>
+              <span class="item-value">Sürekli sosyal mühendislik testleri ve personel odaklı bilgi güvenliği eğitimleri.</span>
+            </div>
+          </div>
+        </div>
+        
+        <footer class="card-footer">
+          <button class="insights-btn">
+            <span>Analizi Göster</span>
+            <span class="arrow-icon">→</span>
+          </button>
+        </footer>
+      </article>
+      
+    </div>
+  </div>
+
+</body>
+</html>
